@@ -1,0 +1,194 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <parent>
+      <groupId>org.gatein.sso</groupId>
+      <artifactId>gatein-sso-parent</artifactId>
+      <relativePath>../pom.xml</relativePath>
+      <version>trunk-SNAPSHOT</version>
+   </parent>
+   
+   <modelVersion>4.0.0</modelVersion>
+   <artifactId>agent</artifactId>
+   <packaging>jar</packaging>
+   <name>Gatein SSO Agent</name> 
+   
+   <properties> 
+   		<!-- ChangeMe to your specific local environment -->
+   		<gatein.location>/home/soshah/projects/gatein/runtime/jboss/server/default</gatein.location>	   		  		
+   </properties>  
+   
+   <dependencies>  
+   		<dependency>
+   			<groupId>org.gatein.sso</groupId>
+   			<artifactId>auth-callback</artifactId>
+   			<version>${project.version}</version>
+   		</dependency>  
+   		<dependency>
+   			<groupId>javax.servlet</groupId>
+   			<artifactId>servlet-api</artifactId>
+   		</dependency>
+   		 
+   		<dependency>
+      		<groupId>org.exoplatform.portal</groupId>
+      		<artifactId>exo.portal.component.web</artifactId>      		
+    	 </dependency>
+    	 <dependency>
+      		<groupId>org.exoplatform.core</groupId>
+      		<artifactId>exo.core.component.organization.api</artifactId>      		
+    	 </dependency>
+    	 
+    	 <dependency>
+          <groupId>org.jasig.cas</groupId>
+          <artifactId>cas-client-core</artifactId>          
+         </dependency>
+         
+         <dependency>
+        	<groupId>org.josso</groupId>
+         	<artifactId>josso-agent</artifactId>         	
+      	</dependency>
+      	<dependency>
+        	<groupId>org.josso</groupId>
+         	<artifactId>josso-servlet-agent</artifactId>         	
+      	</dependency>
+      	<dependency>
+        	<groupId>org.josso</groupId>
+         	<artifactId>josso-agent-shared</artifactId>         	
+      	</dependency>
+      	<dependency>
+        	<groupId>org.josso</groupId>
+         	<artifactId>josso-protocol-client</artifactId>         	
+      	</dependency>      			 
+   </dependencies>  
+   
+   <build>   
+   		<plugins>
+   		 <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.3.1</version>
+            <configuration>
+            	<skip>true</skip>
+            </configuration>                        
+         </plugin>
+   		</plugins>	
+   </build>
+   
+        
+   <!-- profile for packaging and deploying this plugin into a cas server -->
+   <profiles>
+    <profile>
+        <id>integration-tests</id>
+    	<build>   
+   		<plugins>
+   		 <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.3.1</version>	            
+            <configuration>
+           		<skip>true</skip>
+           	</configuration>            
+         </plugin>
+   		</plugins>	
+   		</build>
+    </profile>
+   	
+   	<!--
+   		TODO: move this into packaging module 
+   	 -->
+   	<!--  
+   	<profile>
+   		<id>josso-agent</id>   		
+   		<build>
+   			<plugins>
+   				<plugin>
+   					<groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
+		        	<artifactId>maven-antrun-extended-plugin</artifactId>
+		        	<executions>
+		        	    <execution>
+		        			<id>josso-agent-package</id>
+		        			<phase>package</phase>
+		        			<configuration>
+		        				<tasks>
+		        					<echo message="Preparing the JOSSO Agent for GateIn"/>
+		        					
+		        					
+		        					<delete dir="${basedir}/target/josso"/>
+		        					<mkdir dir="${basedir}/target/josso"/>
+		        					
+		        					<unjar src="${settings.localRepository}/org/exoplatform/portal/exo.portal.web.portal/${org.exoplatform.portal.version}/exo.portal.web.portal-${org.exoplatform.portal.version}.war" 
+		        					dest="${basedir}/target/josso/portal.war" overwrite="true"/>
+		        					
+		        					
+		        					<copy todir="${basedir}/target/josso/portal.war" overwrite="true">
+		        						<fileset dir="${basedir}/src/main/config/josso/portal.war"/>
+		        					</copy> 		        							       
+		        					
+		        					
+		        					<jar destfile="${basedir}/target/josso/02portal.war" basedir="${basedir}/target/josso/portal.war"/> 							        										
+		        				</tasks>
+		        			</configuration>
+		        			<goals>
+		        				<goal>run</goal>
+		        			</goals>
+		        		</execution>
+		        		<execution>
+		        			<id>josso-agent-install</id>
+		        			<phase>install</phase>
+		        			<configuration>
+		        				<tasks>
+		        					<echo message="Deploying the JOSSO Agent for GateIn"/>	
+		        					
+		        					<copy file="${basedir}/target/josso/02portal.war" 
+		        					todir="${gatein.location}/deploy/gatein.ear" 
+		        					overwrite="true"/>	
+		        					
+		        					
+		        					<copy file="${settings.localRepository}/org/gatein/sso/auth-callback/${project.version}/auth-callback-${project.version}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/> 
+		        					
+		        					
+		        					<copy file="${settings.localRepository}/org/gatein/sso/agent/${project.version}/agent-${project.version}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>
+		        					
+		        							        					  
+		        							        					  
+		        					<copy file="${settings.localRepository}/org/josso/josso-agent/${version.josso}/josso-agent-${version.josso}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>
+		        					
+		        					<copy file="${settings.localRepository}/org/josso/josso-servlet-agent/${version.josso}/josso-servlet-agent-${version.josso}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>
+		        					
+		        					<copy file="${settings.localRepository}/org/josso/josso-agent-shared/${version.josso}/josso-agent-shared-${version.josso}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>		
+		        					
+		        					<copy file="${settings.localRepository}/org/josso/josso-protocol-client/${version.josso}/josso-protocol-client-${version.josso}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>        							        					     							        							        					        				
+		        					
+		        					<copy file="${settings.localRepository}/org/josso/josso-common/${version.josso}/josso-common-${version.josso}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>
+		        					
+		        					<copy file="${settings.localRepository}/org/josso/josso-core/${version.josso}/josso-core-${version.josso}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>		        					
+		        				</tasks>
+		        			</configuration>
+		        			<goals>
+		        				<goal>run</goal>
+		        			</goals>
+		        		</execution>		        		
+		        	</executions>
+   				</plugin>
+   			</plugins>
+   		</build>
+   	</profile>
+   	-->
+   </profiles>     
+</project>
+

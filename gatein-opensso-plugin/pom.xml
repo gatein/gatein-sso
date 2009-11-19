@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <parent>
+      <groupId>org.gatein.sso</groupId>
+      <artifactId>gatein-sso-parent</artifactId>
+      <relativePath>../pom.xml</relativePath>
+      <version>trunk-SNAPSHOT</version>
+   </parent>
+   
+   <modelVersion>4.0.0</modelVersion>
+   <artifactId>gatein-opensso-plugin</artifactId>
+   <packaging>jar</packaging>
+   <name>Gatein Plugin for the OpenSSO Server</name> 
+   
+   <properties>   		
+   </properties>  
+   
+   <dependencies>  
+   		<dependency>
+   			<groupId>opensso</groupId>
+   			<artifactId>opensso</artifactId>
+   		</dependency> 
+   		<dependency>
+        	<groupId>opensso</groupId>
+        	<artifactId>amserver</artifactId>        	
+        </dependency>  		 
+   </dependencies>  
+   
+   <build>   	
+   </build>       
+</project>
+

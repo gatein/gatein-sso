@@ -1,0 +1,41 @@
+Instructions:
+-----------------
+
+Build All: 
+---------------------------------
+* mvn clean install
+ 
+or
+ 
+* mvn clean package
+
+
+
+
+
+Install CAS plugin into a designated CAS (3.3.4) server:
+-------------------------------------------------
+Step 1: Go to the packaging directory: cd packaging
+
+Step 2: Update the profiles.xml to reflect the directories where your local JBoss AS 5.1.0.GA and Tomcat 6.0.2 are installed
+
+Step 3: mvn -Pplugin-cas-install install
+
+
+
+Install CAS GateIn Agent into the designated GateIn server:
+-----------------------------------------------------------
+Step 1: Go to the packaging directory: cd packaging
+
+Step 2: Update the profiles.xml to reflect the directories where your local JBoss AS 5.1.0.GA and Tomcat 6.0.2 are installed
+
+Step 3: mvn -Pgatein-cas-install install
+
+
+
+Under Construction:
+---------------------
+
+* JOSSO 1.8.1 integration
+
+* OpenSSO 8.0 Update1 integration

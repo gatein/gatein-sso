@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <parent>
+      <groupId>org.gatein.sso</groupId>
+      <artifactId>gatein-sso-parent</artifactId>
+      <relativePath>../pom.xml</relativePath>
+      <version>trunk-SNAPSHOT</version>
+   </parent>
+   
+   <modelVersion>4.0.0</modelVersion>
+   <artifactId>packaging</artifactId>
+   <packaging>pom</packaging>
+   <name>Used for packaging deployable artifacts</name> 
+   
+   <modules>
+   	<module>cas</module>
+   </modules>
+          
+</project>
+
