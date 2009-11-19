@@ -16,6 +16,13 @@
    <version>trunk-SNAPSHOT</version>
    <packaging>pom</packaging>
    
+   <parent>
+    <groupId>org.gatein</groupId>
+    <artifactId>gatein-parent</artifactId>
+    <version>1.0.0-Beta03</version>
+   </parent>
+   
+   
    <name>Gatein Single Sign On Integration</name>
    <url>http://www.jboss.org/gatein</url>
    <description>Gatein Single Sign On Integration</description>
