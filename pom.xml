@@ -24,7 +24,7 @@
    
    
    <name>Gatein - Single Sign On Integration</name>
-   <description>Gatein Single Sign On Integration</description>
+   <description>GateIn Single Sign On Integration</description>
    
    <modules>
    	<module>agent</module>
