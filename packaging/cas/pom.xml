@@ -93,10 +93,10 @@
 		        					<copy file="${basedir}/target/gatein/02portal.war" 
 		        					todir="${gatein.location}/deploy/gatein.ear" 
 		        					overwrite="true"/>
-		        					
-		        					<copy file="${basedir}/src/main/config/gatein/jboss/server/default/conf/login-config.xml" 
-		        					tofile="${gatein.location}/conf/login-config.xml" 
-		        					overwrite="true"/>
+		        							        				 
+		        					<copy file="${basedir}/src/main/config/gatein/gatein.ear/META-INF/gatein-jboss-beans.xml" 
+		        					tofile="${gatein.location}/deploy/gatein.ear/META-INF/gatein-jboss-beans.xml" 
+		        					overwrite="true"/>		        				
 		        					
 		        					<!-- Deploy the Authentication Callback RESTful service -->
 		        					<copy file="${settings.localRepository}/org/gatein/sso/auth-callback/${project.version}/auth-callback-${project.version}.jar" 

@@ -62,7 +62,7 @@
       <!-- exo -->
       <org.exoplatform.core.version>2.3.0-Beta02</org.exoplatform.core.version>
       <org.exoplatform.ws.version>2.1.0-Beta02</org.exoplatform.ws.version>
-      <org.exoplatform.portal.version>3.0.0-Beta03-SNAPSHOT</org.exoplatform.portal.version>
+      <org.exoplatform.portal.version>3.0.0-Beta03</org.exoplatform.portal.version>
       
       <!-- JAX-RS jsr-311 -->
       <version.javax.ws.rs>1.0</version.javax.ws.rs>
