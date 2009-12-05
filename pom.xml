@@ -31,7 +31,7 @@
     <module>auth-callback</module>
    	<module>gatein-cas-plugin</module>
    	<module>gatein-josso-plugin</module>   
-   	<!--  <module>gatein-opensso-plugin</module> -->	
+   	<module>gatein-opensso-plugin</module>	
    	<module>packaging</module>
    </modules>
 
@@ -102,7 +102,7 @@
         	<groupId>opensso</groupId>
         	<artifactId>amserver</artifactId>
         	<version>${version.opensso}</version>
-        </dependency>
+        </dependency>        
         
         <!-- josso -->
         <dependency>

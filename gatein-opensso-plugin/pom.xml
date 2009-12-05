@@ -23,7 +23,11 @@
    		<dependency>
         	<groupId>opensso</groupId>
         	<artifactId>amserver</artifactId>        	
-        </dependency>  		 
+        </dependency>
+        <dependency> 
+         	<groupId>commons-httpclient</groupId>
+         	<artifactId>commons-httpclient</artifactId>           
+         </dependency>  		 
    </dependencies>  
    
    <build>   	

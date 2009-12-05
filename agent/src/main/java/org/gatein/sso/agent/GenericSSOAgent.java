@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.exoplatform.web.login.InitiateLoginServlet;
 
 import org.gatein.sso.agent.cas.CASAgent;
+import org.gatein.sso.agent.opensso.OpenSSOAgent;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
@@ -87,5 +88,10 @@ public class GenericSSOAgent extends InitiateLoginServlet
 		{
 			//TODO: fix the JOSSO Agent. This will need to the new client side JOSSO stack that can run on 5.1.0.GA
 		}
-	}
+		else
+		{
+			//See if an OpenSSO Token was used
+			OpenSSOAgent.getInstance().validateTicket(httpRequest);
+		}
+	}		
 }

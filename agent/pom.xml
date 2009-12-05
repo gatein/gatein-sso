@@ -37,6 +37,11 @@
       		<artifactId>exo.core.component.organization.api</artifactId>      		
     	 </dependency>
     	 
+    	 <dependency> 
+         	<groupId>commons-httpclient</groupId>
+         	<artifactId>commons-httpclient</artifactId>           
+         </dependency>
+    	 
     	 <dependency>
           <groupId>org.jasig.cas</groupId>
           <artifactId>cas-client-core</artifactId>          
@@ -57,7 +62,7 @@
       	<dependency>
         	<groupId>org.josso</groupId>
          	<artifactId>josso-protocol-client</artifactId>         	
-      	</dependency>      			 
+      	</dependency>       	      	     			 
    </dependencies>  
    
    <build>   
