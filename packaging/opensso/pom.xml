@@ -1,0 +1,196 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <parent>
+      <groupId>org.gatein.sso</groupId>
+      <artifactId>packaging</artifactId>
+      <relativePath>../pom.xml</relativePath>
+      <version>trunk-SNAPSHOT</version>
+   </parent>
+   
+   <modelVersion>4.0.0</modelVersion>
+   <artifactId>opensso-pkg</artifactId>
+   <packaging>jar</packaging>
+   <name>OpenSSO Agent and Server Packages</name> 
+   
+   <dependencies>
+        <!-- gatein installation dependencies -->
+        <!--  -        
+    	 <dependency>
+   			<groupId>org.gatein.sso</groupId>
+   			<artifactId>auth-callback</artifactId>
+   			<version>${project.version}</version>
+   		</dependency>
+   		<dependency>
+   			<groupId>org.gatein.sso</groupId>
+   			<artifactId>agent</artifactId>
+   			<version>${project.version}</version>
+   		</dependency>
+   		<dependency>
+          <groupId>org.jasig.cas</groupId>
+          <artifactId>cas-client-core</artifactId>          
+        </dependency>
+        -->
+         
+        <!--  cas server plugin installation dependencies -->
+        <!--  
+        <dependency>
+   			<groupId>org.gatein.sso</groupId>
+   			<artifactId>gatein-cas-plugin</artifactId>
+   			<version>${project.version}</version>
+   		</dependency>
+   		<dependency> 
+         	<groupId>commons-httpclient</groupId>
+         	<artifactId>commons-httpclient</artifactId>           
+         </dependency>
+         -->
+   </dependencies>
+                                    
+   <profiles>
+    <!--  Install the CAS Agent into the Gatein Server -->	    
+   	<profile>
+   		<id>gatein-opensso-install</id>   		
+   		<build>
+   			<plugins>
+   				<plugin>
+   					<groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
+		        	<artifactId>maven-antrun-extended-plugin</artifactId>
+		        	<version>1.40</version>
+		        	<executions>
+		        	    <execution>
+		        			<id>agent-package</id>
+		        			<phase>package</phase>
+		        			<configuration>
+		        				<tasks>
+		        					<echo message="Preparing the OpenSSO Agent for GateIn"/>
+		        					
+		        					<!--  setup the directory for cas agent artifact -->
+		        					<delete dir="${basedir}/target/gatein"/>
+		        					<mkdir dir="${basedir}/target/gatein"/>
+		        					
+		        					<unjar src="${gatein.location}/deploy/gatein.ear/02portal.war" 
+		        					dest="${basedir}/target/gatein/portal.war" overwrite="true"/>
+		        					
+		        					<!-- override the core artifacts -->
+		        					<copy todir="${basedir}/target/gatein/portal.war" overwrite="true">
+		        						<fileset dir="${basedir}/src/main/config/gatein/portal.war"/>
+		        					</copy> 		        							       
+		        					
+		        					<!-- jar it back up -->
+		        					<jar destfile="${basedir}/target/gatein/02portal.war" basedir="${basedir}/target/gatein/portal.war"/> 							        										
+		        				</tasks>
+		        			</configuration>
+		        			<goals>
+		        				<goal>run</goal>
+		        			</goals>
+		        		</execution>
+		        		<execution>
+		        			<id>agent-install</id>
+		        			<phase>install</phase>
+		        			<configuration>
+		        				<tasks>
+		        					<echo message="Deploying the OpenSSO Agent for GateIn"/>
+		        						
+		        					<copy file="${basedir}/target/gatein/02portal.war" 
+		        					todir="${gatein.location}/deploy/gatein.ear" 
+		        					overwrite="true"/>
+		        							        				 
+		        					<copy file="${basedir}/src/main/config/gatein/gatein.ear/META-INF/gatein-jboss-beans.xml" 
+		        					tofile="${gatein.location}/deploy/gatein.ear/META-INF/gatein-jboss-beans.xml" 
+		        					overwrite="true"/>		        				
+		        					
+		        					<!-- Deploy the Authentication Callback RESTful service -->
+		        					<copy file="${settings.localRepository}/org/gatein/sso/auth-callback/${project.version}/auth-callback-${project.version}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>
+		        					
+		        					<!--  Deploy the SSO Agent -->
+		        					<copy file="${settings.localRepository}/org/gatein/sso/agent/${project.version}/agent-${project.version}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>	
+		        							        					
+		        					<!-- Deploy OpenSSO Agent dependencies -->
+		        					<copy file="${settings.localRepository}/opensso/openssoclientsdk/${version.opensso}/openssoclientsdk-${version.opensso}.jar" 
+		        					todir="${gatein.location}/deploy/gatein.ear/lib"
+		        					overwrite="true"/>	        							        										        							        					        		
+		        				</tasks>
+		        			</configuration>
+		        			<goals>
+		        				<goal>run</goal>
+		        			</goals>
+		        		</execution>		        		
+		        	</executions>
+   				</plugin>
+   			</plugins>
+   		</build>
+   	</profile> 
+   	
+   	<!--  Install the OpenSSO Plugin into an OpenSSO Server -->  
+   	<profile>
+   		<id>plugin-opensso-install</id>   		
+   		<build>
+   			<plugins>
+   				<plugin>
+   					<groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
+		        	<artifactId>maven-antrun-extended-plugin</artifactId>
+		        	<version>1.40</version>
+		        	<executions>
+		        	    <execution>
+		        			<id>plugin-tomcat-package</id>
+		        			<phase>package</phase>
+		        			<configuration>
+		        				<tasks>
+		        					<echo message="Preparing the OpenSSO Plugin for Tomcat 6.0.2......"/>
+		        					
+		        					<!--  setup the directory for the plugin artifacts -->
+		        					<delete dir="${basedir}/target/plugin"/>
+		        					<mkdir dir="${basedir}/target/plugin"/>
+		        							        							        					
+		        					<!--  prepare the plugin configuration -->
+		        					<copy todir="${basedir}/target/plugin/webapps/opensso/config/auth/default">
+		        						<fileset dir="${basedir}/src/main/config/plugin/config/auth/default"/>
+		        					</copy>
+		        					
+		        					<!-- prepare the plugin jar -->
+		        					<copy tofile="${basedir}/target/plugin/webapps/opensso/WEB-INF/lib/gatein-opensso-plugin.jar" 
+		        					file="${settings.localRepository}/org/gatein/sso/gatein-opensso-plugin/${project.version}/gatein-opensso-plugin-${project.version}.jar" 
+		        					overwrite="true"/>
+		        					
+		        					<!--  copy thirdparty dependency -->
+		        					<copy tofile="${basedir}/target/plugin/webapps/opensso/WEB-INF/lib/commons-httpclient.jar" 
+		        					file="${settings.localRepository}/commons-httpclient/commons-httpclient/${version.commons-httpclient}/commons-httpclient-${version.commons-httpclient}.jar" 
+		        					overwrite="true"/>					
+		        				</tasks>
+		        			</configuration>
+		        			<goals>
+		        				<goal>run</goal>
+		        			</goals>
+		        		</execution>
+		        		<execution>
+		        			<id>plugin-tomcat-install</id>
+		        			<phase>install</phase>
+		        			<configuration>
+		        				<tasks>
+		        					<echo message="Starting OpenSSO Plugin Deployment into Tomcat 6.0.2......"/>
+		        					
+		        					<!--  jar plugin -->		        					
+		        					<jar destfile="${basedir}/target/plugin.jar" basedir="${basedir}/target/plugin"/>		        					
+		        							        							        					
+		        					<!--  explode the jar to install the plugin -->		        					 
+		        					<unjar src="${basedir}/target/plugin.jar" dest="${tomcat60.location}" overwrite="true"/>		        					
+		        					
+		        					<!--  cleanup -->		        					 
+		        					<delete dir="${tomcat60.location}/META-INF"/>		        					        					
+		        				</tasks>
+		        			</configuration>
+		        			<goals>
+		        				<goal>run</goal>
+		        			</goals>
+		        		</execution>		        		
+		        	</executions>
+   				</plugin>
+   			</plugins>
+   		</build>
+   	</profile>	
+   </profiles>     
+</project>
+
