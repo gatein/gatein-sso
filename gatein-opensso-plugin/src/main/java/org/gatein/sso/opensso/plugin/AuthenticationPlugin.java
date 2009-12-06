@@ -43,6 +43,9 @@ public class AuthenticationPlugin extends AMLoginModule
 	private String gateInHost;
 	private String gateInPort;
 	private String gateInContext;
+	
+	private String username;
+	private String password;
 
 	public String getGateInHost()
 	{
@@ -91,25 +94,17 @@ public class AuthenticationPlugin extends AMLoginModule
 	{
 		try
 		{
-			System.out.println("---------------------------------------------------------------------");
-			System.out.println("Performing GateIn Login..............................................");
-			System.out.println("---------------------------------------------------------------------");
-	
-			String username = null;
-			String password = null;
 			for (int i = 0; i < callbacks.length; i++)
 			{
 				Callback callback = callbacks[i];
 	
 				if (callback instanceof NameCallback)
 				{
-					username = ((NameCallback) callback).getName();
-					System.out.println("Username: " + username);
+					this.username = ((NameCallback) callback).getName();					
 				}
 				else if (callback instanceof PasswordCallback)
 				{
-					password = new String(((PasswordCallback) callback).getPassword());
-					System.out.println("Password: " + password);
+					this.password = new String(((PasswordCallback) callback).getPassword());
 				}
 			}
 	
@@ -117,34 +112,26 @@ public class AuthenticationPlugin extends AMLoginModule
 			urlBuffer.append("http://" + this.gateInHost + ":" + this.gateInPort + "/"
 					+ this.gateInContext + "/rest/sso/authcallback/auth/" + username + "/"
 					+ password);
-	
-			System.out.println("-------------------------------------------------------------------");
-			System.out.println("REST Request=" + urlBuffer.toString());
-			System.out.println("-------------------------------------------------------------------");
-			
-			System.out.println("About to execute REST call........");
+				
 			boolean success = this.executeRemoteCall(urlBuffer.toString());
-			
-			System.out.println("REST Call was a success....("+success+")");
+			if(!success)
+			{
+				throw new AuthLoginException("GateIn Login Callback Failed!!");
+			}
 	
 			return ISAuthConstants.LOGIN_SUCCEED;
 		}
 		catch(Throwable e)
-		{
-			System.out.println("------------------------------------------------------");
-			System.out.println("Exception :"+e.toString());
-			System.out.println("Message :"+e.getMessage());
-			System.out.println("------------------------------------------------------");
-			e.printStackTrace();
+		{			
 			throw new AuthLoginException(e);
 		}
 	}
 
 	public Principal getPrincipal()
 	{
-		return new GateInPrincipal("demo");
+		return new GateInPrincipal(this.username);
 	}
-
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	private boolean executeRemoteCall(String authUrl) throws Exception
 	{
 		HttpClient client = new HttpClient();

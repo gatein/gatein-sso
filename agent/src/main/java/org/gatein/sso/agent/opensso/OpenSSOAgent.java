@@ -21,6 +21,7 @@
 */
 package org.gatein.sso.agent.opensso;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.exoplatform.web.security.Credentials;
 import org.gatein.sso.agent.GenericSSOAgent;
@@ -117,7 +117,7 @@ public class OpenSSOAgent
 			}
 		}
 	}	
-	
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	private boolean isTokenValid(String token) throws Exception
 	{
 		HttpClient client = new HttpClient();
@@ -131,10 +131,10 @@ public class OpenSSOAgent
 			int status = client.executeMethod(post);
 			String response = post.getResponseBodyAsString();
 			
-			log.info("-------------------------------------------------------");
-			log.info("Status: "+status);
-			log.info("Response: "+response);
-			log.info("-------------------------------------------------------");
+			log.debug("-------------------------------------------------------");
+			log.debug("Status: "+status);
+			log.debug("Response: "+response);
+			log.debug("-------------------------------------------------------");
 			
 			if(response.contains(Boolean.TRUE.toString()))
 			{
@@ -157,7 +157,8 @@ public class OpenSSOAgent
 		HttpClient client = new HttpClient();
 		PostMethod post = null;
 		try
-		{			
+		{	
+			String uid = null;
 			String url = this.openSSOUrl+"/identity/attributes";
 			post = new PostMethod(url);
 			post.addParameter("subjectid", token);
@@ -166,12 +167,19 @@ public class OpenSSOAgent
 			int status = client.executeMethod(post);
 			String response = post.getResponseBodyAsString();
 			
-			log.debug("Must Just Read the uid attribute-------------------------------------------------------");
+			log.debug("--------------------------------------------------------");
 			log.debug("Status: "+status);
-			log.debug("Response: "+response);
+			log.debug(response);
+			log.debug("--------------------------------------------------------");
+			
+			if(response != null)
+			{
+				Properties properties = this.loadAttributes(response);												
+				uid = properties.getProperty("uid");
+			}
 			
 			
-			return "demo";
+			return uid;
 		}
 		finally
 		{
@@ -180,5 +188,45 @@ public class OpenSSOAgent
 				post.releaseConnection();
 			}
 		}		
+	}
+	
+	private Properties loadAttributes(String response) throws Exception
+	{
+		InputStream is = null;
+		try
+		{
+			Properties properties = new Properties();		
+			
+			String[] tokens = response.split("\n");
+			String name = null;
+			for(String token: tokens)
+			{
+				if(token.startsWith("userdetails.attribute.name"))
+				{
+					name = token.substring(token.indexOf("=")+1);
+				}
+				else if(token.startsWith("userdetails.attribute.value"))
+				{
+					String value = token.substring(token.indexOf("=")+1);
+					
+					if(name != null)
+					{						
+						properties.setProperty(name, value);
+					}
+					
+					//cleanup
+					name = null;
+				}
+			}
+			
+			return properties;
+		}
+		finally
+		{
+			if(is != null)
+			{
+				is.close();
+			}
+		}
 	}
 }

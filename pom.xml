@@ -45,6 +45,7 @@
       <version.log4j>1.2.14</version.log4j> 
       <version.jboss.logging>2.0.2.GA</version.jboss.logging>         
       <version.apache.logging>1.0.4-jboss</version.apache.logging> 
+      <version.commons-logging>1.0.4</version.commons-logging>
       
       <!-- cas -->
       <version.cas>3.3.4</version.cas> 

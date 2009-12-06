@@ -158,6 +158,9 @@
 		        					<!--  copy thirdparty dependency -->
 		        					<copy tofile="${basedir}/target/plugin/webapps/opensso/WEB-INF/lib/commons-httpclient.jar" 
 		        					file="${settings.localRepository}/commons-httpclient/commons-httpclient/${version.commons-httpclient}/commons-httpclient-${version.commons-httpclient}.jar" 
+		        					overwrite="true"/>
+		        					<copy tofile="${basedir}/target/plugin/webapps/opensso/WEB-INF/lib/commons-logging.jar" 
+		        					file="${settings.localRepository}/commons-logging/commons-logging/${version.commons-logging}/commons-logging-${version.commons-logging}.jar" 
 		        					overwrite="true"/>					
 		        				</tasks>
 		        			</configuration>
