@@ -23,6 +23,10 @@ package org.gatein.sso.agent.josso;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
+import org.exoplatform.web.security.Credentials;
+import org.gatein.sso.agent.GenericSSOAgent;
 import org.josso.agent.SSOAgent;
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgentRequest;
@@ -38,24 +42,40 @@ import org.josso.servlet.agent.GenericServletLocalSession;
  */
 public class JOSSOAgent
 {
-	/*public static void test(HttpServletRequest httpRequest, String assertionId) throws Exception
+	private static Logger log = Logger.getLogger(Logger.class);
+	private static JOSSOAgent singleton;
+	
+	private String serverUrl = null;
+	
+	private JOSSOAgent(String serverUrl)
 	{
-		System.out.println("Starting simple josso assertion test case..........................");
+		this.serverUrl = serverUrl;
+	}
+	
+	public static JOSSOAgent getInstance(String serverUrl)
+	{
+		if(JOSSOAgent.singleton == null)
+		{
+			synchronized(JOSSOAgent.class)
+			{
+				if(JOSSOAgent.singleton == null)
+				{
+					JOSSOAgent.singleton = new JOSSOAgent(serverUrl);
+				}
+			}
+		}
+		return JOSSOAgent.singleton;
+	}
+	
+	public void validateTicket(HttpServletRequest httpRequest) throws Exception
+	{
+		String ticket = httpRequest.getParameter("josso_assertion_id");
+		log.info("Trying to validate the following Ticket: "+ticket);
 		
-		Lookup lookup = Lookup.getInstance();
-		lookup.init("josso-agent-config.xml");
+		//TODO: Use the JOSSO Client Library to validate the token and extract the subject that was authenticated
 		
-		SSOAgent agent = lookup.lookupSSOAgent();
-		
-		System.out.println("Agent: "+agent);
-		System.out.println("AssertionId: "+assertionId);
-		
-		SSOAgentRequest request = new GenericServletSSOAgentRequest(SSOAgentRequest.ACTION_RELAY,
-				null,
-				new GenericServletLocalSession(httpRequest.getSession()),
-				assertionId);
-		
-		SingleSignOnEntry result = agent.processRequest(request);
-		System.out.println("SSOEntry: "+result);
-	}*/
+		//Just do a hack login for now...to cutoff the infinite redirects
+		Credentials credentials = new Credentials("demo", "");
+		httpRequest.getSession().setAttribute(GenericSSOAgent.CREDENTIALS, credentials);
+	}
 }

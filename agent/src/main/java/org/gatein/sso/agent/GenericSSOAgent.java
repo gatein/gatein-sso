@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.exoplatform.web.login.InitiateLoginServlet;
 
 import org.gatein.sso.agent.cas.CASAgent;
+import org.gatein.sso.agent.josso.JOSSOAgent;
 import org.gatein.sso.agent.opensso.OpenSSOAgent;
 
 /**
@@ -91,6 +92,7 @@ public class GenericSSOAgent extends InitiateLoginServlet
 		else if (jossoAssertion != null && jossoAssertion.trim().length() > 0)
 		{
 			//TODO: fix the JOSSO Agent. This will need to the new client side JOSSO stack that can run on 5.1.0.GA
+			JOSSOAgent.getInstance(this.ssoServerUrl).validateTicket(httpRequest);
 		}
 		else
 		{

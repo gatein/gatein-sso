@@ -109,9 +109,11 @@
 		        					overwrite="true"/>	
 		        							        					
 		        					<!-- Deploy JOSSO Agent dependencies -->
+		        					<!--  
 		        					<copy file="${settings.localRepository}/opensso/openssoclientsdk/${version.opensso}/openssoclientsdk-${version.opensso}.jar" 
 		        					todir="${gatein.location}/deploy/gatein.ear/lib"
-		        					overwrite="true"/>	        							        										        							        					        		
+		        					overwrite="true"/>
+		        					-->	        							        										        							        					        		
 		        				</tasks>
 		        			</configuration>
 		        			<goals>
