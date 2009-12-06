@@ -149,6 +149,9 @@
 		        					<copy todir="${basedir}/target/plugin/webapps/opensso/config/auth/default">
 		        						<fileset dir="${basedir}/src/main/config/plugin/config/auth/default"/>
 		        					</copy>
+		        					<copy todir="${basedir}/target/plugin/webapps/opensso/WEB-INF">
+		        						<fileset dir="${basedir}/src/main/config/plugin/WEB-INF"/>
+		        					</copy>
 		        					
 		        					<!-- prepare the plugin jar -->
 		        					<copy tofile="${basedir}/target/plugin/webapps/opensso/WEB-INF/lib/gatein-opensso-plugin.jar" 

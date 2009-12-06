@@ -21,7 +21,11 @@
  */
 package org.gatein.sso.opensso.plugin;
 
+import java.util.Properties;
 import java.util.Map;
+import java.io.InputStream;
+import java.io.IOException;
+
 import java.security.Principal;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -79,15 +83,33 @@ public class AuthenticationPlugin extends AMLoginModule
 
 	public AuthenticationPlugin()
 	{
-
 	}
 
 	public void init(Subject subject, Map sharedState, Map options)
 	{
-		//TODO: make this configurable
-		this.gateInHost = "localhost";
-		this.gateInPort = "8080";
-		this.gateInContext = "portal";
+		InputStream is = null;
+		try
+		{
+			//Load the GateIn properties
+			Properties properties = new Properties();
+			is = Thread.currentThread().getContextClassLoader().getResourceAsStream("gatein.properties");
+			properties.load(is);
+			
+			this.gateInHost = properties.getProperty("host");
+			this.gateInPort = properties.getProperty("port");
+			this.gateInContext = properties.getProperty("context");
+		}
+		catch(IOException ioe)
+		{
+			
+		}
+		finally
+		{
+			if(is != null)
+			{
+				try{is.close();}catch(Exception e){}
+			}
+		}
 	}
 
 	public int process(Callback[] callbacks, int state) throws AuthLoginException

@@ -42,17 +42,16 @@ public class OpenSSOAgent
 	private static Logger log = Logger.getLogger(OpenSSOAgent.class);
 	private static OpenSSOAgent singleton;
 	
-	private String cookieName;	
-	private String openSSOUrl;
+	private String cookieName;
+	private String serverUrl;
 	
-	private OpenSSOAgent()
-	{
-		//TODO: make this part of externally configured properties
-		this.cookieName = "iPlanetDirectoryPro";
-		this.openSSOUrl = "http://localhost:8888/opensso";
+	private OpenSSOAgent(String serverUrl, String cookieName)
+	{		
+		this.serverUrl = serverUrl;
+		this.cookieName = cookieName;		
 	}
 	
-	public static OpenSSOAgent getInstance()
+	public static OpenSSOAgent getInstance(String serverUrl, String cookieName)
 	{
 		if(OpenSSOAgent.singleton == null)
 		{
@@ -60,33 +59,13 @@ public class OpenSSOAgent
 			{
 				if(OpenSSOAgent.singleton == null)
 				{										
-					OpenSSOAgent.singleton = new OpenSSOAgent();
+					OpenSSOAgent.singleton = new OpenSSOAgent(serverUrl, cookieName);
 				}
 			}
 		}
 		return OpenSSOAgent.singleton;
 	}
 		
-	public String getCookieName()
-	{
-		return cookieName;
-	}
-
-	public void setCookieName(String cookieName)
-	{
-		this.cookieName = cookieName;
-	}
-	
-	public String getOpenSSOUrl()
-	{
-		return openSSOUrl;
-	}
-
-	public void setOpenSSOUrl(String openSSOUrl)
-	{
-		this.openSSOUrl = openSSOUrl;
-	}
-
 	public void validateTicket(HttpServletRequest httpRequest) throws Exception
 	{						
 		String token = null;
@@ -124,7 +103,7 @@ public class OpenSSOAgent
 		PostMethod post = null;
 		try
 		{			
-			String url = this.openSSOUrl+"/identity/isTokenValid";
+			String url = this.serverUrl+"/identity/isTokenValid";
 			post = new PostMethod(url);
 			post.addParameter("tokenid", token);
 			
@@ -159,7 +138,7 @@ public class OpenSSOAgent
 		try
 		{	
 			String uid = null;
-			String url = this.openSSOUrl+"/identity/attributes";
+			String url = this.serverUrl+"/identity/attributes";
 			post = new PostMethod(url);
 			post.addParameter("subjectid", token);
 			post.addParameter("attributes_names", "uid");

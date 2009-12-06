@@ -39,9 +39,12 @@ import org.gatein.sso.agent.opensso.OpenSSOAgent;
  */
 public class GenericSSOAgent extends InitiateLoginServlet
 {
+	private static final long serialVersionUID = 6330639010812906309L;
+
 	private static Logger log = Logger.getLogger(GenericSSOAgent.class);
 	
-	private String casServerUrl;
+	private String ssoServerUrl;
+	private String ssoCookieName;
 	
 	
 	@Override
@@ -49,7 +52,8 @@ public class GenericSSOAgent extends InitiateLoginServlet
 	{
 		super.init();
 		
-		this.casServerUrl = this.getServletConfig().getInitParameter("casServerUrl");
+		this.ssoServerUrl = this.getServletConfig().getInitParameter("ssoServerUrl");
+		this.ssoCookieName = this.getServletConfig().getInitParameter("ssoCookieName");
 	}
 
 	@Override
@@ -82,7 +86,7 @@ public class GenericSSOAgent extends InitiateLoginServlet
 
 		if (ticket != null && ticket.trim().length() > 0)
 		{
-			CASAgent.getInstance(this.casServerUrl).validateTicket(httpRequest, ticket);
+			CASAgent.getInstance(this.ssoServerUrl).validateTicket(httpRequest, ticket);
 		}
 		else if (jossoAssertion != null && jossoAssertion.trim().length() > 0)
 		{
@@ -91,7 +95,7 @@ public class GenericSSOAgent extends InitiateLoginServlet
 		else
 		{
 			//See if an OpenSSO Token was used
-			OpenSSOAgent.getInstance().validateTicket(httpRequest);
+			OpenSSOAgent.getInstance(this.ssoServerUrl, this.ssoCookieName).validateTicket(httpRequest);
 		}
 	}		
 }

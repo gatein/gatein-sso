@@ -182,9 +182,13 @@
     <servlet-name>InitiateLoginServlet</servlet-name>
     <servlet-class>org.gatein.sso.agent.GenericSSOAgent</servlet-class>
     <init-param>
-    	<param-name>casServerUrl</param-name>    	
-    	<param-value>http://localhost:8888/cas</param-value>
-    </init-param>    
+    	<param-name>ssoServerUrl</param-name>    	
+    	<param-value>http://localhost:8888/opensso</param-value>    	
+    </init-param>
+    <init-param>
+    	<param-name>ssoCookieName</param-name>    	
+    	<param-value>iPlanetDirectoryPro</param-value> 
+    </init-param>         
   </servlet>
   
 	<servlet>
