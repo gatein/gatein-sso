@@ -15,6 +15,7 @@
    <modules>
    	<module>cas</module>
    	<module>opensso</module>
+   	<module>josso</module>
    </modules>
           
 </project>
