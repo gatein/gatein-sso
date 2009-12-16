@@ -109,6 +109,19 @@
 		        					overwrite="true"/>	
 		        							        					
 		        					<!-- Deploy JOSSO Agent dependencies -->
+		        					<!--
+		        						NOTE: Thirdparty JOSSO dependencies to be copied to portal.war/WEB-INF/lib
+		        						
+		        						* axis-1.4.jar
+		        						* commons-discovery-0.2.jar
+		        						* josso-agents-bin-1.8.1.jar
+		        						* josso-agents-shared-1.8.1.jar
+		        						* spring-aop-2.5.5.jar
+		        						* spring-beans-2.5.5.jar
+		        						* spring-context-2.5.5.jar
+		        						* spring-core-2.5.5.jar
+		        						* xbean-spring-3.4.3.jar 
+		        					-->
 		        					 							        										        							        					        		
 		        				</tasks>
 		        			</configuration>
