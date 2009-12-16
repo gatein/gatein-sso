@@ -23,7 +23,11 @@
       	<dependency>
         	<groupId>org.josso</groupId>
         	<artifactId>josso-basic-authscheme</artifactId>
-      	</dependency>   		 
+      	</dependency>   
+      	<dependency> 
+         	<groupId>commons-httpclient</groupId>
+         	<artifactId>commons-httpclient</artifactId>           
+         </dependency>  		 		 
    </dependencies>  
    
    <build>

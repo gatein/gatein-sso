@@ -109,11 +109,7 @@
 		        					overwrite="true"/>	
 		        							        					
 		        					<!-- Deploy JOSSO Agent dependencies -->
-		        					<!--  
-		        					<copy file="${settings.localRepository}/opensso/openssoclientsdk/${version.opensso}/openssoclientsdk-${version.opensso}.jar" 
-		        					todir="${gatein.location}/deploy/gatein.ear/lib"
-		        					overwrite="true"/>
-		        					-->	        							        										        							        					        		
+		        					 							        										        							        					        		
 		        				</tasks>
 		        			</configuration>
 		        			<goals>
@@ -165,7 +161,13 @@
 		        					<!--  copy thirdparty dependency -->
 		        					<copy tofile="${basedir}/target/plugin/webapps/josso/WEB-INF/lib/log4j.jar" 
 		        					file="${settings.localRepository}/apache-log4j/log4j/${version.log4j}/log4j-${version.log4j}.jar" 
-		        					overwrite="true"/>		        									
+		        					overwrite="true"/>	
+		        					<copy tofile="${basedir}/target/plugin/webapps/josso/WEB-INF/lib/commons-httpclient.jar" 
+		        					file="${settings.localRepository}/commons-httpclient/commons-httpclient/${version.commons-httpclient}/commons-httpclient-${version.commons-httpclient}.jar" 
+		        					overwrite="true"/>
+		        					<copy tofile="${basedir}/target/plugin/webapps/josso/WEB-INF/lib/commons-logging.jar" 
+		        					file="${settings.localRepository}/commons-logging/commons-logging/${version.commons-logging}/commons-logging-${version.commons-logging}.jar" 
+		        					overwrite="true"/>	        									
 		        				</tasks>
 		        			</configuration>
 		        			<goals>

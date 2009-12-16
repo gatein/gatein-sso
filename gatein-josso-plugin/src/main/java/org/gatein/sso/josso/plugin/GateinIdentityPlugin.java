@@ -22,27 +22,28 @@
  ******************************************************************************/
 package org.gatein.sso.josso.plugin;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.log4j.Logger;
 
-import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.exceptions.NoSuchUserException;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
 import org.josso.gateway.identity.service.BaseRole;
-import org.josso.gateway.identity.service.BaseRoleImpl;
 import org.josso.gateway.identity.service.BaseUser;
 import org.josso.gateway.identity.service.BaseUserImpl;
 import org.josso.gateway.identity.service.store.UserKey;
-import org.josso.gateway.identity.service.store.SimpleUserKey;
 import org.josso.gateway.identity.service.store.IdentityStore;
 
 import org.josso.auth.Credential;
 import org.josso.auth.CredentialKey;
 import org.josso.auth.CredentialProvider;
 import org.josso.auth.scheme.AuthenticationScheme;
-import org.josso.auth.scheme.UsernameCredential;
-import org.josso.auth.scheme.PasswordCredential;
 import org.josso.auth.BindableCredentialStore;
 import org.josso.auth.exceptions.SSOAuthenticationException;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  * @org.apache.xbean.XBean element="gatein-store"
@@ -50,8 +51,7 @@ import org.josso.auth.exceptions.SSOAuthenticationException;
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  * 
  */
-public class GateinIdentityPlugin implements IdentityStore,
-		BindableCredentialStore
+public class GateinIdentityPlugin implements BindableCredentialStore,IdentityStore
 {
 	private static Logger log = Logger.getLogger(GateinIdentityPlugin.class);
 
@@ -67,9 +67,17 @@ public class GateinIdentityPlugin implements IdentityStore,
     */
 	public GateinIdentityPlugin()
 	{
+		InputStream is = null;
 		try
 		{
-			// TODO: readin GateIn configuration from WEB-INF/gatein.properties
+			///Load the GateIn properties
+			Properties properties = new Properties();
+			is = Thread.currentThread().getContextClassLoader().getResourceAsStream("gatein.properties");
+			properties.load(is);
+			
+			this.gateInHost = properties.getProperty("host");
+			this.gateInPort = properties.getProperty("port");
+			this.gateInContext = properties.getProperty("context");
 
 			log
 					.info("-------------------------------------------------------------------");
@@ -86,6 +94,13 @@ public class GateinIdentityPlugin implements IdentityStore,
 			log.error(this, e);
 			throw new RuntimeException(
 					"GateIn Identity Plugin registration failed....");
+		}
+		finally
+		{
+			if(is != null)
+			{
+				try{is.close();}catch(Exception e){}
+			}
 		}
 	}
 
@@ -128,15 +143,12 @@ public class GateinIdentityPlugin implements IdentityStore,
 	// implementation------------------------------------------------------------------------------------------------------------------------
 	public boolean userExists(UserKey userKey) throws SSOIdentityException
 	{		
-		log.info("User: "+userKey+" exists....");
 		return true;
 	}
 
 	public BaseRole[] findRolesByUserKey(UserKey userKey)
 			throws SSOIdentityException
 	{	
-		  log.info("Loading Roles for..."+userKey);
-		  
 			return null;
 	}
 
@@ -145,11 +157,6 @@ public class GateinIdentityPlugin implements IdentityStore,
 	{		
 		BaseUser user = new BaseUserImpl(); 
 		user.setName(userKey.toString());
-		user.addProperty("password", "");
-		
-		log.info("Loading User................................................................");
-		log.info("User:"+user.getName());
-		
 		return user;
 	}
 	// ---------------CredentialStore
@@ -157,30 +164,68 @@ public class GateinIdentityPlugin implements IdentityStore,
 	public Credential[] loadCredentials(CredentialKey credentialKey,
 			CredentialProvider credentialProvider) throws SSOIdentityException
 	{		
-		log.info("Loading Credentials using the new method................................................................");
-		return loadCredentials(credentialKey);
+		return null;
 	}
 	
 	public Credential[] loadCredentials(CredentialKey credentialKey) throws SSOIdentityException
 	{
-		// Get the User corresponding to this credentialKey
-		BaseUser user = this.loadUser((SimpleUserKey) credentialKey);
-		SSONameValuePair[] properties = user.getProperties();
-		String password = properties[0].getValue();
-
-		log.info("Loading Credentials for................................................................");
-		log.info("User:"+user.getName());
-		log.info("Password:"+password);
-		return new Credential[] { new UsernameCredential(user.getName()),new PasswordCredential(password) };
+		return null;
 	}
 
 	public boolean bind(String username, String password)
 			throws SSOAuthenticationException
 	{
-		// return this.portalIdentityService.authenticate(username, password);
-		log.info("Performing Authentication........................");
-		log.info("Username: "+username);
-		log.info("Password: "+password);
-		return true;
+		try
+		{
+			// return this.portalIdentityService.authenticate(username, password);
+			log.debug("Performing Authentication........................");
+			log.debug("Username: "+username);
+			log.debug("Password: "+password);
+			
+			StringBuilder urlBuffer = new StringBuilder();
+				urlBuffer.append("http://" + this.gateInHost + ":" + this.gateInPort + "/"
+						+ this.gateInContext + "/rest/sso/authcallback/auth/" + username + "/"
+						+ password);
+					
+			boolean success = this.executeRemoteCall(urlBuffer.toString());
+				
+			return success;
+		}
+		catch(Exception e)
+		{
+			throw new SSOAuthenticationException(e);
+		}
+	}
+	//------------------------------------------------------------------------------------------------------------------------------------------
+	private boolean executeRemoteCall(String authUrl) throws Exception
+	{
+		HttpClient client = new HttpClient();
+		GetMethod method = null;
+		try
+		{
+			method = new GetMethod(authUrl);
+
+			int status = client.executeMethod(method);
+			String response = method.getResponseBodyAsString();
+
+			switch (status)
+			{
+				case 200:
+				if (response.equals(Boolean.TRUE.toString()))
+				{
+					return true;
+				}
+				break;
+			}
+
+			return false;
+		}
+		finally
+		{
+			if (method != null)
+			{
+				method.releaseConnection();
+			}
+		}
 	}
 }

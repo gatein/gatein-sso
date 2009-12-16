@@ -63,7 +63,7 @@ public class GenericSSOAgent extends InitiateLoginServlet
 	{
 		try
 		{
-			this.processSSOToken(req);		
+			this.processSSOToken(req,resp);		
 			super.doGet(req, resp);
 		}
 		catch(Exception e)
@@ -80,7 +80,7 @@ public class GenericSSOAgent extends InitiateLoginServlet
 		this.doGet(req, resp);
 	}
 
-	private void processSSOToken(HttpServletRequest httpRequest) throws Exception
+	private void processSSOToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception
 	{
 		String ticket = httpRequest.getParameter("ticket");
 		String jossoAssertion = httpRequest.getParameter("josso_assertion_id");
@@ -91,8 +91,8 @@ public class GenericSSOAgent extends InitiateLoginServlet
 		}
 		else if (jossoAssertion != null && jossoAssertion.trim().length() > 0)
 		{
-			//TODO: fix the JOSSO Agent. This will need to the new client side JOSSO stack that can run on 5.1.0.GA
-			JOSSOAgent.getInstance(this.ssoServerUrl).validateTicket(httpRequest);
+			//the JOSSO Agent. This will need to the new client side JOSSO stack that can run on 5.1.0.GA
+			JOSSOAgent.getInstance().validateTicket(httpRequest,httpResponse);
 		}
 		else
 		{

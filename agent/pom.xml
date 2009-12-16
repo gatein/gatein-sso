@@ -75,6 +75,21 @@
             	<skip>true</skip>
             </configuration>                        
          </plugin>
+         <plugin>
+                <groupId>org.apache.xbean</groupId>
+                <artifactId>maven-xbean-plugin</artifactId>
+                <version>${version.xbean}</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <namespace>urn:org:josso:agent:generic-servlet</namespace>
+                        </configuration>
+                        <goals>
+                            <goal>mapping</goal>
+                        </goals>
+                    </execution>
+                </executions>
+          </plugin>
    		</plugins>	
    </build>
    

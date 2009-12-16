@@ -22,22 +22,19 @@
 package org.gatein.sso.agent.josso;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
 import org.exoplatform.web.security.Credentials;
 import org.gatein.sso.agent.GenericSSOAgent;
-import org.josso.agent.SSOAgent;
+
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.SingleSignOnEntry;
-
-import org.josso.servlet.agent.GenericServletSSOAgentRequest;
-import org.josso.servlet.agent.GenericServletLocalSession;
+import org.josso.agent.http.HttpSSOAgent;
 
 /**
- * TODO: This is broken. This will need a JBoss 5.1.0.GA based JOSSO client stack
- * 
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
 public class JOSSOAgent
@@ -45,14 +42,27 @@ public class JOSSOAgent
 	private static Logger log = Logger.getLogger(Logger.class);
 	private static JOSSOAgent singleton;
 	
-	private String serverUrl = null;
+	private HttpSSOAgent httpAgent;
 	
-	private JOSSOAgent(String serverUrl)
+	private JOSSOAgent()
 	{
-		this.serverUrl = serverUrl;
+		try
+		{
+			//Initializing the JOSSO Agent
+			Lookup lookup = Lookup.getInstance();
+	    lookup.init("josso-agent-config.xml");
+	    
+	    this.httpAgent = (HttpSSOAgent) lookup.lookupSSOAgent();
+	    this.httpAgent.start();
+		}
+		catch(Exception e)
+		{
+			log.error(this, e);
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public static JOSSOAgent getInstance(String serverUrl)
+	public static JOSSOAgent getInstance()
 	{
 		if(JOSSOAgent.singleton == null)
 		{
@@ -60,22 +70,49 @@ public class JOSSOAgent
 			{
 				if(JOSSOAgent.singleton == null)
 				{
-					JOSSOAgent.singleton = new JOSSOAgent(serverUrl);
+					JOSSOAgent.singleton = new JOSSOAgent();
 				}
 			}
 		}
 		return JOSSOAgent.singleton;
 	}
 	
-	public void validateTicket(HttpServletRequest httpRequest) throws Exception
+	public void validateTicket(HttpServletRequest httpRequest,HttpServletResponse httpResponse) throws Exception
 	{
 		String ticket = httpRequest.getParameter("josso_assertion_id");
-		log.info("Trying to validate the following Ticket: "+ticket);
+		log.debug("Trying to validate the following Ticket: "+ticket);
 		
-		//TODO: Use the JOSSO Client Library to validate the token and extract the subject that was authenticated
+		//Use the JOSSO Client Library to validate the token and extract the subject that was authenticated
+		SSOAgentRequest agentRequest = this.doMakeSSOAgentRequest(SSOAgentRequest.ACTION_RELAY, 
+		null, ticket, httpRequest, httpResponse);
 		
-		//Just do a hack login for now...to cutoff the infinite redirects
-		Credentials credentials = new Credentials("demo", "");
-		httpRequest.getSession().setAttribute(GenericSSOAgent.CREDENTIALS, credentials);
+		SingleSignOnEntry entry = this.httpAgent.processRequest(agentRequest);
+		
+		if(entry != null)
+		{
+			String sessionId = agentRequest.getSessionId();
+			String assertionId = agentRequest.getAssertionId();
+			String principal = entry.principal.getName();
+			
+			log.debug("-----------------------------------------------------------");
+			log.debug("SessionId: "+sessionId);
+			log.debug("AssertionId: "+assertionId);
+			log.debug("Principal: "+principal);
+			log.debug("-----------------------------------------------------------");
+			
+			Credentials credentials = new Credentials(principal, "");
+			httpRequest.getSession().setAttribute(GenericSSOAgent.CREDENTIALS, credentials);
+		}
 	}
+	
+	protected SSOAgentRequest doMakeSSOAgentRequest(int action, String sessionId, String assertionId,
+                                                    HttpServletRequest hreq, HttpServletResponse hres) 
+	{
+        GateInAgentRequest r = new GateInAgentRequest(action, sessionId, new GateInLocalSession(hreq.getSession()), assertionId);
+        r.setRequest(hreq);
+        r.setResponse(hres);
+
+        return r;
+
+    }
 }
