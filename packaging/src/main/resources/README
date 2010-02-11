@@ -7,8 +7,5 @@ with GateIn portal authentication mechanism
  - JOSSO
  - CAS
  
-Note: For legal reasons, OpenSSO libraries aren't publicly available but you can
-download the necessary files from: https://opensso.dev.java.net/
-
 Please refer to the GateIn Portal documentation for usage of the embedded files.
 

@@ -19,10 +19,16 @@
 		<dependency>
 			<groupId>opensso</groupId>
 			<artifactId>opensso</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}/../../lib/opensso.jar</systemPath>
+			<version>8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>opensso</groupId>
 			<artifactId>amserver</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}/../../lib/amserver.jar</systemPath>
+			<version>8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>

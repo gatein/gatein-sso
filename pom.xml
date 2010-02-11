@@ -58,8 +58,6 @@
 		<!-- xbean -->
 		<version.xbean>3.4.3</version.xbean>
 
-		<!-- opensso -->
-		<version.opensso>8.0</version.opensso>
 
 		<!-- exo -->
 		<org.exoplatform.core.version>2.3.0-Beta02</org.exoplatform.core.version>
@@ -92,18 +90,6 @@
 				<groupId>org.jasig.cas</groupId>
 				<artifactId>cas-client-core</artifactId>
 				<version>${version.cas.client}</version>
-			</dependency>
-
-			<!-- opensso -->
-			<dependency>
-				<groupId>opensso</groupId>
-				<artifactId>opensso</artifactId>
-				<version>${version.opensso}</version>
-			</dependency>
-			<dependency>
-				<groupId>opensso</groupId>
-				<artifactId>amserver</artifactId>
-				<version>${version.opensso}</version>
 			</dependency>
 
 			<!-- josso -->
