@@ -2,8 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <parent>
       <groupId>org.gatein.sso</groupId>
-      <artifactId>gatein-sso-parent</artifactId>
-      <relativePath>../pom.xml</relativePath>
+      <artifactId>sso-parent</artifactId>
       <version>trunk-SNAPSHOT</version>
    </parent>
    
@@ -12,11 +11,27 @@
    <packaging>pom</packaging>
    <name>Used for packaging deployable artifacts</name> 
    
-   <modules>
-   	<module>cas</module>
-   	<module>opensso</module>
-   	<module>josso</module>
-   </modules>
-          
+   	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/src.xml</descriptor>
+					</descriptors>
+				</configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- append to the packaging phase. -->
+            <goals>
+              <goal>single</goal> <!-- goals == mojos -->
+            </goals>
+          </execution>
+        </executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 

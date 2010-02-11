@@ -1,0 +1,31 @@
+<assembly>
+
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <formats>
+     <format>zip</format>
+  </formats>
+  
+  <fileSets>
+    <fileSet>
+       <directory>../cas/gatein-cas-portal/target/cas-pkg-trunk-SNAPSHOT/</directory>
+       <outputDirectory>sso/cas</outputDirectory>
+    </fileSet>
+    <fileSet>
+       <directory>../josso/gatein-josso-portal/target/josso-pkg-trunk-SNAPSHOT/</directory>
+       <outputDirectory>sso/josso</outputDirectory>
+    </fileSet>
+  </fileSets>
+  <!-- 
+  <dependencySets>
+  
+    <dependencySet>
+    
+        <outputDirectory>gatein.ear/lib</outputDirectory>
+        <useProjectArtifact>false</useProjectArtifact>
+        <useTransitiveDependencies>false</useTransitiveDependencies>
+    </dependencySet>
+  
+  </dependencySets>
+ -->
+</assembly>
