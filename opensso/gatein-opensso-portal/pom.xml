@@ -2,19 +2,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.gatein.sso</groupId>
-		<artifactId>opensso-parent</artifactId>
+		<artifactId>sso-opensso-parent</artifactId>
 		<version>trunk-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>opensso-pkg</artifactId>
+	<artifactId>sso-opensso-pkg</artifactId>
 	<packaging>pom</packaging>
-	<name>OpenSSO Agent and Server Packages</name>
+	<name>GateIn SSO - OpenSSO - Portal packaging</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
-			<artifactId>gatein-opensso-plugin</artifactId>
+			<artifactId>sso-opensso-plugin</artifactId>
             <version>trunk-SNAPSHOT</version>
 		</dependency>
 		<dependency>

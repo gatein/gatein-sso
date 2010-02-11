@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  This pom functions as a default configuration.  The subproject
-  poms each inherit configuration from this one.
-
-  When adding version information for an artifact please do the following
-  - add a version property for the specific version
-  - add a dependency in the dependencyManagement section which refers to
-    the property
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">   
-   <modelVersion>4.0.0</modelVersion>
-   <groupId>org.gatein.sso</groupId>
-   <artifactId>cas-parent</artifactId>
-   <version>trunk-SNAPSHOT</version>
-   <packaging>pom</packaging>
-   
-   <parent>
-    <groupId>org.gatein.sso</groupId>
-    <artifactId>sso-parent</artifactId>
-    <version>trunk-SNAPSHOT</version>
-   </parent>
-   
-   
-   <name>Gatein - Single Sign On Integration (CAS)</name>
-   <description>GateIn Single Sign On Integration (CAS)</description>
-   
-   <modules>
-   	<module>gatein-cas-plugin</module>
-    <module>gatein-cas-portal</module>
-   </modules>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.gatein.sso</groupId>
+	<artifactId>sso-cas-parent</artifactId>
+	<version>trunk-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.gatein.sso</groupId>
+		<artifactId>sso-parent</artifactId>
+		<version>trunk-SNAPSHOT</version>
+	</parent>
+
+	<name>GateIn SSO - CAS</name>
+
+	<modules>
+		<module>gatein-cas-plugin</module>
+		<module>gatein-cas-portal</module>
+	</modules>
 
 </project>

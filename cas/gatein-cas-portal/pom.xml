@@ -2,20 +2,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.gatein.sso</groupId>
-		<artifactId>cas-parent</artifactId>
+		<artifactId>sso-cas-parent</artifactId>
 		<version>trunk-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cas-pkg</artifactId>
+	<artifactId>sso-cas-pkg</artifactId>
 	<packaging>pom</packaging>
-	<name>CAS Agent and Server Packages</name>
+	<name>GateIn SSO - CAS - Portal packaging</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
-			<artifactId>gatein-cas-plugin</artifactId>
-            <version>trunk-SNAPSHOT</version>
+			<artifactId>sso-cas-plugin</artifactId>
+			<version>trunk-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -33,16 +33,16 @@
 						<descriptor>src/main/assembly/src.xml</descriptor>
 					</descriptors>
 				</configuration>
-				        <executions>
-          <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- append to the packaging phase. -->
-            <goals>
-              <goal>single</goal> <!-- goals == mojos -->
-            </goals>
-          </execution>
-        </executions>
-				
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+
 			</plugin>
 		</plugins>
 	</build>

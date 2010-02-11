@@ -2,14 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.gatein.sso</groupId>
-		<artifactId>josso-parent</artifactId>
+		<artifactId>sso-josso-parent</artifactId>
 		<version>trunk-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>josso-pkg</artifactId>
+	<artifactId>sso-josso-pkg</artifactId>
 	<packaging>pom</packaging>
-	<name>JOSSO Agent and Server Packages</name>
+	<name>GateIn SSO - JOSSO - Portal packaging</name>
 
 	<dependencies>
 		<dependency>
@@ -51,6 +51,25 @@
 			<groupId>org.apache.xbean</groupId>
 			<artifactId>xbean-spring</artifactId>
             <version>3.4.3</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${version.commons-logging}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-josso-plugin</artifactId>
+			<version>trunk-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>apache-log4j</groupId>
+			<artifactId>log4j</artifactId>
 		</dependency>
 	</dependencies>
 

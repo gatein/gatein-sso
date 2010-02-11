@@ -1,3 +1,14 @@
 GateIn - SSO Integration
 
-Please refer to the GateIn Portal documentation for usage
+This package provides the necessary files for integration of various SSO frameworks
+with GateIn portal authentication mechanism
+
+ - OpenSSO
+ - JOSSO
+ - CAS
+ 
+Note: For legal reasons, OpenSSO libraries aren't publicly available but you can
+download the necessary files from: https://opensso.dev.java.net/
+
+Please refer to the GateIn Portal documentation for usage of the embedded files.
+
