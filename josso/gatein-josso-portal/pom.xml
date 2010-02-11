@@ -52,6 +52,16 @@
 			<artifactId>xbean-spring</artifactId>
             <version>3.4.3</version>
 		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-agent</artifactId>
+			<version>trunk-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-auth-callback</artifactId>
+			<version>trunk-SNAPSHOT</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>commons-httpclient</groupId>

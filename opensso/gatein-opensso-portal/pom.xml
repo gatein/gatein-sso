@@ -26,6 +26,16 @@
 			<artifactId>commons-logging</artifactId>
 			<version>${version.commons-logging}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-agent</artifactId>
+			<version>trunk-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-auth-callback</artifactId>
+			<version>trunk-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
  
 	<build>

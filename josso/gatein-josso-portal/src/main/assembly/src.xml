@@ -28,6 +28,8 @@
 				<include>commons-discovery:commons-discovery</include>
 				<include>org.apache.axis:axis</include>
 				<include>org.apache.xbean:xbean-spring</include>
+				<include>org.gatein.sso:sso-agent</include>
+				<include>org.gatein.sso:sso-auth-callback</include>
 			</includes>
 		</dependencySet>
 

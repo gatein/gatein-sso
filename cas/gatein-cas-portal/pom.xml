@@ -21,6 +21,21 @@
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-agent</artifactId>
+			<version>trunk-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-auth-callback</artifactId>
+			<version>trunk-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-client-core</artifactId>
+			<version>${version.cas.client}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
