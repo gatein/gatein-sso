@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-opensso-parent</artifactId>
-		<version>1.0.0-Beta01</version>
+		<version>1.0.0-Beta02-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-opensso-plugin</artifactId>
-            <version>1.0.0-Beta01</version>
+            <version>1.0.0-Beta02-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -28,12 +28,12 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-agent</artifactId>
-			<version>1.0.0-Beta01</version>
+			<version>1.0.0-Beta02-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-auth-callback</artifactId>
-			<version>1.0.0-Beta01</version>
+			<version>1.0.0-Beta02-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
  
