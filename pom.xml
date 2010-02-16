@@ -6,12 +6,11 @@
 		property for the specific version - add a dependency in the
 		dependencyManagement section which refers to the property
 	-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.gatein.sso</groupId>
 	<artifactId>sso-parent</artifactId>
-	<version>trunk-SNAPSHOT</version>
+	<version>1.0.0-Beta01</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -26,9 +25,9 @@
 
 
         <scm>
-           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/trunk</connection>
-           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/trunk</developerConnection>
-           <url>http://fisheye.jboss.org/browse/gatein/components/sso/trunk</url>
+           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/tags/1.0.0-Beta01</connection>
+           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/tags/1.0.0-Beta01</developerConnection>
+           <url>http://fisheye.jboss.org/browse/gatein/components/sso/tags/1.0.0-Beta01</url>
         </scm>
 
 
