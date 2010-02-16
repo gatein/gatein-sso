@@ -24,6 +24,14 @@
 	<name>GateIn SSO</name>
 	<description>GateIn Single Sign On Integration</description>
 
+
+        <scm>
+           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/trunk</connection>
+           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/trunk</developerConnection>
+           <url>http://fisheye.jboss.org/browse/gatein/components/sso/trunk</url>
+        </scm>
+
+
 	<modules>
 		<module>agent</module>
 		<module>auth-callback</module>
