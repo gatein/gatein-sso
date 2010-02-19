@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-josso-parent</artifactId>
-		<version>1.0.0-Beta02-SNAPSHOT</version>
+		<version>1.0.0-Beta02</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -54,12 +54,12 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-agent</artifactId>
-			<version>1.0.0-Beta02-SNAPSHOT</version>
+			<version>1.0.0-Beta02</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-auth-callback</artifactId>
-			<version>1.0.0-Beta02-SNAPSHOT</version>
+			<version>1.0.0-Beta02</version>
 		</dependency>
 		
 		<dependency>
@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-josso-plugin</artifactId>
-			<version>1.0.0-Beta02-SNAPSHOT</version>
+			<version>1.0.0-Beta02</version>
 		</dependency>
 		<dependency>
 			<groupId>apache-log4j</groupId>
