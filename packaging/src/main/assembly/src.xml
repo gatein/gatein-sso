@@ -8,15 +8,15 @@
   
   <fileSets>
     <fileSet>
-       <directory>../cas/gatein-cas-portal/target/sso-cas-pkg-trunk-SNAPSHOT/</directory>
+       <directory>../cas/gatein-cas-portal/target/sso-cas-pkg-${version}/</directory>
        <outputDirectory>gatein-sso-${version}/cas</outputDirectory>
     </fileSet>
     <fileSet>
-       <directory>../josso/gatein-josso-portal/target/sso-josso-pkg-trunk-SNAPSHOT/</directory>
+       <directory>../josso/gatein-josso-portal/target/sso-josso-pkg-${version}/</directory>
        <outputDirectory>gatein-sso-${version}/josso</outputDirectory>
     </fileSet>
     <fileSet>
-       <directory>../opensso/gatein-opensso-portal/target/sso-opensso-pkg-trunk-SNAPSHOT/</directory>
+       <directory>../opensso/gatein-opensso-portal/target/sso-opensso-pkg-${version}/</directory>
        <outputDirectory>gatein-sso-${version}/opensso</outputDirectory>
     </fileSet>
     <fileSet>
