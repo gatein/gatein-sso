@@ -76,6 +76,9 @@
 
 		<!-- servlet-api -->
 		<version.servlet-api>2.5</version.servlet-api>
+		
+		<!--  SPNEGO support using JBoss Negotiation -->
+		<version.jboss.negotiation>2.0.3.GA</version.jboss.negotiation>
 	</properties>
 
 	<dependencyManagement>
@@ -197,6 +200,13 @@
 				<groupId>javax.servlet</groupId>
 				<artifactId>servlet-api</artifactId>
 				<version>${version.servlet-api}</version>
+			</dependency>
+			
+			<!-- SPNEGO support using JBoss Negotiation -->
+			<dependency>
+				<groupId>org.jboss.security</groupId>
+				<artifactId>jboss-negotiation-spnego</artifactId>
+				<version>${version.jboss.negotiation}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
