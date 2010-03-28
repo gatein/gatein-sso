@@ -20,7 +20,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.gatein.sso.agent.login;
+package org.gatein.sso.spnego;
 
 import java.security.Principal;
 import java.security.PrivilegedAction;
@@ -47,13 +47,6 @@ import org.jboss.security.negotiation.spnego.encoding.NegTokenInit;
 import org.jboss.security.negotiation.spnego.encoding.NegTokenTarg;
 import org.jboss.security.negotiation.spnego.encoding.SPNEGOMessage;
 
-import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.container.PortalContainer;
-import org.exoplatform.container.RootContainer;
-import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.Authenticator;
-import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.services.security.jaas.UserPrincipal;
 
 /**
@@ -77,12 +70,7 @@ public class SPNEGOLoginModule extends AbstractServerLoginModule
 
 	private Principal identity = null;
 
-	// GateIn integration
-	private static final String OPTION_PORTAL_CONTAINER_NAME = "portalContainerName";
-	private static final String OPTION_REALM_NAME = "realmName";
-	private String portalContainerName;
-	private String realmName;
-
+	
 	static
 	{
 		try
@@ -105,10 +93,6 @@ public class SPNEGOLoginModule extends AbstractServerLoginModule
 		// Which security domain to authenticate the server.
 		serverSecurityDomain = (String) options.get("serverSecurityDomain");
 		log.debug("serverSecurityDomain=" + serverSecurityDomain);
-
-		// GateIn integration
-		this.portalContainerName = getPortalContainerName(options);
-		this.realmName = getRealmName(options);
 	}
 
 	@Override
@@ -194,64 +178,12 @@ public class SPNEGOLoginModule extends AbstractServerLoginModule
 
 	@Override
 	protected Group[] getRoleSets() throws LoginException
-	{		
-		try
-		{
-			Authenticator authenticator = (Authenticator) getContainer()
-					.getComponentInstanceOfType(Authenticator.class);
-			
-			String username = this.getIdentity().getName();
-			Identity identity = authenticator.createIdentity(username);
-	
-			Group roles = new SimpleGroup("Roles");
-			Group callerPrincipal = new SimpleGroup("CallerPrincipal");
-			for (String role : identity.getRoles())
-			{
-				roles.addMember(this.createIdentity(role));
-			}
-						
-			Group[] groups = { roles, callerPrincipal };
-			callerPrincipal.addMember(getIdentity());
-			
-			return groups;		
-		}
-		catch(Exception e)
-		{
-			throw new LoginException(e.getMessage());
-		}
-	}
-
-	@Override
-	public boolean commit() throws LoginException
 	{
-		if (super.commit())
-		{
-			try
-			{
-				Authenticator authenticator = (Authenticator) getContainer()
-					.getComponentInstanceOfType(Authenticator.class);
-				
-				IdentityRegistry identityRegistry =
-            (IdentityRegistry)getContainer().getComponentInstanceOfType(IdentityRegistry.class);
-				
-				//TODO: Add check for single check
-				
-				String username = this.getIdentity().getName();
-				Identity identity = authenticator.createIdentity(username);
-				identity.setSubject(this.subject);
-        identityRegistry.register(identity);
-         
-				return true;
-			}
-			catch (Exception e)
-			{
-				throw new LoginException(e.getMessage());
-			}
-		}
-		else
-		{
-			return false;
-		}
+		Group roles = new SimpleGroup("Roles");
+		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
+		Group[] groups = { roles, callerPrincipal };
+		callerPrincipal.addMember(getIdentity());
+		return groups;
 	}
 
 	protected Subject getServerSubject() throws LoginException
@@ -359,8 +291,8 @@ public class SPNEGOLoginModule extends AbstractServerLoginModule
 					// TODO - Refactor to only do this once.
 					// identity = new
 					// KerberosPrincipal(gssContext.getSrcName().toString());
-					identity = new UserPrincipal(mapSpnegoToGateIn(gssContext.getSrcName()
-							.toString()));
+					identity = new UserPrincipal(mapSpnegoToGateIn(gssContext
+							.getSrcName().toString()));
 
 					log.debug("context.getCredDelegState() = "
 							+ gssContext.getCredDelegState());
@@ -394,8 +326,8 @@ public class SPNEGOLoginModule extends AbstractServerLoginModule
 				{
 					// identity = new
 					// KerberosPrincipal(gssContext.getSrcName().toString());
-					identity = new UserPrincipal(mapSpnegoToGateIn(gssContext.getSrcName()
-							.toString()));
+					identity = new UserPrincipal(mapSpnegoToGateIn(gssContext
+							.getSrcName().toString()));
 
 					log.debug("context.getCredDelegState() = "
 							+ gssContext.getCredDelegState());
@@ -431,43 +363,5 @@ public class SPNEGOLoginModule extends AbstractServerLoginModule
 		}
 
 		return exoPrincipal;
-	}
-
-	private String getPortalContainerName(Map options)
-	{
-		if (options != null)
-		{
-			String optionValue = (String) options.get(OPTION_PORTAL_CONTAINER_NAME);
-			if (optionValue != null && optionValue.length() > 0)
-			{
-				return optionValue;
-			}
-		}
-		return PortalContainer.DEFAULT_PORTAL_CONTAINER_NAME;
-	}
-
-	private String getRealmName(Map options)
-	{
-		if (options != null)
-		{
-			String optionValue = (String) options.get(OPTION_REALM_NAME);
-			if (optionValue != null && optionValue.length() > 0)
-			{
-				return optionValue;
-			}
-		}
-		return PortalContainer.DEFAULT_REALM_NAME;
-	}
-
-	private ExoContainer getContainer() throws Exception
-	{
-		// TODO set correct current container
-		ExoContainer container = ExoContainerContext.getCurrentContainer();
-		if (container instanceof RootContainer)
-		{
-			container = RootContainer.getInstance().getPortalContainer(
-					portalContainerName);
-		}
-		return container;
 	}
 }

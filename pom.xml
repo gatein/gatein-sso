@@ -40,6 +40,7 @@
    		OpenSSO requires manual installation
     -->
 		<module>opensso</module>
+		<module>spnego</module>
 		<module>packaging</module>
 	</modules>
 
