@@ -72,7 +72,7 @@
 										
 										<copy
 											file="${settings.localRepository}/org/gatein/sso/spnego/${project.version}/${project.artifactId}-${project.version}.jar"
-											todir="${gatein.location}/lib" overwrite="true" />
+											todir="${gatein.location}/deploy/gatein.ear/lib" overwrite="true" />
 									</tasks>
 								</configuration>
 								<goals>
