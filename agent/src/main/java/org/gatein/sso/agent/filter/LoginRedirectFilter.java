@@ -32,8 +32,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//Works for GateIn Portal Login Url = {AnyURL}?portal:componentId=UIPortal&portal:action=ShowLoginForm&ajaxRequest=true
-
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
