@@ -41,12 +41,12 @@ import javax.servlet.http.HttpServletResponse;
  * Add the following to portal.war/WEB-INF/web.xml
  * 
  * <filter>                                                                                                                                     
- *   <filter-name>JOSSOLogoutFilter</filter-name>                                                                                              
- *     <filter-class>org.gatein.sso.agent.filter.JOSSOLogoutFilter</filter-class>                                                      
+ *   <filter-name>OpenSSOLogoutFilter</filter-name>                                                                                              
+ *     <filter-class>org.gatein.sso.agent.filter.OpenSSOLogoutFilter</filter-class>                                                      
  *     <init-param>                                 
- *       <!-- This should point to your JOSSO authentication server -->                                                                                              
- *       <param-name>JOSSO_LOGOUT_URL</param-name>                                                                                                
- *       <param-value>http://localhost:8888/josso/signon/logout.do</param-value>                                                                                                         
+ *       <!-- This should point to your OpenSSO authentication server -->                                                                                              
+ *       <param-name>OPENSSO_LOGOUT_URL</param-name>                                                                                                
+ *       <param-value>http://localhost:8888/opensso/UI/Logout</param-value>                                                                                                         
  *     </init-param>                                                                                                                              
  * </filter>   
  * 
@@ -63,13 +63,13 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class JOSSOLogoutFilter implements Filter
+public class OpenSSOLogoutFilter implements Filter
 {
-	private String jossoLogoutUrl;
+	private String logoutUrl;
 	
 	public void init(FilterConfig config) throws ServletException
 	{
-		this.jossoLogoutUrl = config.getInitParameter("JOSSO_LOGOUT_URL");
+		this.logoutUrl = config.getInitParameter("OPENSSO_LOGOUT_URL");
 	}
 
 	public void destroy()
@@ -91,7 +91,7 @@ public class JOSSOLogoutFilter implements Filter
 			{
 				httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
 				String parameters = URLEncoder.encode("portal:componentId=UIPortal&portal:action=Logout", "UTF-8");
-				httpResponse.sendRedirect(jossoLogoutUrl+"?josso_back_to="+httpRequest.getRequestURL()+"?"+parameters);			
+				httpResponse.sendRedirect(this.logoutUrl+"?realm=gatein&goto="+httpRequest.getRequestURL()+"?"+parameters);			
 				return;
 			}
 			else
