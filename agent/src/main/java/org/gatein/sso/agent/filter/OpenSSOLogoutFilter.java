@@ -21,17 +21,8 @@
 */
 package org.gatein.sso.agent.filter;
 
-import java.io.IOException;
 import java.net.URLEncoder;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 //Works for GateIn Portal Logout URL = {AnyURL}?portal:componentId=UIPortal&portal:action=Logout
 
@@ -45,13 +36,13 @@ import javax.servlet.http.HttpServletResponse;
  *     <filter-class>org.gatein.sso.agent.filter.OpenSSOLogoutFilter</filter-class>                                                      
  *     <init-param>                                 
  *       <!-- This should point to your OpenSSO authentication server -->                                                                                              
- *       <param-name>OPENSSO_LOGOUT_URL</param-name>                                                                                                
+ *       <param-name>LOGOUT_URL</param-name>                                                                                                
  *       <param-value>http://localhost:8888/opensso/UI/Logout</param-value>                                                                                                         
  *     </init-param>                                                                                                                              
  * </filter>   
  * 
  * <filter-mapping>
- *    <filter-name>JOSSOLogoutFilter</filter-name>
+ *    <filter-name>OpenSSOLogoutFilter</filter-name>
  *    <url-pattern>/*</url-pattern>
  *  </filter-mapping>
  *
@@ -63,56 +54,22 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class OpenSSOLogoutFilter implements Filter
-{
-	private String logoutUrl;
-	
-	public void init(FilterConfig config) throws ServletException
+public class OpenSSOLogoutFilter extends AbstractLogoutFilter
+{		
+	protected String getRedirectUrl(HttpServletRequest httpRequest)
 	{
-		this.logoutUrl = config.getInitParameter("OPENSSO_LOGOUT_URL");
-	}
-
-	public void destroy()
-	{
-	}
-
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException
-	{
-		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		HttpServletResponse httpResponse = (HttpServletResponse)response;
-		
-		boolean isLogoutInProgress = this.isLogoutInProgress(httpRequest);
-		
-		if(isLogoutInProgress)
+		try
 		{
-						
-			if(httpRequest.getSession().getAttribute("SSO_LOGOUT_FLAG") == null)
-			{
-				httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
-				String parameters = URLEncoder.encode("portal:componentId=UIPortal&portal:action=Logout", "UTF-8");
-				httpResponse.sendRedirect(this.logoutUrl+"?realm=gatein&goto="+httpRequest.getRequestURL()+"?"+parameters);			
-				return;
-			}
-			else
-			{
-				//clear the LOGOUT flag
-				httpRequest.getSession().removeAttribute("SSO_LOGOUT_FLAG");
-			}
+			String parameters = URLEncoder.encode(
+							"portal:componentId=UIPortal&portal:action=Logout", "UTF-8");
+			
+			String redirectUrl = this.logoutUrl+"?realm=gatein&goto="+httpRequest.getRequestURL()+"?"+parameters;
+			
+			return redirectUrl;
 		}
-		
-		chain.doFilter(request, response);		
-	}
-	
-	private boolean isLogoutInProgress(HttpServletRequest request)
-	{
-		String action = request.getParameter("portal:action");
-		
-		if(action != null && action.equals("Logout"))
+		catch(Exception e)
 		{
-			return true;
+			throw new RuntimeException(e);
 		}
-		
-		return false;
 	}
 }

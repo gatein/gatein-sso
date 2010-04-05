@@ -21,17 +21,8 @@
 */
 package org.gatein.sso.agent.filter;
 
-import java.io.IOException;
 import java.net.URLEncoder;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 //Works for GateIn Portal Logout URL = {AnyURL}?portal:componentId=UIPortal&portal:action=Logout
 
@@ -45,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  *     <filter-class>org.gatein.sso.agent.filter.JOSSOLogoutFilter</filter-class>                                                      
  *     <init-param>                                 
  *       <!-- This should point to your JOSSO authentication server -->                                                                                              
- *       <param-name>JOSSO_LOGOUT_URL</param-name>                                                                                                
+ *       <param-name>LOGOUT_URL</param-name>                                                                                                
  *       <param-value>http://localhost:8888/josso/signon/logout.do</param-value>                                                                                                         
  *     </init-param>                                                                                                                              
  * </filter>   
@@ -63,56 +54,23 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class JOSSOLogoutFilter implements Filter
+public class JOSSOLogoutFilter extends AbstractLogoutFilter
 {
-	private String jossoLogoutUrl;
-	
-	public void init(FilterConfig config) throws ServletException
+	protected String getRedirectUrl(HttpServletRequest httpRequest)
 	{
-		this.jossoLogoutUrl = config.getInitParameter("JOSSO_LOGOUT_URL");
-	}
-
-	public void destroy()
-	{
-	}
-
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException
-	{
-		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		HttpServletResponse httpResponse = (HttpServletResponse)response;
-		
-		boolean isLogoutInProgress = this.isLogoutInProgress(httpRequest);
-		
-		if(isLogoutInProgress)
+		try
 		{
-						
-			if(httpRequest.getSession().getAttribute("SSO_LOGOUT_FLAG") == null)
-			{
-				httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
-				String parameters = URLEncoder.encode("portal:componentId=UIPortal&portal:action=Logout", "UTF-8");
-				httpResponse.sendRedirect(jossoLogoutUrl+"?josso_back_to="+httpRequest.getRequestURL()+"?"+parameters);			
-				return;
-			}
-			else
-			{
-				//clear the LOGOUT flag
-				httpRequest.getSession().removeAttribute("SSO_LOGOUT_FLAG");
-			}
+			String parameters = URLEncoder.encode(
+							"portal:componentId=UIPortal&portal:action=Logout", "UTF-8");
+			
+			String redirectUrl = this.logoutUrl + "?josso_back_to="
+							+ httpRequest.getRequestURL() + "?" + parameters;
+			
+			return redirectUrl;
 		}
-		
-		chain.doFilter(request, response);		
-	}
-	
-	private boolean isLogoutInProgress(HttpServletRequest request)
-	{
-		String action = request.getParameter("portal:action");
-		
-		if(action != null && action.equals("Logout"))
+		catch(Exception e)
 		{
-			return true;
+			throw new RuntimeException(e);
 		}
-		
-		return false;
 	}
 }
