@@ -23,9 +23,7 @@ package org.gatein.sso.agent.filter;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -38,11 +36,14 @@ import javax.naming.InitialContext;
 import org.exoplatform.container.web.AbstractFilter;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
+import org.exoplatform.services.security.Authenticator;
+import org.exoplatform.services.security.IdentityRegistry;
+import org.exoplatform.services.security.Identity;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class SPNEGOTxFilter extends AbstractFilter
+public class SPNEGOFilter extends AbstractFilter
 {
 	
 	public void destroy()
@@ -59,20 +60,32 @@ public class SPNEGOTxFilter extends AbstractFilter
 		{
 			String remoteUser = httpRequest.getRemoteUser();
 			
-			System.out.println("-----------------------------------------------------------------");
-			System.out.println("SPNEGO TX Filter invoked...(TX Started: )"+isStartedHere);
-			System.out.println("RequestURL: "+httpRequest.getRequestURI());
-			System.out.println("RemoteUser: "+remoteUser);			
+			//System.out.println("-----------------------------------------------------------------");						
+			//System.out.println("SPNEGO TX Filter (TX Started: )"+isStartedHere);
+			//System.out.println("RequestURL: "+httpRequest.getRequestURI());
+			//System.out.println("RemoteUser: "+remoteUser);			
 			
 			if(remoteUser != null)
-			{
+			{								
+				//Check and make sure the IdentityRegistry is consistent
+				IdentityRegistry identityRegistry = (IdentityRegistry) getContainer()
+						.getComponentInstanceOfType(IdentityRegistry.class);
+				if(identityRegistry.getIdentity(remoteUser) == null)
+				{
+					Authenticator authenticator = (Authenticator) getContainer()
+					.getComponentInstanceOfType(Authenticator.class);
+					
+					Identity identity = authenticator.createIdentity(remoteUser);
+					identityRegistry.register(identity);
+				}
+				
 				OrganizationService orgService =
                   (OrganizationService)getContainer().getComponentInstanceOfType(OrganizationService.class);
 				User user = orgService.getUserHandler().findUserByName(remoteUser);
 				
-				System.out.println("Exo User: "+user);
+				//System.out.println("Exo User : "+user);
 			}
-			System.out.println("-----------------------------------------------------------------");
+			//System.out.println("-----------------------------------------------------------------");
 			
 			chain.doFilter(request, response);
 			
@@ -83,8 +96,6 @@ public class SPNEGOTxFilter extends AbstractFilter
 		}
 		catch(Throwable t)
 		{
-			t.printStackTrace();
-			
 			if(isStartedHere)
 			{
 				this.rollback();
@@ -110,7 +121,6 @@ public class SPNEGOTxFilter extends AbstractFilter
 		}
 		catch(Throwable t)
 		{
-			t.printStackTrace();
 			return false;
 		}
 	}
@@ -124,7 +134,6 @@ public class SPNEGOTxFilter extends AbstractFilter
 		}
 		catch(Throwable t)
 		{
-			t.printStackTrace();
 			throw new RuntimeException(t);
 		}
 	}
@@ -137,8 +146,7 @@ public class SPNEGOTxFilter extends AbstractFilter
 			tm.rollback();
 		}
 		catch(Throwable t)
-		{
-			t.printStackTrace();
+		{			
 			throw new RuntimeException(t);
 		}
 	}

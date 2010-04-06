@@ -14,7 +14,7 @@
 
 	<properties>
 		<!-- ChangeMe to your specific local environment -->
-		<gatein.location>/home/soshah/projects/gatein/runtime/jboss/server/default</gatein.location>
+		<gatein.location>/home/soshah/projects/gatein/portal/trunk/packaging/pkg/target/jboss/server/gatein-spnego</gatein.location>
 	</properties>
 
 	<dependencies>	
