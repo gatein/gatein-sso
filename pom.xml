@@ -10,13 +10,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.gatein.sso</groupId>
 	<artifactId>sso-parent</artifactId>
-	<version>1.0.0-Beta03-SNAPSHOT</version>
+	<version>1.0.0-epp-Beta03-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>org.gatein</groupId>
 		<artifactId>gatein-parent</artifactId>
-		<version>1.0.0-Beta04</version>
+		<version>1.0.0-GA</version>
 	</parent>
 
 
@@ -68,9 +68,9 @@
 
 
 		<!-- exo -->
-		<org.exoplatform.core.version>2.3.0-CR2</org.exoplatform.core.version>
-		<org.exoplatform.ws.version>2.1.0-CR2</org.exoplatform.ws.version>
-		<org.exoplatform.portal.version>3.0.0-CR01</org.exoplatform.portal.version>
+		<org.exoplatform.core.version>2.3.1-CR1</org.exoplatform.core.version>
+		<org.exoplatform.ws.version>2.1.1-CR1</org.exoplatform.ws.version>
+		<org.exoplatform.portal.version>5.0.0-epp-CR01-SNAPSHOT</org.exoplatform.portal.version>
 
 		<!-- JAX-RS jsr-311 -->
 		<version.javax.ws.rs>1.0</version.javax.ws.rs>
