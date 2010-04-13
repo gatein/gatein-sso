@@ -41,6 +41,7 @@ public class CASAgent
 	private static CASAgent singleton;
 	
 	private String casServerUrl;
+	private boolean renewTicket;
 	
 	private CASAgent(String casServerUrl)
 	{
@@ -62,10 +63,21 @@ public class CASAgent
 		return CASAgent.singleton;
 	}
 	
+		
+	public boolean isRenewTicket()
+	{
+		return renewTicket;
+	}
+
+	public void setRenewTicket(boolean renewTicket)
+	{
+		this.renewTicket = renewTicket;
+	}
+
 	public void validateTicket(HttpServletRequest httpRequest, String ticket) throws Exception
 	{		
 		Cas20ProxyTicketValidator ticketValidator = new Cas20ProxyTicketValidator(casServerUrl);
-    ticketValidator.setRenew(true);
+    ticketValidator.setRenew(this.renewTicket);
     
     String serviceUrl = "http://"+ httpRequest.getServerName() +":" + httpRequest.getServerPort() + 
     httpRequest.getContextPath() +"/private/classic";
