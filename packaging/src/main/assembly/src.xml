@@ -20,10 +20,38 @@
        <outputDirectory>gatein-sso-${version}/opensso</outputDirectory>
     </fileSet>
     <fileSet>
+       <directory>../spnego/target/sso-spnego-pkg-${version}/</directory>
+       <outputDirectory>gatein-sso-${version}/spnego</outputDirectory>
+    </fileSet>
+    <fileSet>
        <directory>src/main/resources/</directory>
        <outputDirectory>gatein-sso-${version}</outputDirectory>
     </fileSet>
   </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>gatein-sso-${version}/spnego/gatein.ear/lib</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <includes>
+        <include>org.gatein.sso:sso-agent</include>
+        <include>org.gatein.sso:spnego</include>
+      </includes>
+    </dependencySet>
+
+    <dependencySet>
+      <outputDirectory>gatein-sso-${version}/spnego</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <includes>
+        <include>org.jboss.security:jboss-negotiation-spnego</include>
+      </includes>
+    </dependencySet>
+
+  </dependencySets>
+
+
   <!-- 
   <dependencySets>
   
