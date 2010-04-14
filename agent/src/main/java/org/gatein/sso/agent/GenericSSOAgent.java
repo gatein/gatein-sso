@@ -46,6 +46,7 @@ public class GenericSSOAgent extends InitiateLoginServlet
 	
 	private String ssoServerUrl;
 	private String ssoCookieName;
+	private boolean casRenewTicket;
 	
 	
 	@Override
@@ -55,6 +56,12 @@ public class GenericSSOAgent extends InitiateLoginServlet
 		
 		this.ssoServerUrl = this.getServletConfig().getInitParameter("ssoServerUrl");
 		this.ssoCookieName = this.getServletConfig().getInitParameter("ssoCookieName");
+		
+		String casRenewTicketConfig = this.getServletConfig().getInitParameter("casRenewTicket");
+		if(casRenewTicketConfig != null)
+		{
+			this.casRenewTicket = Boolean.parseBoolean(casRenewTicketConfig);
+		}
 	}
 
 	@Override
@@ -96,7 +103,9 @@ public class GenericSSOAgent extends InitiateLoginServlet
 
 		if (ticket != null && ticket.trim().length() > 0)
 		{
-			CASAgent.getInstance(this.ssoServerUrl).validateTicket(httpRequest, ticket);
+			CASAgent casagent = CASAgent.getInstance(this.ssoServerUrl);
+			casagent.setRenewTicket(this.casRenewTicket);
+			casagent.validateTicket(httpRequest, ticket);
 		}
 		else if (jossoAssertion != null && jossoAssertion.trim().length() > 0)
 		{
