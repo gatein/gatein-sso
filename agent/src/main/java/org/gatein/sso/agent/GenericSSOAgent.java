@@ -63,7 +63,16 @@ public class GenericSSOAgent extends InitiateLoginServlet
 	{
 		try
 		{
-			this.processSSOToken(req,resp);		
+			this.processSSOToken(req,resp);	
+			
+			String portalContext = req.getContextPath();
+			if(req.getAttribute("abort") != null)
+			{
+				String ssoRedirect = portalContext + "/sso";
+				resp.sendRedirect(ssoRedirect);
+				return;
+			}
+			
 			super.doGet(req, resp);
 		}
 		catch(Exception e)
@@ -96,8 +105,16 @@ public class GenericSSOAgent extends InitiateLoginServlet
 		}
 		else
 		{
-			//See if an OpenSSO Token was used
-			OpenSSOAgent.getInstance(this.ssoServerUrl, this.ssoCookieName).validateTicket(httpRequest);
+			try
+			{
+				//See if an OpenSSO Token was used
+				OpenSSOAgent.getInstance(this.ssoServerUrl, this.ssoCookieName).validateTicket(httpRequest);
+			}
+			catch(IllegalStateException ilse)
+			{
+				//somehow cookie failed validation, retry by starting the opensso login process again
+				httpRequest.setAttribute("abort", Boolean.TRUE);
+			}
 		}
 	}		
 }
