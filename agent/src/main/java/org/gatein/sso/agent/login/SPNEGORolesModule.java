@@ -24,11 +24,21 @@ package org.gatein.sso.agent.login;
 
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
+import javax.security.jacc.PolicyContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.jboss.security.SimpleGroup;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
@@ -40,6 +50,8 @@ import org.exoplatform.container.RootContainer;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.IdentityRegistry;
+import org.exoplatform.container.monitor.jvm.J2EEServerInfo;
+import org.exoplatform.services.security.jaas.UserPrincipal;
 
 /**
  * The LoginModule that is responsible for setting up the proper GateIn roles
@@ -192,4 +204,91 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
 			throw new LoginException(e.getMessage());
 		}
 	}
+	
+	 public boolean logout() throws LoginException
+   {
+      org.exoplatform.container.monitor.jvm.J2EEServerInfo info = new J2EEServerInfo();
+      MBeanServer jbossServer = info.getMBeanServer();
+
+      //
+      if (jbossServer != null)
+      {
+         try
+         {
+
+            log.debug("Performing JBoss security manager cache eviction");
+
+            ObjectName securityManagerName = new ObjectName("jboss.security:service=JaasSecurityManager");
+            
+            //Obtain the httpsession key
+            HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
+            HttpSession session = request.getSession(false);
+            String sessionId = session.getId();
+
+            //
+            if (sessionId != null)
+            {
+            	String userName = null;
+	            Set<UserPrincipal> userPrincipals = subject.getPrincipals(UserPrincipal.class);
+	            if (!userPrincipals.isEmpty())
+	            {
+	               // There should be one
+	               userName = userPrincipals.iterator().next().getName();
+	            }
+	            
+              log.debug("Going to perform JBoss security manager cache eviction for user " + userName);
+
+               //
+               List allPrincipals =
+                  (List)jbossServer.invoke(securityManagerName, "getAuthenticationCachePrincipals",
+                     new Object[]{realmName}, new String[]{String.class.getName()});
+
+               // Make a copy to avoid some concurrent mods
+               allPrincipals = new ArrayList(allPrincipals);
+
+               // Lookup for invalidation key, it must be the same principal!
+               Principal key = null;
+               for (Iterator i = allPrincipals.iterator(); i.hasNext();)
+               {
+                  Principal principal = (Principal)i.next();
+                  
+                  if (principal.getName().equals(sessionId))
+                  {
+                     key = principal;
+                     break;
+                  }                  
+               }
+
+               // Perform invalidation
+               if (key != null)
+               {
+                  jbossServer.invoke(securityManagerName, "flushAuthenticationCache", new Object[]{realmName, key},
+                     new String[]{String.class.getName(), Principal.class.getName()});
+                  log.debug("Performed JBoss security manager cache eviction for user " + sessionId + " with principal "
+                     + key);
+               }
+               else
+               {
+                  log.warn("No principal found when performing JBoss security manager cache eviction for user "
+                     + userName);
+               }
+            }
+            else
+            {
+               log.warn("No user name found when performing JBoss security manager cache eviction");
+            }
+         }
+         catch (Exception e)
+         {
+            log.error("Could not perform JBoss security manager cache eviction", e);
+         }
+      }
+      else
+      {
+         log.debug("Could not find mbean server for performing JBoss security manager cache eviction");
+      }
+
+      //
+      return true;
+   }
 }

@@ -29,42 +29,28 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.Status;
-import javax.naming.InitialContext;
-
 import org.exoplatform.container.web.AbstractFilter;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.services.security.Identity;
 
 /**
+ * Note: This Filter should not be needed anymore. Once various SPNEGO scenarios have been tested and stabilized, I would recommend removing this from the codebase in 
+ * a future release of the module
+ * 
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
 public class SPNEGOFilter extends AbstractFilter
 {
 	
-	public void destroy()
-	{
-	}
-
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException
 	{
-		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		
-		boolean isStartedHere = this.startTx();		
+		HttpServletRequest httpRequest = (HttpServletRequest)request;		
 		try
 		{
 			String remoteUser = httpRequest.getRemoteUser();
-			
-			//System.out.println("-----------------------------------------------------------------");						
-			//System.out.println("SPNEGO TX Filter (TX Started: )"+isStartedHere);
-			//System.out.println("RequestURL: "+httpRequest.getRequestURI());
-			//System.out.println("RemoteUser: "+remoteUser);			
-			
+									
 			if(remoteUser != null)
 			{								
 				//Check and make sure the IdentityRegistry is consistent
@@ -76,78 +62,20 @@ public class SPNEGOFilter extends AbstractFilter
 					.getComponentInstanceOfType(Authenticator.class);
 					
 					Identity identity = authenticator.createIdentity(remoteUser);
+					
 					identityRegistry.register(identity);
 				}
-				
-				OrganizationService orgService =
-                  (OrganizationService)getContainer().getComponentInstanceOfType(OrganizationService.class);
-				User user = orgService.getUserHandler().findUserByName(remoteUser);
-				
-				//System.out.println("Exo User : "+user);
 			}
-			//System.out.println("-----------------------------------------------------------------");
 			
-			chain.doFilter(request, response);
-			
-			if(isStartedHere)
-			{				
-				this.commit();
-			}
+			chain.doFilter(request, response);						
 		}
 		catch(Throwable t)
-		{
-			if(isStartedHere)
-			{
-				this.rollback();
-			}
-			
+		{						
 			throw new RuntimeException(t);
 		}
 	}
-	
-	private boolean startTx()
+
+	public void destroy()
 	{
-		try
-		{
-			TransactionManager tm = (TransactionManager)new InitialContext().lookup("java:/TransactionManager");
-			
-			if(tm.getStatus() == Status.STATUS_NO_TRANSACTION)
-			{
-				tm.begin();
-				return true;
-			}
-			
-			return false;
-		}
-		catch(Throwable t)
-		{
-			return false;
-		}
-	}
-	
-	private void commit()
-	{
-		try
-		{
-			TransactionManager tm = (TransactionManager)new InitialContext().lookup("java:/TransactionManager");
-			tm.commit();
-		}
-		catch(Throwable t)
-		{
-			throw new RuntimeException(t);
-		}
-	}
-	
-	private void rollback()
-	{
-		try
-		{
-			TransactionManager tm = (TransactionManager)new InitialContext().lookup("java:/TransactionManager");
-			tm.rollback();
-		}
-		catch(Throwable t)
-		{			
-			throw new RuntimeException(t);
-		}
 	}
 }
