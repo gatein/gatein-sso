@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.gatein.sso</groupId>
 	<artifactId>sso-josso-parent</artifactId>
-	<version>1.0.0-Beta03-SNAPSHOT</version>
+	<version>1.0.0-GA</version>
 	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-parent</artifactId>
-		<version>1.0.0-Beta03-SNAPSHOT</version>
+		<version>1.0.0-GA</version>
 	</parent>
 
 

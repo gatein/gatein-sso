@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-parent</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.0.0-Beta03-SNAPSHOT</version>
+		<version>1.0.0-GA</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -68,6 +67,12 @@
 			<groupId>org.jboss.security</groupId>
 			<artifactId>jboss-negotiation-spnego</artifactId>				
 		</dependency>
+
+                        <dependency>
+                                <groupId>javax.security</groupId>
+                                <artifactId>jacc</artifactId>
+                        </dependency>
+
 	</dependencies>
 
 	<build>
@@ -137,9 +142,7 @@
 									<tasks>
 										<echo message="Deploying the Gatein SSO Agent" />
 										
-										<copy
-											file="${settings.localRepository}/org/gatein/sso/sso-agent/${project.version}/${project.artifactId}-${project.version}.jar"
-											todir="${gatein.location}/deploy/gatein.ear/lib" overwrite="true" />
+										<copy file="${settings.localRepository}/org/gatein/sso/sso-agent/${project.version}/${project.artifactId}-${project.version}.jar" todir="${gatein.location}/deploy/gatein.ear/lib" overwrite="true" />
 									</tasks>
 								</configuration>
 								<goals>
