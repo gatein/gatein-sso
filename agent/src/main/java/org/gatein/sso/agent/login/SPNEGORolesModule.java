@@ -222,6 +222,11 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
             
             //Obtain the httpsession key
             HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
+            if(request == null)
+            {
+                return true;
+            }
+            
             HttpSession session = request.getSession(false);
             String sessionId = session.getId();
 
@@ -280,7 +285,7 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
          }
          catch (Exception e)
          {
-            log.error("Could not perform JBoss security manager cache eviction", e);
+            log.debug("Could not perform JBoss security manager cache eviction", e);
          }
       }
       else
