@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.gatein.sso</groupId>
 	<artifactId>sso-parent</artifactId>
-	<version>1.0.1-GA-SNAPSHOT</version>
+	<version>1.0.1-GA</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -25,9 +25,9 @@
 
 
         <scm>
-           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/trunk</connection>
-           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/trunk</developerConnection>
-           <url>http://fisheye.jboss.org/browse/gatein/components/sso/trunk</url>
+           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/tags/1.0.1-GA</connection>
+           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/tags/1.0.1-GA</developerConnection>
+           <url>http://fisheye.jboss.org/browse/gatein/components/sso/tags/1.0.1-GA</url>
         </scm>
 
 
@@ -68,8 +68,8 @@
 
 
 		<!-- exo -->
-		<org.exoplatform.core.version>2.3.2-GA</org.exoplatform.core.version>
-		<org.exoplatform.ws.version>2.1.2-GA</org.exoplatform.ws.version>
+		<org.exoplatform.core.version>2.3.5-GA</org.exoplatform.core.version>
+		<org.exoplatform.ws.version>2.1.5-GA</org.exoplatform.ws.version>
 		<org.exoplatform.portal.version>3.1.0-GA</org.exoplatform.portal.version>
 
 		<!-- JAX-RS jsr-311 -->

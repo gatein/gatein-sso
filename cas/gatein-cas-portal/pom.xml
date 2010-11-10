@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-cas-parent</artifactId>
-		<version>1.0.1-GA-SNAPSHOT</version>
+		<version>1.0.1-GA</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-cas-plugin</artifactId>
-			<version>1.0.1-GA-SNAPSHOT</version>
+			<version>1.0.1-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -23,12 +23,12 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-agent</artifactId>
-			<version>1.0.1-GA-SNAPSHOT</version>
+			<version>1.0.1-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-auth-callback</artifactId>
-			<version>1.0.1-GA-SNAPSHOT</version>
+			<version>1.0.1-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
