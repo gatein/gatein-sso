@@ -1,0 +1,159 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.gatein.sso</groupId>
+		<artifactId>sso-parent</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>1.0.1-GA</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>sso-agent</artifactId>
+	<packaging>jar</packaging>
+	<name>GateIn SSO - Agent</name>
+
+	<properties>
+		<!-- ChangeMe to your specific local environment -->
+		<gatein.location>/home/soshah/projects/gatein/portal/trunk/packaging/pkg/target/jboss/server/gatein-spnego</gatein.location>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-auth-callback</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.exoplatform.portal</groupId>
+			<artifactId>exo.portal.component.web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.exoplatform.core</groupId>
+			<artifactId>exo.core.component.organization.api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-client-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.josso</groupId>
+			<artifactId>josso-agent</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.josso</groupId>
+			<artifactId>josso-servlet-agent</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.josso</groupId>
+			<artifactId>josso-agent-shared</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.josso</groupId>
+			<artifactId>josso-protocol-client</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.security</groupId>
+			<artifactId>jboss-negotiation-spnego</artifactId>				
+		</dependency>
+
+                        <dependency>
+                                <groupId>javax.security</groupId>
+                                <artifactId>jacc</artifactId>
+                        </dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.xbean</groupId>
+				<artifactId>maven-xbean-plugin</artifactId>
+				<version>${version.xbean}</version>
+				<executions>
+					<execution>
+						<configuration>
+							<namespace>urn:org:josso:agent:generic-servlet</namespace>
+						</configuration>
+						<goals>
+							<goal>mapping</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<!--
+		profile for packaging and deploying this plugin into a cas server
+	-->
+	<profiles>
+		<profile>
+			<id>integration-tests</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.3.1</version>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!--
+			Note: This profile is used only during Development for deploying artifacts into a Development Gatein server 
+		 -->
+		<profile>
+			<id>dev</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>dev</id>
+								<phase>install</phase>
+								<configuration>
+									<tasks>
+										<echo message="Deploying the Gatein SSO Agent" />
+										
+										<copy file="${settings.localRepository}/org/gatein/sso/sso-agent/${project.version}/${project.artifactId}-${project.version}.jar" todir="${gatein.location}/deploy/gatein.ear/lib" overwrite="true" />
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
+

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		This pom functions as a default configuration. The subproject poms
+		each inherit configuration from this one. When adding version
+		information for an artifact please do the following - add a version
+		property for the specific version - add a dependency in the
+		dependencyManagement section which refers to the property
+	-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.gatein.sso</groupId>
+	<artifactId>sso-parent</artifactId>
+	<version>1.0.1-GA</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.gatein</groupId>
+		<artifactId>gatein-parent</artifactId>
+		<version>1.0.1-GA</version>
+	</parent>
+
+
+	<name>Gatein - Single Sign On Integration</name>
+	<description>GateIn Single Sign On Integration</description>
+
+
+        <scm>
+           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/tags/1.0.1-GA</connection>
+           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/tags/1.0.1-GA</developerConnection>
+           <url>http://fisheye.jboss.org/browse/gatein/components/sso/tags/1.0.1-GA</url>
+        </scm>
+
+
+	<modules>
+		<module>agent</module>
+		<module>auth-callback</module>
+		<module>cas</module>
+		<module>josso</module>
+		<!-- 
+   		OpenSSO requires manual installation
+    -->
+		<module>opensso</module>
+		<module>spnego</module>
+		<module>packaging</module>
+	</modules>
+
+	<properties>
+		<version.junit>3.8.1</version.junit>
+
+		<!--  http client -->
+		<version.commons-httpclient>3.1</version.commons-httpclient>
+
+		<!-- logging -->
+		<version.log4j>1.2.14</version.log4j>
+		<version.jboss.logging>2.0.2.GA</version.jboss.logging>
+		<version.apache.logging>1.0.4-jboss</version.apache.logging>
+		<version.commons-logging>1.0.4</version.commons-logging>
+
+		<!-- cas -->
+		<version.cas>3.3.4</version.cas>
+		<version.cas.client>3.1.9</version.cas.client>
+
+		<!-- josso -->
+		<version.josso>1.8.1</version.josso>
+
+		<!-- xbean -->
+		<version.xbean>3.4.3</version.xbean>
+
+
+		<!-- exo -->
+		<org.exoplatform.core.version>2.3.5-GA</org.exoplatform.core.version>
+		<org.exoplatform.ws.version>2.1.5-GA</org.exoplatform.ws.version>
+		<org.exoplatform.portal.version>3.1.0-GA</org.exoplatform.portal.version>
+
+		<!-- JAX-RS jsr-311 -->
+		<version.javax.ws.rs>1.0</version.javax.ws.rs>
+
+		<!-- servlet-api -->
+		<version.servlet-api>2.5</version.servlet-api>
+		
+		<!--  SPNEGO support using JBoss Negotiation -->
+		<version.jboss.negotiation>2.0.3.GA</version.jboss.negotiation>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!--  junit -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${version.junit}</version>
+			</dependency>
+
+			<!-- cas -->
+			<dependency>
+				<groupId>org.jasig.cas</groupId>
+				<artifactId>cas-server-core</artifactId>
+				<version>${version.cas}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jasig.cas</groupId>
+				<artifactId>cas-client-core</artifactId>
+				<version>${version.cas.client}</version>
+			</dependency>
+
+			<!-- josso -->
+			<dependency>
+				<groupId>org.josso</groupId>
+				<artifactId>josso-core</artifactId>
+				<version>${version.josso}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.josso</groupId>
+				<artifactId>josso-basic-authscheme</artifactId>
+				<version>${version.josso}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.josso</groupId>
+				<artifactId>josso-agent</artifactId>
+				<version>${version.josso}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.josso</groupId>
+				<artifactId>josso-agent-shared</artifactId>
+				<version>${version.josso}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.josso</groupId>
+				<artifactId>josso-servlet-agent</artifactId>
+				<version>${version.josso}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.josso</groupId>
+				<artifactId>josso-protocol-client</artifactId>
+				<version>${version.josso}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.josso</groupId>
+				<artifactId>josso-common</artifactId>
+				<version>${version.josso}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.xbean</groupId>
+				<artifactId>xbean-spring</artifactId>
+				<version>${version.xbean}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!--  logging -->
+			<dependency>
+				<groupId>apache-log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${version.log4j}</version>
+			</dependency>
+
+			<!-- httpclient -->
+			<dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>${version.commons-httpclient}</version>
+			</dependency>
+
+			<!-- jax-rs api -->
+			<dependency>
+				<groupId>javax.ws.rs</groupId>
+				<artifactId>jsr311-api</artifactId>
+				<version>${version.javax.ws.rs}</version>
+			</dependency>
+
+			<!-- exo -->
+			<dependency>
+				<groupId>org.exoplatform.ws</groupId>
+				<artifactId>exo.ws.rest.core</artifactId>
+				<version>${org.exoplatform.ws.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.exoplatform.core</groupId>
+				<artifactId>exo.core.component.security.core</artifactId>
+				<version>${org.exoplatform.core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.exoplatform.core</groupId>
+				<artifactId>exo.core.component.organization.api</artifactId>
+				<version>${org.exoplatform.core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.exoplatform.portal</groupId>
+				<artifactId>exo.portal.component.web</artifactId>
+				<version>${org.exoplatform.portal.version}</version>
+			</dependency>
+
+
+			<!-- servlet-api -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${version.servlet-api}</version>
+			</dependency>
+			
+			<!-- SPNEGO support using JBoss Negotiation -->
+			<dependency>
+				<groupId>org.jboss.security</groupId>
+				<artifactId>jboss-negotiation-spnego</artifactId>
+				<version>${version.jboss.negotiation}</version>
+			</dependency>
+
+                        <dependency>
+                                <groupId>javax.security</groupId>
+                                <artifactId>jacc</artifactId>
+                                <version>1.0</version>
+                        </dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>repository.jboss.org</id>
+			<name>JBoss Repository</name>
+			<layout>default</layout>
+			<url>http://repository.jboss.org/maven2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>snapshots.jboss.org</id>
+			<name>JBoss Snapshots Repository</name>
+			<layout>default</layout>
+			<url>http://snapshots.jboss.org/maven2/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+
+		<repository>
+			<id>josso-m2-repo</id>
+			<name>JOSSO Maven2 Repository</name>
+			<url>http://repository.josso.org</url>
+			<releases>
+				<checksumPolicy>fail</checksumPolicy>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<checksumPolicy>fail</checksumPolicy>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>exo-int</id>
+			<url>http://maven2.exoplatform.org/rest/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>java.net maven repository</id>
+			<url>http://download.java.net/maven/2/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

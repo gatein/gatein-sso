@@ -1,0 +1,50 @@
+<assembly>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<formats>
+		<format>dir</format>
+
+	</formats>
+
+	<fileSets>
+		<fileSet>
+
+			<directory>src/main/resources</directory>
+			<outputDirectory></outputDirectory>
+		</fileSet>
+	</fileSets>
+
+	<dependencySets>
+
+		<dependencySet>
+			<outputDirectory>gatein.ear/lib</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<includes>
+				<include>org.josso:josso-agents-bin</include>
+				<include>org.josso:josso-agent-shared</include>
+				<include>org.springframework:spring-beans</include>
+				<include>org.springframework:spring-context</include>
+				<include>org.springframework:spring-core</include>
+				<include>commons-discovery:commons-discovery</include>
+				<include>org.apache.axis:axis</include>
+				<include>org.apache.xbean:xbean-spring</include>
+				<include>org.gatein.sso:sso-agent</include>
+				<include>org.gatein.sso:sso-auth-callback</include>
+			</includes>
+		</dependencySet>
+
+		<dependencySet>
+			<outputDirectory>plugin/webapps/josso/WEB-INF/lib</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<includes>
+				<include>commons-httpclient:commons-httpclient</include>
+				<include>commons-logging:commons-logging</include>
+				<include>org.gatein.sso:sso-josso-plugin</include>
+				<include>apache-log4j:log4j</include>
+			</includes>
+		</dependencySet>
+
+	</dependencySets>
+
+</assembly>

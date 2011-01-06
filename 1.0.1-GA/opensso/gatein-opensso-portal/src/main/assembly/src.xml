@@ -1,0 +1,41 @@
+<assembly>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<formats>
+		<format>dir</format>
+
+	</formats>
+
+	<fileSets>
+		<fileSet>
+
+			<directory>src/main/resources</directory>
+			<outputDirectory></outputDirectory>
+		</fileSet>
+	</fileSets>
+
+	<dependencySets>
+
+		<dependencySet>
+			<outputDirectory>gatein.ear/lib</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<includes>
+				<include>org.gatein.sso:sso-agent</include>
+				<include>org.gatein.sso:sso-auth-callback</include>
+			</includes>
+		</dependencySet>
+
+		<dependencySet>
+			<outputDirectory>plugin/WEB-INF/lib</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+			<includes>
+				<include>commons-httpclient:commons-httpclient</include>
+				<include>commons-logging:commons-logging</include>
+				<include>org.gatein.sso:sso-opensso-plugin</include>
+			</includes>
+		</dependencySet>
+
+	</dependencySets>
+
+</assembly>

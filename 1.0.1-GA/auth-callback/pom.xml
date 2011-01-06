@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.gatein.sso</groupId>
+		<artifactId>sso-parent</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>1.0.1-GA</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>sso-auth-callback</artifactId>
+	<packaging>jar</packaging>
+	<name>GateIn SSO - Authentication Callback</name>
+	<description>A RESTful call back service used by SSO servers to perform authentication against the Gatein instance</description>
+	<properties>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.exoplatform.ws</groupId>
+			<artifactId>exo.ws.rest.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.exoplatform.core</groupId>
+			<artifactId>exo.core.component.security.core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+		</dependency>
+	</dependencies>
+</project>
+

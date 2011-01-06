@@ -1,0 +1,11 @@
+GateIn - SSO Integration
+
+This package provides the necessary files for integration of various SSO frameworks
+with GateIn portal authentication mechanism
+
+ - OpenSSO
+ - JOSSO
+ - CAS
+ 
+Please refer to the GateIn Portal documentation for usage of the embedded files.
+
