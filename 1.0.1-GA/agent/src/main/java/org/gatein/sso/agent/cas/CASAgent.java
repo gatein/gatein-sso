@@ -79,7 +79,7 @@ public class CASAgent
 		Cas20ProxyTicketValidator ticketValidator = new Cas20ProxyTicketValidator(casServerUrl);
     ticketValidator.setRenew(this.renewTicket);
     
-    String serviceUrl = "http://"+ httpRequest.getServerName() +":" + httpRequest.getServerPort() + 
+    String serviceUrl = httpRequest.getScheme()+"://"+ httpRequest.getServerName() +":" + httpRequest.getServerPort() + 
     httpRequest.getContextPath() +"/private/classic";
     Assertion assertion = ticketValidator.validate(ticket, serviceUrl); 
     
