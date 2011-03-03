@@ -42,13 +42,15 @@ public class CASAgent
 	
 	private String casServerUrl;
 	private boolean renewTicket;
+	private String casServiceUrl;
 	
-	private CASAgent(String casServerUrl)
+	private CASAgent(String casServerUrl, String casServiceUrl)
 	{
 		this.casServerUrl = casServerUrl;
+		this.casServiceUrl = casServiceUrl;
 	}
 	
-	public static CASAgent getInstance(String casServerUrl)
+	public static CASAgent getInstance(String casServerUrl,String casServiceUrl)
 	{
 		if(CASAgent.singleton == null)
 		{
@@ -56,7 +58,7 @@ public class CASAgent
 			{
 				if(CASAgent.singleton == null)
 				{
-					CASAgent.singleton = new CASAgent(casServerUrl);
+					CASAgent.singleton = new CASAgent(casServerUrl,casServiceUrl);
 				}
 			}
 		}
@@ -79,12 +81,12 @@ public class CASAgent
 		Cas20ProxyTicketValidator ticketValidator = new Cas20ProxyTicketValidator(casServerUrl);
     ticketValidator.setRenew(this.renewTicket);
     
-    String serviceUrl = "http://"+ httpRequest.getServerName() +":" + httpRequest.getServerPort() + 
-    httpRequest.getContextPath() +"/private/classic";
-    Assertion assertion = ticketValidator.validate(ticket, serviceUrl); 
+    //String serviceUrl = "http://"+ httpRequest.getServerName() +":" + httpRequest.getServerPort() + 
+    //httpRequest.getContextPath() +"/private/classic";
+    Assertion assertion = ticketValidator.validate(ticket, this.casServiceUrl); 
     
     log.debug("------------------------------------------------------------------------------------");
-    log.debug("Service: "+serviceUrl);
+    log.debug("Service: "+this.casServiceUrl);
     log.debug("Principal: "+assertion.getPrincipal().getName());
     log.debug("------------------------------------------------------------------------------------");
     
