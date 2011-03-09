@@ -31,8 +31,8 @@ import javax.servlet.http.Cookie;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.exoplatform.web.security.Credentials;
-import org.gatein.sso.agent.GenericSSOAgent;
+
+import org.gatein.wci.security.Credentials;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
@@ -70,6 +70,11 @@ public class OpenSSOAgent
 	{						
 		String token = null;
 		Cookie[] cookies = httpRequest.getCookies();
+		if(cookies == null)
+		{
+		    return;
+		}
+		
 		for(Cookie cookie: cookies)
 		{
 			if(cookie.getName().equals(this.cookieName))
@@ -77,6 +82,11 @@ public class OpenSSOAgent
 				token = cookie.getValue();
 				break;
 			}
+		}
+		
+		if(token == null)
+		{
+		    throw new IllegalStateException("No SSO Tokens Found");
 		}
 						
 		if(token != null)
@@ -92,7 +102,8 @@ public class OpenSSOAgent
 			if(subject != null)
 			{
 				Credentials credentials = new Credentials(subject, "");
-				httpRequest.getSession().setAttribute(GenericSSOAgent.CREDENTIALS, credentials);
+				httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
+				httpRequest.getSession().setAttribute("username", subject);
 			}
 		}
 	}	

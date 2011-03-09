@@ -21,35 +21,49 @@
  */
 package org.gatein.sso.agent.login;
 
+import java.lang.reflect.Method;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 
-import org.exoplatform.container.ExoContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.UsernameCredential;
 import org.exoplatform.services.security.jaas.AbstractLoginModule;
-import org.exoplatform.web.security.Credentials;
-import org.exoplatform.web.security.security.CookieTokenService;
-import org.exoplatform.web.security.security.TransientTokenService;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
 public final class SSOLoginModule extends AbstractLoginModule
 {
-	private static final Log LOG = ExoLogger.getLogger(SSOLoginModule.class
+	private static final Log log = ExoLogger.getLogger(SSOLoginModule.class
 			.getName());
+	
+	/** JACC get context method. */
+   private static Method getContextMethod;
 
-	protected Log getLogger()
-	{
-		return LOG;
-	}
-
+   static
+   {
+      try
+      {
+         Class<?> policyContextClass = Thread.currentThread().getContextClassLoader().loadClass("javax.security.jacc.PolicyContext");
+         getContextMethod = policyContextClass.getDeclaredMethod("getContext", String.class);
+      }
+      catch (ClassNotFoundException ignore)
+      {
+         log.debug("JACC not found ignoring it", ignore);
+      }
+      catch (Exception e)
+      {
+     	log.error("Could not obtain JACC get context method", e);
+      }
+   }
+	
 	public boolean login() throws LoginException
 	{
 		try
@@ -61,33 +75,37 @@ public final class SSOLoginModule extends AbstractLoginModule
 
 			String password = new String(((PasswordCallback) callbacks[1])
 					.getPassword());
-
-			ExoContainer container = getContainer();
-			Object o = ((TransientTokenService) container
-					.getComponentInstanceOfType(TransientTokenService.class))
-					.validateToken(password, true);
-			if (o == null)
-				o = ((CookieTokenService) container
-						.getComponentInstanceOfType(CookieTokenService.class))
-						.validateToken(password, false);
 			
-			String username = null;
-			if (o instanceof Credentials)
-			{
-				Credentials wc = (Credentials)o;
-				username = wc.getUsername();
-			}
-
+		   //
+          // For clustered config check credentials stored and propagated in session. This won't work in tomcat because
+         // of lack of JACC PolicyContext so the code must be a bit defensive
+		 String username = null;
+         if (getContextMethod != null && password.startsWith("wci-ticket"))
+         {
+            HttpServletRequest request;
+            try
+            {
+               request = (HttpServletRequest)getContextMethod.invoke(null, "javax.servlet.http.HttpServletRequest");
+               username = (String)request.getSession().getAttribute("username");
+            }
+            catch(Throwable e)
+            {
+               log.error(this,e);
+               log.error("LoginModule error. Turn off session credentials checking with proper configuration option of " +
+                  "LoginModule set to false");
+            }
+         }
+			
 			if (username == null)
 			{
-					//SSO token could not be validated...hence a user id cannot be found
-				  LOG.error("---------------------------------------------------------");
-				  LOG.error("SSOLogin Failed. Credential Not Found!!");
-				  LOG.error("---------------------------------------------------------");
-					return false;
+				  //SSO token could not be validated...hence a user id cannot be found
+				  log.error("---------------------------------------------------------");
+				  log.error("SSOLogin Failed. Credential Not Found!!");
+				  log.error("---------------------------------------------------------");
+				  return false;
 			}
 				
-
+			//Perform authentication by setting up the proper Application State
 			Authenticator authenticator = (Authenticator) getContainer()
 					.getComponentInstanceOfType(Authenticator.class);
 
@@ -125,4 +143,10 @@ public final class SSOLoginModule extends AbstractLoginModule
 	{
 		return true;
 	}
+
+    @Override
+    protected Log getLogger() 
+    {
+        return log;
+    }
 }

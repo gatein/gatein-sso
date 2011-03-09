@@ -26,8 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import org.exoplatform.web.security.Credentials;
-import org.gatein.sso.agent.GenericSSOAgent;
+import org.gatein.wci.security.Credentials;
 
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgentRequest;
@@ -101,7 +100,8 @@ public class JOSSOAgent
 			log.debug("-----------------------------------------------------------");
 			
 			Credentials credentials = new Credentials(principal, "");
-			httpRequest.getSession().setAttribute(GenericSSOAgent.CREDENTIALS, credentials);
+			httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
+			httpRequest.getSession().setAttribute("username", principal);
 		}
 	}
 	

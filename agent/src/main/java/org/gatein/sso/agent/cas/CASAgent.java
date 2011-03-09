@@ -25,12 +25,9 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.gatein.wci.security.Credentials;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
-
-import org.exoplatform.web.security.Credentials;
-
-import org.gatein.sso.agent.GenericSSOAgent;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
@@ -44,13 +41,13 @@ public class CASAgent
 	private boolean renewTicket;
 	private String casServiceUrl;
 	
-	private CASAgent(String casServerUrl, String casServiceUrl)
+	private CASAgent(String casServerUrl,String casServiceUrl)
 	{
 		this.casServerUrl = casServerUrl;
 		this.casServiceUrl = casServiceUrl;
 	}
 	
-	public static CASAgent getInstance(String casServerUrl,String casServiceUrl)
+	public static CASAgent getInstance(String casServerUrl, String casServiceUrl)
 	{
 		if(CASAgent.singleton == null)
 		{
@@ -79,22 +76,24 @@ public class CASAgent
 	public void validateTicket(HttpServletRequest httpRequest, String ticket) throws Exception
 	{		
 		Cas20ProxyTicketValidator ticketValidator = new Cas20ProxyTicketValidator(casServerUrl);
-    ticketValidator.setRenew(this.renewTicket);
-    
-    //String serviceUrl = "http://"+ httpRequest.getServerName() +":" + httpRequest.getServerPort() + 
-    //httpRequest.getContextPath() +"/private/classic";
-    Assertion assertion = ticketValidator.validate(ticket, this.casServiceUrl); 
-    
-    log.debug("------------------------------------------------------------------------------------");
-    log.debug("Service: "+this.casServiceUrl);
-    log.debug("Principal: "+assertion.getPrincipal().getName());
-    log.debug("------------------------------------------------------------------------------------");
-    
-        
-    //Use empty password....it shouldn't be needed...this is a SSO login. The password has
-    //already been presented with the SSO server. It should not be passed around for 
-    //better security
-    Credentials credentials = new Credentials(assertion.getPrincipal().getName(), "");
-    httpRequest.getSession().setAttribute(GenericSSOAgent.CREDENTIALS, credentials);		    
+	    ticketValidator.setRenew(this.renewTicket);
+	    
+	    //String serviceUrl = "http://"+ httpRequest.getServerName() +":" + httpRequest.getServerPort() + 
+	    //httpRequest.getContextPath() +"/private/classic";
+	    Assertion assertion = ticketValidator.validate(ticket, this.casServiceUrl); 
+	    
+	    log.debug("------------------------------------------------------------------------------------");
+	    log.debug("Service: "+this.casServiceUrl);
+	    log.debug("Principal: "+assertion.getPrincipal().getName());
+	    log.debug("------------------------------------------------------------------------------------");
+	    
+	        
+	    //Use empty password....it shouldn't be needed...this is a SSO login. The password has
+	    //already been presented with the SSO server. It should not be passed around for 
+	    //better security
+	    String principal = assertion.getPrincipal().getName();
+	    Credentials credentials = new Credentials(principal, "");
+        httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
+	    httpRequest.getSession().setAttribute("username", principal);
 	}		
 }
