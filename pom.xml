@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.gatein.sso</groupId>
 	<artifactId>sso-parent</artifactId>
-	<version>1.0.1-GA</version>
+	<version>1.0.2-GA-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
@@ -25,9 +25,9 @@
 
 
         <scm>
-           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/tags/1.0.1-GA</connection>
-           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/tags/1.0.1-GA</developerConnection>
-           <url>http://fisheye.jboss.org/browse/gatein/components/sso/tags/1.0.1-GA</url>
+           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/branches/1.0-Branch</connection>
+           <developerConnection>scm:svn:http://svn.jboss.org/repos/gatein/components/sso/branches/1.0-Branch</developerConnection>
+           <url>http://fisheye.jboss.org/browse/gatein/components/sso/branches/1.0-Branch</url>
         </scm>
 
 
