@@ -22,6 +22,7 @@
 package org.gatein.sso.agent.filter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class AbstractLogoutFilter implements Filter
 {
 	protected String logoutUrl;
+	private static final String fileEncoding = System.getProperty("file.encoding");        
 
 	public void init(FilterConfig config) throws ServletException
 	{
@@ -76,8 +78,13 @@ public abstract class AbstractLogoutFilter implements Filter
 		chain.doFilter(request, response);
 	}
 
-	private boolean isLogoutInProgress(HttpServletRequest request)
+	private boolean isLogoutInProgress(HttpServletRequest request) throws UnsupportedEncodingException
 	{
+		// set character encoding before retrieving request parameters
+		if(fileEncoding!=null) 
+		{
+			request.setCharacterEncoding(fileEncoding);
+		}
 		String action = request.getParameter("portal:action");
 
 		if (action != null && action.equals("Logout"))
