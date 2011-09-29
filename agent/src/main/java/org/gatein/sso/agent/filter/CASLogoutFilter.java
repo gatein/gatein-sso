@@ -65,6 +65,8 @@ public class CASLogoutFilter extends AbstractLogoutFilter
 			
 			String redirectUrl = this.logoutUrl+"?url="+httpRequest.getRequestURL()+"?"+parameters;
 			
+			httpRequest.getSession().invalidate();
+			
 			return redirectUrl;
 		}
 		catch(Exception e)
