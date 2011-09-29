@@ -68,9 +68,9 @@
 
 
 		<!-- exo -->
-		<org.exoplatform.core.version>2.3.7-GA</org.exoplatform.core.version>
-		<org.exoplatform.ws.version>2.1.7-GA</org.exoplatform.ws.version>
-		<org.gatein.wci.version>2.1.0-Beta01</org.gatein.wci.version>
+		<org.exoplatform.core.version>2.4.1-GA</org.exoplatform.core.version>
+		<org.exoplatform.ws.version>2.2.1-GA</org.exoplatform.ws.version>
+		<org.gatein.wci.version>2.1.0-Beta06</org.gatein.wci.version>
 
 		<!-- JAX-RS jsr-311 -->
 		<version.javax.ws.rs>1.0</version.javax.ws.rs>
