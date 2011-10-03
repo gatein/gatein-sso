@@ -28,11 +28,13 @@ public class InitiateLoginFilter implements Filter
     private String ssoCookieName;
     private boolean casRenewTicket;
     private String casServiceUrl;
+    private String loginUrl;
     
     public void init(FilterConfig filterConfig) throws ServletException 
     {
         this.ssoServerUrl = filterConfig.getInitParameter("ssoServerUrl");
         this.ssoCookieName = filterConfig.getInitParameter("ssoCookieName");
+        this.loginUrl = filterConfig.getInitParameter("loginUrl");
         
         String casRenewTicketConfig = filterConfig.getInitParameter("casRenewTicket");
         if(casRenewTicketConfig != null)
@@ -65,7 +67,8 @@ public class InitiateLoginFilter implements Filter
                 return;
             }
             
-            chain.doFilter(request, response);
+            resp.sendRedirect(loginUrl);
+			return;
         }
         catch(Exception e)
         {

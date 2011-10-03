@@ -60,10 +60,7 @@ public class CASLogoutFilter extends AbstractLogoutFilter
 	{
 		try
 		{
-			String parameters = URLEncoder.encode(
-							"portal:componentId=UIPortal&portal:action=Logout", "UTF-8");
-			
-			String redirectUrl = this.logoutUrl+"?url="+httpRequest.getRequestURL()+"?"+parameters;
+			String redirectUrl = this.logoutUrl+"?service="+httpRequest.getRequestURL() + "&url="+httpRequest.getRequestURL();
 			
 			httpRequest.getSession().invalidate();
 			
