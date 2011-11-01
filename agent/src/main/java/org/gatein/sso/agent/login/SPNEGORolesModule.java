@@ -37,10 +37,12 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.jacc.PolicyContext;
 
+import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jboss.security.SimpleGroup;
+import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
 import org.exoplatform.container.ExoContainer;
@@ -219,81 +221,136 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
             log.debug("Performing JBoss security manager cache eviction");
 
             ObjectName securityManagerName = new ObjectName("jboss.security:service=JaasSecurityManager");
-            
-            //Obtain the httpsession key
-            HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
-            if(request == null)
+
+           	String userName = null;
+            Principal principalToInvalidate = null;
+            String sessionId = null;
+
+            // If authentication was performed by Spnego, we have SimplePrincipal
+            Set<SimplePrincipal> simplePrincipals = subject.getPrincipals(SimplePrincipal.class);
+            if (!simplePrincipals.isEmpty())
             {
-                return true;
+               // There should be one non-group principal
+               Iterator<SimplePrincipal> iterator = simplePrincipals.iterator();
+               while (iterator.hasNext())
+               {
+                  Principal temp = iterator.next();
+                  if (!(temp instanceof SimpleGroup))
+                  {
+                     principalToInvalidate = temp;
+                     userName = principalToInvalidate.getName();
+
+                     //Obtain the httpsession key
+                     sessionId = findSessionId();
+                     break;
+                  }
+               }
             }
-            
-            HttpSession session = request.getSession(false);
-            String sessionId = session.getId();
+            // This means that authentication was performned by Form, we have UserPrincipal
+            else
+            {
+               Set<UserPrincipal> userPrincipals = subject.getPrincipals(UserPrincipal.class);
+               if (!userPrincipals.isEmpty())
+               {
+                  // There should be one
+                  principalToInvalidate = userPrincipals.iterator().next();
+                  userName = principalToInvalidate.getName();
+               }
+            }
+
+            // Case with recursive call to 'logout' method
+            if (principalToInvalidate == null)
+            {
+               return true;
+            }
+
+            log.debug("Going to perform JBoss security manager cache eviction for user " + userName);
 
             //
-            if (sessionId != null)
+            List allPrincipals =
+              (List)jbossServer.invoke(securityManagerName, "getAuthenticationCachePrincipals",
+                 new Object[]{realmName}, new String[]{String.class.getName()});
+
+            // Make a copy to avoid some concurrent mods
+            allPrincipals = new ArrayList(allPrincipals);
+
+            Principal key = findKeyPrincipal(principalToInvalidate, allPrincipals, sessionId);
+
+            // Perform invalidation
+            if (key != null)
             {
-            	String userName = null;
-	            Set<UserPrincipal> userPrincipals = subject.getPrincipals(UserPrincipal.class);
-	            if (!userPrincipals.isEmpty())
-	            {
-	               // There should be one
-	               userName = userPrincipals.iterator().next().getName();
-	            }
-	            
-              log.debug("Going to perform JBoss security manager cache eviction for user " + userName);
-
-               //
-               List allPrincipals =
-                  (List)jbossServer.invoke(securityManagerName, "getAuthenticationCachePrincipals",
-                     new Object[]{realmName}, new String[]{String.class.getName()});
-
-               // Make a copy to avoid some concurrent mods
-               allPrincipals = new ArrayList(allPrincipals);
-
-               // Lookup for invalidation key, it must be the same principal!
-               Principal key = null;
-               for (Iterator i = allPrincipals.iterator(); i.hasNext();)
-               {
-                  Principal principal = (Principal)i.next();
-                  
-                  if (principal.getName().equals(sessionId))
-                  {
-                     key = principal;
-                     break;
-                  }                  
-               }
-
-               // Perform invalidation
-               if (key != null)
-               {
-                  jbossServer.invoke(securityManagerName, "flushAuthenticationCache", new Object[]{realmName, key},
-                     new String[]{String.class.getName(), Principal.class.getName()});
-                  log.debug("Performed JBoss security manager cache eviction for user " + sessionId + " with principal "
-                     + key);
-               }
-               else
-               {
-                  log.warn("No principal found when performing JBoss security manager cache eviction for user "
-                     + userName);
-               }
+               jbossServer.invoke(securityManagerName, "flushAuthenticationCache", new Object[]{realmName, key},
+                  new String[]{String.class.getName(), Principal.class.getName()});
+               log.debug("Performed JBoss security manager cache eviction for user " + userName);
             }
             else
             {
-               log.warn("No user name found when performing JBoss security manager cache eviction");
+               log.warn("No principal found when performing JBoss security manager cache eviction for user "
+                  + userName);
             }
          }
          catch (Exception e)
          {
-            log.debug("Could not perform JBoss security manager cache eviction", e);
+            log.warn("Could not perform JBoss security manager cache eviction", e);
          }
       }
       else
       {
-         log.debug("Could not find mbean server for performing JBoss security manager cache eviction");
+         log.warn("Could not find mbean server for performing JBoss security manager cache eviction");
       }
 
       //
       return true;
+   }
+
+   private String findSessionId() throws PolicyContextException
+   {
+      HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
+      if(request == null)
+      {
+         return null;
+      }
+
+      HttpSession session = request.getSession(false);
+      String sessionId = session.getId();
+      return sessionId;
+   }
+
+   private Principal findKeyPrincipal(Principal subjectPrincipal, List<Principal> allPrincipals, String sessionId)
+   {
+      Principal key = null;
+
+      // TODO: Investigate possibility to find principal without iteration through allPrincipals
+      // Spnego authentication case. Invalidation key starts with sessionId
+      if ((subjectPrincipal instanceof SimplePrincipal) && (sessionId != null))
+      {
+         for (Iterator i = allPrincipals.iterator(); i.hasNext();)
+         {
+            Principal principal = (Principal)i.next();
+
+            if (principal.getName().startsWith(sessionId))
+            {
+               key = principal;
+               break;
+            }
+         }
+      }
+      // Form authentication case
+      else
+      {
+         String userName = subjectPrincipal.getName();
+         for (Iterator i = allPrincipals.iterator(); i.hasNext();)
+         {
+            Principal principal = (Principal)i.next();
+
+            if (principal.getName().equals(userName))
+            {
+               key = principal;
+               break;
+            }
+         }
+      }
+
+      return key;
    }
 }

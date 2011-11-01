@@ -79,7 +79,7 @@
 		<version.servlet-api>2.5</version.servlet-api>
 		
 		<!--  SPNEGO support using JBoss Negotiation -->
-		<version.jboss.negotiation>2.0.3.GA</version.jboss.negotiation>
+		<version.jboss.negotiation>2.1.0.GA</version.jboss.negotiation>
 	</properties>
 
 	<dependencyManagement>
@@ -220,10 +220,10 @@
 
 	<repositories>
 		<repository>
-			<id>repository.jboss.org</id>
+			<id>jboss-public-repository-group</id>
 			<name>JBoss Repository</name>
 			<layout>default</layout>
-			<url>http://repository.jboss.org/maven2/</url>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
