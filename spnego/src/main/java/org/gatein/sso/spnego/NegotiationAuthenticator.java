@@ -26,11 +26,14 @@ package org.gatein.sso.spnego;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
 import org.apache.catalina.authenticator.AuthenticatorBase;
+import org.apache.catalina.authenticator.Constants;
 import org.apache.catalina.authenticator.FormAuthenticator;
+import org.apache.catalina.authenticator.SavedRequest;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.log4j.Logger;
+import org.gatein.sso.agent.filter.SPNEGOFilter;
 import org.jboss.security.negotiation.MessageFactory;
 import org.jboss.security.negotiation.NegotiationException;
 import org.jboss.security.negotiation.NegotiationMessage;
@@ -296,6 +299,32 @@ public class NegotiationAuthenticator extends FormAuthenticator
          log.error(e);
       }
    }
+
+    /**
+     * Return the request URI (with the corresponding query string, if any)
+     * from the saved request so that we can redirect to it. We need to override this method
+     * because Constants.FORM_REQUEST_NOTE can be null sometimes (when request was send to /portal/login without displaying login.jsp page)
+     *
+     * @param session Our current session
+     */
+    protected String savedRequestURL(Session session)
+    {
+       String savedURI = super.savedRequestURL(session);
+
+       // use url saved by SPNEGOFilter if saved request not found
+       if (savedURI == null)
+       {
+          savedURI = (String)session.getSession().getAttribute(SPNEGOFilter.ATTR_INITIAL_URI);
+       }
+
+       // using default context if nothing helped
+       if (savedURI == null)
+       {
+          savedURI = session.getSession().getServletContext().getContextPath();
+       }
+
+       return savedURI;
+    }
 
    private void initiateNegotiation(final Request request, final HttpServletResponse response, final LoginConfig config)
          throws IOException

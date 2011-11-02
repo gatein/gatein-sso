@@ -25,6 +25,11 @@
 			<groupId>org.jboss.security</groupId>
 			<artifactId>jboss-negotiation-spnego</artifactId>				
 		</dependency>
+		<dependency>
+			<groupId>org.gatein.sso</groupId>
+			<artifactId>sso-agent</artifactId>
+         <version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
