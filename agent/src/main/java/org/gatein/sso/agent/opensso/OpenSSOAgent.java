@@ -187,7 +187,7 @@ public class OpenSSOAgent
 		{
 			Properties properties = new Properties();		
 			
-			String[] tokens = response.split("\n");
+			String[] tokens = response.split(System.getProperty("line.separator"));
 			String name = null;
 			for(String token: tokens)
 			{
