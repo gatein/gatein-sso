@@ -70,7 +70,7 @@ public class LoginRedirectFilter implements Filter
 	{
 		String action = request.getRequestURI();
 
-		if (action != null && action.equals("/portal/sso"))
+		if (action != null && action.equals(request.getContextPath() + "/sso"))
 		{
 			return true;
 		}

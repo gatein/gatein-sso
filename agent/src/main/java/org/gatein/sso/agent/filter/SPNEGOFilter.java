@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.exoplatform.container.web.AbstractFilter;
 
 /**
- * Filter is needed because when fallback to FORM authentication, we don't need to redirect request to PortalLoginController to secured URI,
+ * Filter is needed because when fallback to FORM authentication, we don't need to redirect request to /dologin, which is secured URI,
  * but we need to go directly to /initiatelogin without going again through Tomcat authenticator.
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -53,24 +53,18 @@ public class SPNEGOFilter extends AbstractFilter
       HttpServletResponse httpResponse = (HttpServletResponse)response;
    	try
       {
-         if (isLoginControllerInProgress(httpRequest))
-         {
-            // first save initialURI as parameter into HTTP session. We may need it later in authenticator
-            String initialURI = httpRequest.getParameter("initialURI");
-            if (initialURI != null)
-            {
-               httpRequest.getSession().setAttribute(ATTR_INITIAL_URI, initialURI);
-            }
 
-            // we need to redirect directly to initiatelogin without going through secured URL.
-            HttpServletResponse wrapperResponse = new IgnoreRedirectHttpResponse(httpResponse);
-			   chain.doFilter(request, wrapperResponse);
-            httpResponse.sendRedirect("/portal/initiatelogin");
-         }
-         else
+         // first save initialURI as parameter into HTTP session. We may need it later in authenticator
+         String initialURI = httpRequest.getParameter("initialURI");
+         if (initialURI != null)
          {
-            chain.doFilter(request, response);
+            httpRequest.getSession().setAttribute(ATTR_INITIAL_URI, initialURI);
          }
+
+         // we need to redirect directly to initiatelogin without going through secured URL.
+         HttpServletResponse wrapperResponse = new IgnoreRedirectHttpResponse(httpResponse);
+			chain.doFilter(request, wrapperResponse);
+         httpResponse.sendRedirect(httpRequest.getContextPath() + "/initiatelogin");
       }
       catch(Throwable t)
       {
@@ -80,18 +74,6 @@ public class SPNEGOFilter extends AbstractFilter
 
    public void destroy()
    {
-   }
-
-   private boolean isLoginControllerInProgress(HttpServletRequest request)
-   {
-      String action = request.getRequestURI();
-
-		if (action != null && action.equals("/portal/login"))
-      {
-         return true;
-      }
-
-      return false;
    }
 
    // Ignoring calls to response.sendRedirect, which are performed from PortalLoginController

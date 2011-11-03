@@ -79,7 +79,7 @@
 		<version.servlet-api>2.5</version.servlet-api>
 		
 		<!--  SPNEGO support using JBoss Negotiation -->
-		<version.jboss.negotiation>2.1.0.GA</version.jboss.negotiation>
+		<version.jboss.negotiation>2.0.4.GA</version.jboss.negotiation>
 	</properties>
 
 	<dependencyManagement>
