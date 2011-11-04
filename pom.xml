@@ -10,13 +10,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.gatein.sso</groupId>
 	<artifactId>sso-parent</artifactId>
-	<version>1.1.0-Beta03-SNAPSHOT</version>
+	<version>1.1.0-GA-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
 		<groupId>org.gatein</groupId>
 		<artifactId>gatein-parent</artifactId>
-		<version>1.1.0-Beta01</version>
+		<version>1.1.0-GA</version>
 	</parent>
 
 
@@ -45,14 +45,14 @@
 	</modules>
 
 	<properties>
-		<version.junit>3.8.1</version.junit>
+		<version.junit>3.8.2</version.junit>
 
 		<!--  http client -->
 		<version.commons-httpclient>3.1</version.commons-httpclient>
 
 		<!-- logging -->
 		<version.log4j>1.2.14</version.log4j>
-		<version.jboss.logging>2.0.2.GA</version.jboss.logging>
+		<version.jboss.logging>2.0.5.GA</version.jboss.logging>
 		<version.apache.logging>1.0.4-jboss</version.apache.logging>
 		<version.commons-logging>1.0.4</version.commons-logging>
 
@@ -68,9 +68,9 @@
 
 
 		<!-- exo -->
-		<org.exoplatform.core.version>2.4.1-GA</org.exoplatform.core.version>
-		<org.exoplatform.ws.version>2.2.1-GA</org.exoplatform.ws.version>
-		<org.gatein.wci.version>2.1.0-Beta06</org.gatein.wci.version>
+		<org.exoplatform.core.version>2.4.3-GA</org.exoplatform.core.version>
+		<org.exoplatform.ws.version>2.2.3-GA</org.exoplatform.ws.version>
+		<org.gatein.wci.version>2.1.0-GA</org.gatein.wci.version>
 
 		<!-- JAX-RS jsr-311 -->
 		<version.javax.ws.rs>1.0</version.javax.ws.rs>
