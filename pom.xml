@@ -25,9 +25,9 @@
 
 
         <scm>
-           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/tags/sso-parent-1.1.0-GA</connection>
-           <developerConnection>scm:svn:https://svn.jboss.org/repos/gatein/components/sso/tags/sso-parent-1.1.0-GA</developerConnection>
-           <url>http://fisheye.jboss.org/browse/gatein/components/sso/tags/sso-parent-1.1.0-GA</url>
+           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/tags/1.1.0-GA</connection>
+           <developerConnection>scm:svn:https://svn.jboss.org/repos/gatein/components/sso/tags/1.1.0-GA</developerConnection>
+           <url>http://fisheye.jboss.org/browse/gatein/components/sso/tags/1.1.0-GA</url>
         </scm>
 
 
