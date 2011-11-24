@@ -204,17 +204,21 @@
 			</dependency>
 			
 			<!-- SPNEGO support using JBoss Negotiation -->
-			<dependency>
-				<groupId>org.jboss.security</groupId>
-				<artifactId>jboss-negotiation-spnego</artifactId>
-				<version>${version.jboss.negotiation}</version>
-			</dependency>
-
-                        <dependency>
-                                <groupId>javax.security</groupId>
-                                <artifactId>jacc</artifactId>
-                                <version>1.0</version>
-                        </dependency>
+         <dependency>
+            <groupId>org.jboss.security</groupId>
+            <artifactId>jboss-negotiation-spnego</artifactId>
+            <version>${version.jboss.negotiation}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.security</groupId>
+            <artifactId>jboss-negotiation</artifactId>
+            <version>${version.jboss.negotiation}</version>
+         </dependency>
+         <dependency>
+            <groupId>javax.security</groupId>
+            <artifactId>jacc</artifactId>
+            <version>1.0</version>
+         </dependency>
 		</dependencies>
 	</dependencyManagement>
 

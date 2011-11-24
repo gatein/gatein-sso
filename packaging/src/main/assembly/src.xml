@@ -45,7 +45,7 @@
       <useProjectArtifact>false</useProjectArtifact>
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <includes>
-        <include>org.jboss.security:jboss-negotiation-spnego</include>
+        <include>org.jboss.security:jboss-negotiation</include>
       </includes>
     </dependencySet>
 

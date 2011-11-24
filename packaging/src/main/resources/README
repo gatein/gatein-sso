@@ -6,6 +6,7 @@ with GateIn portal authentication mechanism
  - OpenSSO
  - JOSSO
  - CAS
+ - SPNEGO
  
 Please refer to the GateIn Portal documentation for usage of the embedded files.
 
