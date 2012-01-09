@@ -305,9 +305,7 @@
     <!-- ===================================================================== -->
     <!-- SSO Certificate key adapter used for strong authentication            -->
     <!-- ===================================================================== -->
-
-    <!-- Marker: Certificate key adapter can't be enabled for JOSSO 1.8.1 -->
-    <!-- <certificate-key-adapter id="josso-certificate-key-adapter"/> -->
+    <certificate-key-adapter id="josso-certificate-key-adapter"/>
 
     <!-- ===================================================================== -->
     <!-- Spring Mail Sender bean.  Configure mail delivery settings here       -->

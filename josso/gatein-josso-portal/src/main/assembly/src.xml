@@ -7,23 +7,34 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>src/main/resources</directory>
-			<outputDirectory></outputDirectory>
+			<directory>src/main/resources/gatein.ear</directory>
+			<outputDirectory>josso-181/gatein.ear</outputDirectory>
 		</fileSet>
       <fileSet>
          <directory>src/main/resources/gatein.ear</directory>
-         <outputDirectory>gatein.ear-josso182</outputDirectory>
+         <outputDirectory>josso-182/gatein.ear</outputDirectory>
       </fileSet>
       <fileSet>
-         <directory>src/main/resources/gatein.ear</directory>
-         <outputDirectory>gatein.ear-josso182</outputDirectory>
+         <directory>src/main/resources/plugin</directory>
+         <outputDirectory>josso-181/plugin</outputDirectory>
+      </fileSet>
+      <fileSet>
+         <directory>src/main/resources/plugin</directory>
+         <outputDirectory>josso-182/plugin</outputDirectory>
+         <excludes>
+            <exclude>lib/josso-gateway-config.xml</exclude>
+         </excludes>
+      </fileSet>
+      <fileSet>
+         <directory>src/main/resources/plugin-182/lib</directory>
+         <outputDirectory>josso-182/plugin/lib</outputDirectory>
       </fileSet>
 
       <!-- We need to use old josso libraries for josso 1.8.1 packaging. Libraries  are included in dependencies of project gatein-agent-josso181
            and downloaded thanks to maven-dependency-plugin declared in pom.xml of gatein-agent-josso181 module. -->
       <fileSet>
          <directory>../gatein-agent-josso181/target/dependency</directory>
-         <outputDirectory>gatein.ear/lib</outputDirectory>
+         <outputDirectory>josso-181/gatein.ear/lib</outputDirectory>
          <includes>
             <include>josso-agents-bin-1.8.0.jar</include>
             <include>josso-agent-shared-1.8.1.jar</include>
@@ -34,7 +45,7 @@
 	<dependencySets>
 
 		<dependencySet>
-			<outputDirectory>gatein.ear/lib</outputDirectory>
+			<outputDirectory>josso-181/gatein.ear/lib</outputDirectory>
 			<useProjectArtifact>false</useProjectArtifact>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<includes>
@@ -51,7 +62,7 @@
 		</dependencySet>
 
       <dependencySet>
-         <outputDirectory>gatein.ear-josso182/lib</outputDirectory>
+         <outputDirectory>josso-182/gatein.ear/lib</outputDirectory>
          <useProjectArtifact>false</useProjectArtifact>
          <useTransitiveDependencies>false</useTransitiveDependencies>
          <includes>
@@ -70,7 +81,7 @@
       </dependencySet>
 
 		<dependencySet>
-			<outputDirectory>plugin/webapps/josso/WEB-INF/lib</outputDirectory>
+			<outputDirectory>josso-181/plugin/webapps/josso/WEB-INF/lib</outputDirectory>
 			<useProjectArtifact>false</useProjectArtifact>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<includes>
@@ -80,6 +91,18 @@
 				<include>apache-log4j:log4j</include>
 			</includes>
 		</dependencySet>
+
+      <dependencySet>
+         <outputDirectory>josso-182/plugin/webapps/josso/WEB-INF/lib</outputDirectory>
+         <useProjectArtifact>false</useProjectArtifact>
+         <useTransitiveDependencies>false</useTransitiveDependencies>
+         <includes>
+            <include>commons-httpclient:commons-httpclient</include>
+            <include>commons-logging:commons-logging</include>
+            <include>org.gatein.sso:sso-josso-plugin</include>
+            <include>apache-log4j:log4j</include>
+         </includes>
+      </dependencySet>
 
 	</dependencySets>
 
