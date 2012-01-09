@@ -24,8 +24,8 @@ package org.gatein.sso.agent.josso;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
 import org.gatein.wci.security.Credentials;
 
 import org.josso.agent.Lookup;
@@ -38,10 +38,10 @@ import org.josso.agent.http.HttpSSOAgent;
  */
 public class JOSSOAgent
 {
-	private static Logger log = Logger.getLogger(Logger.class);
-	private static JOSSOAgent singleton;
+	private static Logger log = LoggerFactory.getLogger(JOSSOAgent.class);
+	private static JOSSOAgent singleton;      
 	
-	private HttpSSOAgent httpAgent;
+	private HttpSSOAgent httpAgent;         
 	
 	private JOSSOAgent()
 	{
@@ -75,14 +75,16 @@ public class JOSSOAgent
 		}
 		return JOSSOAgent.singleton;
 	}
-	
-	public void validateTicket(HttpServletRequest httpRequest,HttpServletResponse httpResponse) throws Exception
+
+   public void validateTicket(HttpServletRequest httpRequest,HttpServletResponse httpResponse) throws Exception
 	{
 		String ticket = httpRequest.getParameter("josso_assertion_id");
-		log.debug("Trying to validate the following Ticket: "+ticket);
+		log.debug("Trying to validate the following Ticket: " + ticket);
 		
+      String requester = httpRequest.getContextPath().substring(1);
+
 		//Use the JOSSO Client Library to validate the token and extract the subject that was authenticated
-		SSOAgentRequest agentRequest = this.doMakeSSOAgentRequest(SSOAgentRequest.ACTION_RELAY, 
+		SSOAgentRequest agentRequest = this.doMakeSSOAgentRequest(requester, SSOAgentRequest.ACTION_RELAY,
 		null, ticket, httpRequest, httpResponse);
 		
 		SingleSignOnEntry entry = this.httpAgent.processRequest(agentRequest);
@@ -94,25 +96,23 @@ public class JOSSOAgent
 			String principal = entry.principal.getName();
 			
 			log.debug("-----------------------------------------------------------");
-			log.debug("SessionId: "+sessionId);
-			log.debug("AssertionId: "+assertionId);
-			log.debug("Principal: "+principal);
+			log.debug("SessionId: " + sessionId);
+			log.debug("AssertionId: " + assertionId);
+			log.debug("Principal: " + principal);
 			log.debug("-----------------------------------------------------------");
 			
 			Credentials credentials = new Credentials(principal, "");
 			httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
 			httpRequest.getSession().setAttribute("username", principal);
+
+         // TODO: this is needed for using default login module stack instead of SSOLoginModule. Should be moved to some abstract superclass instead.
+         httpRequest.getSession().setAttribute("authenticatedCredentials", credentials);
 		}
 	}
 	
-	protected SSOAgentRequest doMakeSSOAgentRequest(int action, String sessionId, String assertionId,
+	protected SSOAgentRequest doMakeSSOAgentRequest(String requester, int action, String sessionId, String assertionId,
                                                     HttpServletRequest hreq, HttpServletResponse hres) 
 	{
-        GateInAgentRequest r = new GateInAgentRequest(action, sessionId, new GateInLocalSession(hreq.getSession()), assertionId);
-        r.setRequest(hreq);
-        r.setResponse(hres);
-
-        return r;
-
-    }
+      return GateInJOSSOAgentFactory.getInstance().getSSOAgentRequest(requester, action, sessionId,assertionId, hreq, hres);
+   }
 }

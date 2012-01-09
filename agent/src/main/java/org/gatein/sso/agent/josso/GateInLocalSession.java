@@ -23,10 +23,11 @@
 package org.gatein.sso.agent.josso;
 
 import javax.servlet.http.HttpSession;
-import org.josso.agent.http.JOSSOSecurityContext;
-import org.josso.agent.http.WebAccessControlUtil;
 
 /**
+ * Forked class {@link org.josso.servlet.agent.GenericServletLocalSession} . We don't want dependency
+ * on josso-servlet-agent library because we need our own agent {@link GateInSSOAgent} to be used instead of 
+ * {@link org.josso.servlet.agent.GenericServletSSOAgent} from josso-servlet-agent
  * 
  * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
  */
@@ -39,12 +40,6 @@ public class GateInLocalSession extends LocalSessionImpl
 
 		setWrapped(httpSession);
 		setMaxInactiveInterval(httpSession.getMaxInactiveInterval());
-
 	}
 
-	public void setSecurityContext(JOSSOSecurityContext ctx)
-	{
-		HttpSession session = (HttpSession) getWrapped();
-		session.setAttribute(WebAccessControlUtil.KEY_JOSSO_SECURITY_CONTEXT, ctx);
-	}
 }

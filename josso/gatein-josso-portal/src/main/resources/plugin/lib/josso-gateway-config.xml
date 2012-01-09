@@ -303,6 +303,11 @@
     <simple-key-adapter id="josso-simple-key-adapter"/>
 
     <!-- ===================================================================== -->
+    <!-- SSO Certificate key adapter used for strong authentication            -->
+    <!-- ===================================================================== -->
+    <certificate-key-adapter id="josso-certificate-key-adapter"/>
+
+    <!-- ===================================================================== -->
     <!-- Spring Mail Sender bean.  Configure mail delivery settings here       -->
     <!-- ===================================================================== -->
     <s:bean id="josso-spring-mailsender" class="org.springframework.mail.javamail.JavaMailSenderImpl">

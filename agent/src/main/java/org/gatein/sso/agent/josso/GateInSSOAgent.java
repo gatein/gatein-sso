@@ -21,11 +21,13 @@
 */
 package org.gatein.sso.agent.josso;
 
-import org.apache.log4j.Logger;
-
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.http.HttpSSOAgent;
+import org.josso.gateway.identity.service.SSOIdentityManagerService;
 
+import java.lang.reflect.Method;
 import java.security.Principal;
 
 /**
@@ -34,22 +36,15 @@ import java.security.Principal;
  *
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class GateInSSOAgent extends HttpSSOAgent 
+public class GateInSSOAgent extends HttpSSOAgent
 {
 
-    private static final Logger log = Logger.getLogger(GateInSSOAgent.class);
+    private static final Logger log = LoggerFactory.getLogger(GateInSSOAgent.class);
 
     protected Principal authenticate(SSOAgentRequest request) 
     {
-    		try
-    		{
-    			String ssoSessionId = request.getSessionId();
-    			return this.getSSOIdentityManager().findUserInSession(ssoSessionId);
-    		}
-    		catch(Exception e)
-    		{
-    			throw new RuntimeException(e);
-    		}
+       GateInAuthenticationDelegate authDelegate = GateInJOSSOAgentFactory.getInstance().getAuthenticationDelegate();
+       return authDelegate.authenticate(this.getSSOIdentityManager(), request);
     }
 
     protected boolean isAuthenticationAlwaysRequired() 

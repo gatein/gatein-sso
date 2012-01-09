@@ -14,52 +14,42 @@
 		<dependency>
 			<groupId>org.josso</groupId>
 			<artifactId>josso-agents-bin</artifactId>
-            <version>1.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.josso</groupId>
 			<artifactId>josso-agent-shared</artifactId>
-            <version>1.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-            <version>2.5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-            <version>2.5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-            <version>2.5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-discovery</groupId>
 			<artifactId>commons-discovery</artifactId>
-            <version>0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis</groupId>
 			<artifactId>axis</artifactId>
-            <version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xbean</groupId>
 			<artifactId>xbean-spring</artifactId>
-            <version>3.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-agent</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-auth-callback</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -74,8 +64,15 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-josso-plugin</artifactId>
-			<version>${project.version}</version>
 		</dependency>
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-agent-josso181</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-agent-josso182</artifactId>
+      </dependency>
 		<dependency>
 			<groupId>apache-log4j</groupId>
 			<artifactId>log4j</artifactId>

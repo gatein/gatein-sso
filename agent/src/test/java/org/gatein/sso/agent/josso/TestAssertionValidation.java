@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 import org.josso.agent.SSOAgent;
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgentRequest;
-import org.josso.agent.LocalSession;
 import org.josso.agent.SingleSignOnEntry;
 
 import org.josso.servlet.agent.GenericServletSSOAgentRequest;
@@ -65,7 +64,7 @@ public class TestAssertionValidation extends TestCase
 		
 		String assertionId = "";
 		
-		SSOAgentRequest request = new GenericServletSSOAgentRequest(SSOAgentRequest.ACTION_RELAY,
+		SSOAgentRequest request = new GenericServletSSOAgentRequest("portal", SSOAgentRequest.ACTION_RELAY,
 				null,
 				new GenericServletLocalSession(null),
 				assertionId);

@@ -148,8 +148,9 @@ public class GateinIdentityPlugin implements BindableCredentialStore,IdentitySto
 
 	public BaseRole[] findRolesByUserKey(UserKey userKey)
 			throws SSOIdentityException
-	{	
-			return null;
+	{
+      // Return empty role set for now. We may think about extending auth-callback for obtain GateIn roles via REST.
+      return new BaseRole[] {};
 	}
 
 	public BaseUser loadUser(UserKey userKey) throws NoSuchUserException,
@@ -172,6 +173,11 @@ public class GateinIdentityPlugin implements BindableCredentialStore,IdentitySto
 		return null;
 	}
 
+   public String loadUID(CredentialKey key, CredentialProvider cp) throws SSOIdentityException
+   {
+      return null;
+   }
+
 	public boolean bind(String username, String password)
 			throws SSOAuthenticationException
 	{
@@ -179,8 +185,7 @@ public class GateinIdentityPlugin implements BindableCredentialStore,IdentitySto
 		{
 			// return this.portalIdentityService.authenticate(username, password);
 			log.debug("Performing Authentication........................");
-			log.debug("Username: "+username);
-			log.debug("Password: "+password);
+			log.debug("Username: " + username);
 			
 			StringBuilder urlBuffer = new StringBuilder();
 				urlBuffer.append("http://" + this.gateInHost + ":" + this.gateInPort + "/"

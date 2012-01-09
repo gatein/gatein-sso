@@ -61,11 +61,19 @@
 		<version.cas.client>3.1.9</version.cas.client>
 
 		<!-- josso -->
-		<version.josso>1.8.1</version.josso>
+		<version.josso>1.8.2</version.josso>
 
 		<!-- xbean -->
 		<version.xbean>3.4.3</version.xbean>
 
+      <!-- spring -->
+      <version.spring>2.5.5</version.spring>
+
+      <!-- commons discovery -->
+      <version.commons.discovery>0.2</version.commons.discovery>
+
+      <!-- apache axis -->
+      <version.axis>1.4</version.axis>
 
 		<!-- exo -->
 		<org.exoplatform.core.version>2.4.3-GA</org.exoplatform.core.version>
@@ -84,6 +92,33 @@
 
 	<dependencyManagement>
 		<dependencies>
+         <!-- internal -->
+         <dependency>
+            <groupId>org.gatein.sso</groupId>
+            <artifactId>sso-auth-callback</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.gatein.sso</groupId>
+            <artifactId>sso-agent</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.gatein.sso</groupId>
+            <artifactId>sso-josso-plugin</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.gatein.sso</groupId>
+            <artifactId>sso-agent-josso181</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.gatein.sso</groupId>
+            <artifactId>sso-agent-josso182</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
 			<!--  junit -->
 			<dependency>
 				<groupId>junit</groupId>
@@ -124,6 +159,11 @@
 				<artifactId>josso-agent-shared</artifactId>
 				<version>${version.josso}</version>
 			</dependency>
+         <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agents-bin</artifactId>
+            <version>${version.josso}</version>
+         </dependency>
 			<dependency>
 				<groupId>org.josso</groupId>
 				<artifactId>josso-servlet-agent</artifactId>
@@ -151,6 +191,35 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+
+         <!-- Spring (needed for JOSSO -->
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${version.spring}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${version.spring}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${version.spring}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>${version.commons.discovery}</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>${version.axis}</version>
+         </dependency>
 
 			<!--  logging -->
 			<dependency>
@@ -274,6 +343,16 @@
 
 
 	<build>
+      <!-- Set plugin versions here -->
+      <pluginManagement>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-dependency-plugin</artifactId>
+               <version>2.2</version>
+            </plugin>
+         </plugins>
+      </pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

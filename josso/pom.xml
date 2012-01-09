@@ -15,8 +15,10 @@
 	<name>GateIn SSO - JOSSO</name>
 
 	<modules>
+      <module>gatein-agent-josso181</module>
+      <module>gatein-agent-josso182</module>
 		<module>gatein-josso-portal</module>
 		<module>gatein-josso-plugin</module>
-	</modules>
+   </modules>
 
 </project>

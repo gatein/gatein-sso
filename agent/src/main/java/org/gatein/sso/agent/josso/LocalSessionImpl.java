@@ -31,7 +31,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * 
+ * Forked class {@link org.josso.servlet.agent.LocalSessionImpl} . We don't want dependency
+ * on josso-servlet-agent library because we need our own agent {@link GateInSSOAgent} to be used instead of
+ * {@link org.josso.servlet.agent.GenericServletSSOAgent} from josso-servlet-agent
+ *
  * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
  */
 public class LocalSessionImpl implements LocalSession

@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <parent>
+      <artifactId>sso-josso-parent</artifactId>
+      <groupId>org.gatein.sso</groupId>
+      <version>1.1.1-CR01-SNAPSHOT</version>
+   </parent>
+   <modelVersion>4.0.0</modelVersion>
+
+   <artifactId>sso-agent-josso182</artifactId>
+   <packaging>jar</packaging>
+
+   <name>GateIn JOSSO agent for JOSSO 1.8.2 and newer</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-agent</artifactId>
+      </dependency>
+   </dependencies>
+</project>
