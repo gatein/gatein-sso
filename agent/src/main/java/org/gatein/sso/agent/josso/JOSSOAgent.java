@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
+import org.gatein.sso.agent.GenericAgent;
 import org.gatein.wci.security.Credentials;
 
 import org.josso.agent.Lookup;
@@ -36,7 +37,7 @@ import org.josso.agent.http.HttpSSOAgent;
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class JOSSOAgent
+public class JOSSOAgent extends GenericAgent
 {
 	private static Logger log = LoggerFactory.getLogger(JOSSOAgent.class);
 	private static JOSSOAgent singleton;      
@@ -101,12 +102,7 @@ public class JOSSOAgent
 			log.debug("Principal: " + principal);
 			log.debug("-----------------------------------------------------------");
 			
-			Credentials credentials = new Credentials(principal, "");
-			httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
-			httpRequest.getSession().setAttribute("username", principal);
-
-         // TODO: this is needed for using default login module stack instead of SSOLoginModule. Should be moved to some abstract superclass instead.
-         httpRequest.getSession().setAttribute("authenticatedCredentials", credentials);
+         this.saveSSOCredentials(principal, httpRequest);
 		}
 	}
 	

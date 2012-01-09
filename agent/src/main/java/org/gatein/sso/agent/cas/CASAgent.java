@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.gatein.sso.agent.GenericAgent;
 import org.gatein.wci.security.Credentials;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
@@ -32,7 +33,7 @@ import org.jasig.cas.client.validation.Assertion;
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class CASAgent
+public class CASAgent extends GenericAgent
 {
 	private static Logger log = Logger.getLogger(CASAgent.class);
 	private static CASAgent singleton;
@@ -86,14 +87,8 @@ public class CASAgent
 	    log.debug("Service: "+this.casServiceUrl);
 	    log.debug("Principal: "+assertion.getPrincipal().getName());
 	    log.debug("------------------------------------------------------------------------------------");
-	    
-	        
-	    //Use empty password....it shouldn't be needed...this is a SSO login. The password has
-	    //already been presented with the SSO server. It should not be passed around for 
-	    //better security
+
 	    String principal = assertion.getPrincipal().getName();
-	    Credentials credentials = new Credentials(principal, "");
-        httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
-	    httpRequest.getSession().setAttribute("username", principal);
+       this.saveSSOCredentials(principal, httpRequest);
 	}		
 }

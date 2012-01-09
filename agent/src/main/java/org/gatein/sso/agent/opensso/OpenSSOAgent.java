@@ -32,12 +32,13 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 
+import org.gatein.sso.agent.GenericAgent;
 import org.gatein.wci.security.Credentials;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class OpenSSOAgent
+public class OpenSSOAgent extends GenericAgent
 {
 	private static Logger log = Logger.getLogger(OpenSSOAgent.class);
 	private static OpenSSOAgent singleton;
@@ -101,9 +102,7 @@ public class OpenSSOAgent
 			String subject = this.getSubject(token);			
 			if(subject != null)
 			{
-				Credentials credentials = new Credentials(subject, "");
-				httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
-				httpRequest.getSession().setAttribute("username", subject);
+            this.saveSSOCredentials(subject, httpRequest);
 			}
 		}
 	}	
