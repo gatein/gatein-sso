@@ -46,6 +46,7 @@
 				<include>org.apache.xbean:xbean-spring</include>
 				<include>org.gatein.sso:sso-agent</include>
 				<include>org.gatein.sso:sso-auth-callback</include>
+            <include>org.gatein.sso:sso-agent-josso181</include>
 			</includes>
 		</dependencySet>
 
@@ -64,6 +65,7 @@
             <include>org.apache.xbean:xbean-spring</include>
             <include>org.gatein.sso:sso-agent</include>
             <include>org.gatein.sso:sso-auth-callback</include>
+            <include>org.gatein.sso:sso-agent-josso182</include>
          </includes>
       </dependencySet>
 
