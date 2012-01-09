@@ -3,6 +3,7 @@
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-parent</artifactId>
 		<version>1.1.1-CR01-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -14,12 +15,10 @@
                 <dependency>
                         <groupId>org.gatein.sso</groupId>
                         <artifactId>sso-agent</artifactId>
-                        <version>${project.version}</version>
                 </dependency>
                 <dependency>
                         <groupId>org.gatein.sso</groupId>
                         <artifactId>spnego</artifactId>
-                        <version>${project.version}</version>
                 </dependency>
                 <dependency>
                         <groupId>org.jboss.security</groupId>
@@ -32,7 +31,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-5</version>
 				<configuration>
 					<descriptors>
 						<descriptor>src/main/assembly/src.xml</descriptor>

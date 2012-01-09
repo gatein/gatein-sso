@@ -3,6 +3,7 @@
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-josso-parent</artifactId>
 		<version>1.1.1-CR01-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -37,7 +38,6 @@
 			<plugin>
 				<groupId>org.apache.xbean</groupId>
 				<artifactId>maven-xbean-plugin</artifactId>
-				<version>${version.xbean}</version>
 				<executions>
 					<execution>
 						<configuration>

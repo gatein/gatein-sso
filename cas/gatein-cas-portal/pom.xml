@@ -2,6 +2,7 @@
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-cas-parent</artifactId>
+      <relativePath>../pom.xml</relativePath>
 		<version>1.1.1-CR01-SNAPSHOT</version>
 	</parent>
 
@@ -14,7 +15,6 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-cas-plugin</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -23,17 +23,14 @@
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-agent</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-auth-callback</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-client-core</artifactId>
-			<version>${version.cas.client}</version>
 		</dependency>
 	</dependencies>
 
@@ -41,7 +38,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-5</version>
 				<configuration>
 					<descriptors>
 						<descriptor>src/main/assembly/src.xml</descriptor>
