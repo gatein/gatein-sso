@@ -41,8 +41,9 @@
     -->
 		<module>opensso</module>
 		<module>spnego</module>
+      <module>saml</module>
 		<module>packaging</module>
-	</modules>
+   </modules>
 
 	<properties>
 		<version.junit>3.8.2</version.junit>
@@ -88,6 +89,10 @@
 		
 		<!--  SPNEGO support using JBoss Negotiation -->
 		<version.jboss.negotiation>2.0.4.GA</version.jboss.negotiation>
+
+      <!-- Picketlink federation (SAML integration) -->
+      <version.picketlink.fed>2.0.1.final</version.picketlink.fed>
+
 	</properties>
 
 	<dependencyManagement>
@@ -308,6 +313,14 @@
             <artifactId>jacc</artifactId>
             <version>1.0</version>
          </dependency>
+
+         <!-- Picketlink federation (SAML) -->
+         <dependency>
+            <groupId>org.picketlink</groupId>
+            <artifactId>picketlink-bindings-jboss</artifactId>
+            <version>2.0.1.final</version>
+         </dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

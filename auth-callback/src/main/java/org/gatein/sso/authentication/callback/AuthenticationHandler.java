@@ -37,10 +37,13 @@ import org.exoplatform.container.RootContainer;
 
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.Credential;
+import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.PasswordCredential;
 import org.exoplatform.services.security.UsernameCredential;
 
 import org.exoplatform.services.rest.resource.ResourceContainer;
+
+import java.util.Collection;
 
 /**
  * This is a RESTful component that is invoked by central SSO servers like CAS server, JOSSO server etc, to invoke
@@ -64,9 +67,8 @@ public class AuthenticationHandler implements ResourceContainer
 		 {
 			  log.debug("---------------------------------------");
 			  log.debug("Username: "+username);
-			  log.debug("Password: "+password);
-			  
-			  ExoContainer container = this.getContainer();
+			  log.debug("Password: XXXXXXXXXXXXXXXX");
+
 			  Authenticator authenticator = (Authenticator) getContainer().getComponentInstanceOfType(Authenticator.class);
 			  			  
 			  Credential[] credentials = new Credential[] { new UsernameCredential(username),
@@ -87,6 +89,57 @@ public class AuthenticationHandler implements ResourceContainer
 			 log.error(this, e);
 			 throw new RuntimeException(e);
 		 }
+   }
+
+   /**
+    * Obtain list of JAAS roles for some user. For example, for user root it can return String like: "users,administrators,organization"
+    * It's usually not needed because SSO authorization is done on portal side, but may be useful for some SSO implementations to use
+    * this callback and ask portal for roles.
+    *
+    * @param username
+    * @return {@link String} with roles in format like: "users,administrators,organization"
+    */
+   @GET
+   @Path("/roles/{1}")
+   @Produces({MediaType.TEXT_PLAIN})
+   public String getJAASRoles(@PathParam("1") String username)
+   {      
+      try
+      {
+         log.debug("---------------------------------------");
+         log.debug("Going to obtain roles for user: " + username);
+
+         Authenticator authenticator = (Authenticator) getContainer().getComponentInstanceOfType(Authenticator.class);
+         Identity identity = authenticator.createIdentity(username);
+         Collection<String> roles = identity.getRoles();
+         
+         StringBuilder result = null;
+         for (String role : roles)
+         {
+            if (result == null)
+            {
+               result = new StringBuilder(role);
+            }
+            else
+            {
+               result.append(",").append(role);
+            }
+         }
+         
+         if (result != null)
+         {
+            return result.toString();
+         }
+         else
+         {
+            return "";
+         }
+      }
+      catch(Exception e)
+      {
+         log.error(this, e);
+         throw new RuntimeException(e);
+      }
    }
 	 
 	 private ExoContainer getContainer() throws Exception 

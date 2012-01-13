@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <parent>
+      <artifactId>sso-saml-parent</artifactId>
+      <groupId>org.gatein.sso</groupId>
+      <version>1.1.1-CR01-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>org.gatein.sso</groupId>
+   <artifactId>sso-saml-plugin</artifactId>
+   <packaging>jar</packaging>
+
+   <name>GateIn SSO - SAML Identity provider plugin</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>commons-httpclient</groupId>
+         <artifactId>commons-httpclient</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>apache-log4j</groupId>
+         <artifactId>log4j</artifactId>
+      </dependency>
+   </dependencies>
+
+</project>
