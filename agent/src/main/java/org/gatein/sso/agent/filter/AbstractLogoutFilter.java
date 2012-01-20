@@ -64,8 +64,10 @@ public abstract class AbstractLogoutFilter implements Filter
 			if (httpRequest.getSession().getAttribute("SSO_LOGOUT_FLAG") == null)
 			{
 				httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
-				
-				httpResponse.sendRedirect(this.getRedirectUrl(httpRequest));
+
+            String redirectUrl = this.getRedirectUrl(httpRequest);
+            redirectUrl = httpResponse.encodeRedirectURL(redirectUrl);
+				httpResponse.sendRedirect(redirectUrl);
 				return;
 			}
 			else
