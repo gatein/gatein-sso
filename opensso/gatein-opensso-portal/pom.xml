@@ -2,7 +2,7 @@
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-opensso-parent</artifactId>
-		<version>1.1.1-CR01-SNAPSHOT</version>
+		<version>1.1.1-CR01</version>
       <relativePath>../pom.xml</relativePath>
 	</parent>
 
