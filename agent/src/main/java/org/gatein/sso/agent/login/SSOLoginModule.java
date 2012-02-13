@@ -35,14 +35,14 @@ import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.UsernameCredential;
 import org.exoplatform.services.security.jaas.AbstractLoginModule;
+import org.gatein.sso.agent.tomcat.ServletAccess;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
 public final class SSOLoginModule extends AbstractLoginModule
 {
-	private static final Log log = ExoLogger.getLogger(SSOLoginModule.class
-			.getName());
+   private static final Log log = ExoLogger.getLogger(SSOLoginModule.class);
 	
 	/** JACC get context method. */
    private static Method getContextMethod;
@@ -75,26 +75,22 @@ public final class SSOLoginModule extends AbstractLoginModule
 
 			String password = new String(((PasswordCallback) callbacks[1])
 					.getPassword());
-			
-		   //
-          // For clustered config check credentials stored and propagated in session. This won't work in tomcat because
-         // of lack of JACC PolicyContext so the code must be a bit defensive
+					 
+       // Check credentials stored and propagated in session.
 		 String username = null;
-         if (getContextMethod != null && password.startsWith("wci-ticket"))
-         {
-            HttpServletRequest request;
-            try
-            {
-               request = (HttpServletRequest)getContextMethod.invoke(null, "javax.servlet.http.HttpServletRequest");
-               username = (String)request.getSession().getAttribute("username");
-            }
-            catch(Throwable e)
-            {
-               log.error(this,e);
-               log.error("LoginModule error. Turn off session credentials checking with proper configuration option of " +
-                  "LoginModule set to false");
-            }
-         }
+       HttpServletRequest request = getCurrentHttpServletRequest();
+         
+       if (request == null)
+       {
+          log.debug("HttpServletRequest is null. SSOLoginModule will be ignored.");
+          return false;
+       }
+
+       if (password.startsWith("wci-ticket"))
+       {
+          username = (String)request.getSession().getAttribute("username");
+       }
+
 			
 			if (username == null)
 			{
@@ -145,8 +141,40 @@ public final class SSOLoginModule extends AbstractLoginModule
 	}
 
     @Override
-    protected Log getLogger() 
+    protected Log getLogger()
     {
         return log;
     }
+   
+   protected HttpServletRequest getCurrentHttpServletRequest()
+   {
+      HttpServletRequest request = null;
+
+      // JBoss way
+      if (getContextMethod != null)
+      {
+         try
+         {
+            request = (HttpServletRequest)getContextMethod.invoke(null, "javax.servlet.http.HttpServletRequest");
+         }
+         catch(Throwable e)
+         {
+            log.error("LoginModule error. Turn off session credentials checking with proper configuration option of " +
+                  "LoginModule set to false");
+            log.error(this, e);
+         }
+      }
+      // Tomcat way (Assumed that ServletAccessValve has been configured in context.xml)
+      else
+      {
+         request = ServletAccess.getRequest();
+      }
+      
+      if (log.isTraceEnabled())
+      {
+         log.trace("Returning HttpServletRequest " + request);
+      }
+      
+      return request;
+   }
 }
