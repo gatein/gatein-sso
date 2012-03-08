@@ -77,21 +77,24 @@
       <version.axis>1.4</version.axis>
 
 		<!-- exo -->
-		<org.exoplatform.core.version>2.4.3-GA</org.exoplatform.core.version>
-		<org.exoplatform.ws.version>2.2.3-GA</org.exoplatform.ws.version>
-		<org.gatein.wci.version>2.1.1-Beta03</org.gatein.wci.version>
+		<org.exoplatform.core.version>2.4.6-GA</org.exoplatform.core.version>
+		<org.exoplatform.ws.version>2.2.6-GA</org.exoplatform.ws.version>
+		<org.gatein.wci.version>2.1.1-GA</org.gatein.wci.version>
 
 		<!-- JAX-RS jsr-311 -->
 		<version.javax.ws.rs>1.0</version.javax.ws.rs>
 
 		<!-- servlet-api -->
 		<version.servlet-api>2.5</version.servlet-api>
+
+      <!-- JACC -->
+      <version.security.jacc>1.0</version.security.jacc>
 		
 		<!--  SPNEGO support using JBoss Negotiation -->
 		<version.jboss.negotiation>2.0.4.GA</version.jboss.negotiation>
 
       <!-- Picketlink federation (SAML integration) -->
-      <version.picketlink.fed>2.0.1.final</version.picketlink.fed>
+      <version.picketlink.fed>2.0.2.Final</version.picketlink.fed>
 
 	</properties>
 
@@ -311,14 +314,14 @@
          <dependency>
             <groupId>javax.security</groupId>
             <artifactId>jacc</artifactId>
-            <version>1.0</version>
+            <version>${version.security.jacc}</version>
          </dependency>
 
          <!-- Picketlink federation (SAML) -->
          <dependency>
             <groupId>org.picketlink</groupId>
             <artifactId>picketlink-bindings-jboss</artifactId>
-            <version>2.0.1.final</version>
+            <version>${version.picketlink.fed}</version>
          </dependency>
 
 		</dependencies>
@@ -399,13 +402,17 @@
                <artifactId>maven-xbean-plugin</artifactId>
                <version>${version.xbean}</version>
             </plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-compiler-plugin</artifactId>
+               <version>2.0.2</version>
+            </plugin>
          </plugins>
       </pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
