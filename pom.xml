@@ -56,6 +56,7 @@
 		<version.jboss.logging>2.0.5.GA</version.jboss.logging>
 		<version.apache.logging>1.0.4-jboss</version.apache.logging>
 		<version.commons-logging>1.0.4</version.commons-logging>
+      <version.slf4j>1.5.8</version.slf4j>
 
 		<!-- cas -->
 		<version.cas>3.3.4</version.cas>
@@ -254,6 +255,11 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>${version.commons-logging}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${version.slf4j}</version>
          </dependency>
 
 			<!-- httpclient -->

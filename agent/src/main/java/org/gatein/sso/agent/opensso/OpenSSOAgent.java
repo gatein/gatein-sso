@@ -21,30 +21,34 @@
 */
 package org.gatein.sso.agent.opensso;
 
-import java.io.InputStream;
-import java.util.Properties;
-
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Cookie;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
-
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.GenericAgent;
-import org.gatein.wci.security.Credentials;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
 public class OpenSSOAgent extends GenericAgent
 {
-	private static Logger log = Logger.getLogger(OpenSSOAgent.class);
+   // HttpSession attribute, which will be used to check that response message from CDC contains same ID of InResponseTo as the ID, which we used in OpenSSOCDLoginRedirectFilter
+   public static final String IN_RESPONSE_TO_ATTR = "OpenSSOAgent.InResponseTo";
+
+   private static Logger log = LoggerFactory.getLogger(OpenSSOAgent.class);
 	private static OpenSSOAgent singleton;
 	
 	private String cookieName;
 	private String serverUrl;
+
+   private CDMessageParser cdcMessageParser = new CDMessageParser();
 	
 	private OpenSSOAgent(String serverUrl, String cookieName)
 	{		
@@ -67,13 +71,20 @@ public class OpenSSOAgent extends GenericAgent
 		return OpenSSOAgent.singleton;
 	}
 		
-	public void validateTicket(HttpServletRequest httpRequest) throws Exception
-	{						
+	public void validateTicket(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception
+	{
+      // Start with processing message from CDCServlet if this message is available (it should be in servlet request parameter "LARES")
+      if (tryMessageFromCDC(httpRequest, httpResponse))
+      {
+         return;
+      }
+
+      // Now cookie should be set and we can continue with cookie processing
 		String token = null;
 		Cookie[] cookies = httpRequest.getCookies();
 		if(cookies == null)
 		{
-		    return;
+         return;
 		}
 		
 		for(Cookie cookie: cookies)
@@ -87,7 +98,7 @@ public class OpenSSOAgent extends GenericAgent
 		
 		if(token == null)
 		{
-		    throw new IllegalStateException("No SSO Tokens Found");
+		    throwIllegalStateException("No SSO Tokens Found");
 		}
 						
 		if(token != null)
@@ -96,7 +107,7 @@ public class OpenSSOAgent extends GenericAgent
 			
 			if(!isValid)
 			{
-				throw new IllegalStateException("OpenSSO Token is not valid!!");
+            throwIllegalStateException("OpenSSO Token is not valid!!");
 			}
 		
 			String subject = this.getSubject(token);			
@@ -105,7 +116,92 @@ public class OpenSSOAgent extends GenericAgent
             this.saveSSOCredentials(subject, httpRequest);
 			}
 		}
-	}	
+	}
+
+   /**
+    * This method is useful only for Cross-Domain (CD) authentication scenario when GateIn and OpenSSO are in different DNS domains and they can't share cookie.
+    *
+    * It performs:
+    * <li>Parse and validate message from OpenSSO CDCServlet.</li>
+    * <li>Use ssoToken from parsed message and establish OpenSSO cookie iPlanetDirectoryPro</li>
+    * <li>Redirects to InitiateLoginFilter but with cookie established. So in next request, we can perform agent validation against OpenSSO server</li>
+    *
+    * @param httpRequest
+    * @param httpResponse
+    * @return true if parameter LARES with message from CDC is present in HttpServletRequest
+    * @throws IOException
+    */
+   protected boolean tryMessageFromCDC(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException
+   {
+      String encodedCDCMessage = httpRequest.getParameter("LARES");
+
+      if (encodedCDCMessage == null)
+      {
+         if (log.isTraceEnabled())
+         {
+            log.trace("Message from CDC not found in this HttpServletRequest");
+         }
+         return false;
+      }
+
+      CDMessageContext messageContext = cdcMessageParser.parseMessage(encodedCDCMessage);
+      if (log.isTraceEnabled())
+      {
+         log.trace("Successfully parsed messageContext " + messageContext);
+      }
+
+      // Validate received messageContext
+      validateCDMessageContext(httpRequest, messageContext);
+
+      // Establish cookie with ssoToken
+      String ssoToken = messageContext.getSsoToken();
+      Cookie cookie = new Cookie(cookieName, "\"" + ssoToken + "\"");
+      cookie.setPath(httpRequest.getContextPath());
+      httpResponse.addCookie(cookie);
+      if (log.isTraceEnabled())
+      {
+         log.trace("Cookie " + cookieName + " with value " + ssoToken + " added to HttpResponse");
+      }
+
+      // Redirect again this request to be processed by OpenSSOAgent. Now we have cookie established
+      String urlToRedirect = httpResponse.encodeRedirectURL(httpRequest.getRequestURI());
+      httpResponse.sendRedirect(urlToRedirect);
+
+      return true;
+   }
+
+
+   /**
+    * Validation of various criterias in {@link CDMessageContext}
+    *
+    * @param httpRequest
+    * @param context
+    */
+   protected void validateCDMessageContext(HttpServletRequest httpRequest, CDMessageContext context)
+   {
+      // First validate if context contains success
+      if (!context.getSuccess())
+      {
+         throwIllegalStateException("CDMessageContext contains success=false. Check SAML message from CDCServlet");
+      }
+
+      // Now validate inResponseTo
+      Integer inResponseToFromCDC = context.getInResponseTo();
+      Integer inResponseToFromSession = (Integer)httpRequest.getSession().getAttribute(IN_RESPONSE_TO_ATTR);
+      if (inResponseToFromSession == null || inResponseToFromCDC == null || !inResponseToFromCDC.equals(inResponseToFromSession))
+      {
+         throwIllegalStateException("inResponseTo from CDC message is " + inResponseToFromCDC + ", inResponseTo from Http session is " + inResponseToFromSession + ". Both should have same value");
+      }
+
+      // TODO: validate dates notBefore and notOnOrAfter
+
+      // Validate that token is present
+      if (context.getSsoToken() == null)
+      {
+         throwIllegalStateException("No token found in CDMessageContext. Check SAML message from CDCServlet");
+      }
+   }
+
 	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	private boolean isTokenValid(String token) throws Exception
 	{
@@ -218,4 +314,12 @@ public class OpenSSOAgent extends GenericAgent
 			}
 		}
 	}
+
+   private void throwIllegalStateException(String message)
+   {
+      log.warn(message);
+      IllegalStateException ise = new IllegalStateException(message);
+      throw ise;
+   }
+
 }

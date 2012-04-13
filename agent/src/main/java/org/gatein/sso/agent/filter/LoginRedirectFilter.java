@@ -21,6 +21,9 @@
 */
 package org.gatein.sso.agent.filter;
 
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -38,11 +41,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LoginRedirectFilter implements Filter
 {
-	private String loginUrl;
+	String loginUrl;
+   private static final Logger log = LoggerFactory.getLogger(LoginRedirectFilter.class);
 	
 	public void init(FilterConfig config) throws ServletException
 	{
 		this.loginUrl = config.getInitParameter("LOGIN_URL");
+      log.info("Filter configuration: loginUrl=" + loginUrl);
 	}
 	
 	public void destroy()
@@ -58,13 +63,23 @@ public class LoginRedirectFilter implements Filter
 		boolean isLoginInProgress = this.isLoginInProgress(httpRequest);
 		if(isLoginInProgress)
 		{
-			httpResponse.sendRedirect(this.loginUrl);
+         String urlToRedirect = getLoginRedirectURL(httpRequest);
+         urlToRedirect = httpResponse.encodeRedirectURL(urlToRedirect);
+			httpResponse.sendRedirect(urlToRedirect);
 			
 			return;
 		}
 		
 		chain.doFilter(request, response);
 	}
+
+   /**
+    * @return value of parameter loginUrl. But can be overriden by subclasses.
+    */
+   protected String getLoginRedirectURL(HttpServletRequest httpRequest)
+   {
+      return this.loginUrl;
+   }
 	
 	private boolean isLoginInProgress(HttpServletRequest request)
 	{

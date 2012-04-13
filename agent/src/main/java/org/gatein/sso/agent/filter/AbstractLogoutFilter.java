@@ -21,6 +21,9 @@
  */
 package org.gatein.sso.agent.filter;
 
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -39,11 +42,15 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class AbstractLogoutFilter implements Filter
 {
 	protected String logoutUrl;
-	private static final String fileEncoding = System.getProperty("file.encoding");        
+	private static final String fileEncoding = System.getProperty("file.encoding");
+
+   private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public void init(FilterConfig config) throws ServletException
 	{
 		this.logoutUrl = config.getInitParameter("LOGOUT_URL");
+
+      log.info("Reading filter configuration: logoutUrl=" + this.logoutUrl);
 	}
 
 	public void destroy()
