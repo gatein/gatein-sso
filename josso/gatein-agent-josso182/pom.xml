@@ -2,7 +2,7 @@
    <parent>
       <artifactId>sso-josso-parent</artifactId>
       <groupId>org.gatein.sso</groupId>
-      <version>1.1.2-Beta01-SNAPSHOT</version>
+      <version>1.1.2-Beta01</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <modelVersion>4.0.0</modelVersion>
