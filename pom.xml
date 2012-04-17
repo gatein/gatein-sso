@@ -24,11 +24,11 @@
 	<description>GateIn Single Sign On Integration</description>
 
 
-        <scm>
-           <connection>scm:svn:http://anonsvn.jboss.org/repos/gatein/components/sso/trunk</connection>
-           <developerConnection>scm:svn:https://svn.jboss.org/repos/gatein/components/sso/trunk</developerConnection>
-           <url>http://fisheye.jboss.org/browse/gatein/components/sso/trunk</url>
-        </scm>
+    <scm>
+        <connection>scm:git:git://github.com/gatein/gatein-sso.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/gatein/gatein-sso.git</developerConnection>
+        <url>https://github.com/gatein/gatein-sso</url>
+    </scm>
 
 
 	<modules>
@@ -96,6 +96,17 @@
 
       <!-- Picketlink federation (SAML integration) -->
       <version.picketlink.fed>2.0.2.Final</version.picketlink.fed>
+      
+      
+      <!-- maven-release-plugin -->
+      <useReleaseProfile>false</useReleaseProfile>
+      <arguments>-Prelease</arguments>
+      <version.release.plugin>2.2.1</version.release.plugin>
+      <pushChanges>false</pushChanges>
+      <autoVersionSubmodules>true</autoVersionSubmodules>
+      
+      <!-- buildnumber-maven-plugin : needs 1.0 for git -->
+      <version.buildnumber.plugin>1.0</version.buildnumber.plugin>
 
 	</properties>
 
