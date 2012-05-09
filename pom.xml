@@ -95,7 +95,7 @@
 		<version.jboss.negotiation>2.0.4.GA</version.jboss.negotiation>
 
       <!-- Picketlink federation (SAML integration) -->
-      <version.picketlink.fed>2.0.2.Final</version.picketlink.fed>
+      <version.picketlink.fed>2.0.3.Final</version.picketlink.fed>
       
       
       <!-- maven-release-plugin -->
