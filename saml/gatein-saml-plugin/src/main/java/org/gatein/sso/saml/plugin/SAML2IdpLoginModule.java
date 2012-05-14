@@ -60,10 +60,8 @@ public class SAML2IdpLoginModule implements LoginModule
    // This option is valid only if rolesProcessing is STATIC. It contains list of static roles, which will be assigned to each authenticated user.
    private static final String OPTION_STATIC_ROLES_LIST = "staticRolesList";
 
-   //  gateIn URL related properties, which will be used to send REST callback requests
-   private static final String OPTION_GATEIN_HOST = "gateInHost";
-   private static final String OPTION_GATEIN_PORT = "gateInPort";
-   private static final String OPTION_GATEIN_CONTEXT = "gateInContext";
+   //  gateIn URL related property, which will be used to send REST callback requests
+   private static final String OPTION_GATEIN_URL = "gateInURL";
 
    private static Logger log = Logger.getLogger(SAML2IdpLoginModule.class);
 
@@ -76,9 +74,7 @@ public class SAML2IdpLoginModule implements LoginModule
    @SuppressWarnings("unchecked")
    private Map options;
 
-   private String gateInHost;
-   private String gateInPort;
-   private String gateInContext;
+   private String gateInURL;
 
    private ROLES_PROCESSING_TYPE rolesProcessingType;
    private List<String> staticRolesList;
@@ -105,9 +101,7 @@ public class SAML2IdpLoginModule implements LoginModule
       String staticRoles = readOption(OPTION_STATIC_ROLES_LIST, "users");
       this.staticRolesList = Arrays.asList(staticRoles.split(","));
 
-      this.gateInHost = readOption(OPTION_GATEIN_HOST, "localhost");
-      this.gateInPort = readOption(OPTION_GATEIN_PORT, "8080");
-      this.gateInContext = readOption(OPTION_GATEIN_CONTEXT, "portal");
+      this.gateInURL = readOption(OPTION_GATEIN_URL, "http://localhost:8080/portal");
    }   
 
    public boolean login() throws LoginException
@@ -197,7 +191,7 @@ public class SAML2IdpLoginModule implements LoginModule
    protected boolean validateUser(String username, String password)
    {
       StringBuilder urlBuffer = new StringBuilder();
-      urlBuffer.append("http://" + this.gateInHost + ":" + this.gateInPort + "/" + this.gateInContext
+      urlBuffer.append(this.gateInURL
             + "/rest/sso/authcallback/auth/" + username + "/" + password);
       String url = urlBuffer.toString();
       log.debug("Execute callback HTTP for authentication of user: " + username);
@@ -217,7 +211,7 @@ public class SAML2IdpLoginModule implements LoginModule
       {
          // We need to execute REST callback to GateIn to ask for roles
          StringBuilder urlBuffer = new StringBuilder();
-         urlBuffer.append("http://" + this.gateInHost + ":" + this.gateInPort + "/" + this.gateInContext
+         urlBuffer.append(this.gateInURL
                + "/rest/sso/authcallback/roles/" + username);
          
          String url = urlBuffer.toString();
