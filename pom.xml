@@ -153,6 +153,11 @@
             <artifactId>spnego</artifactId>
             <version>${project.version}</version>
          </dependency>
+         <dependency>
+            <groupId>org.gatein.sso</groupId>
+            <artifactId>sso-saml-plugin</artifactId>
+            <version>${project.version}</version>
+         </dependency>
 
 			<!--  junit -->
 			<dependency>
