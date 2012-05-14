@@ -96,8 +96,10 @@
 
       <!-- Picketlink federation (SAML integration) -->
       <version.picketlink.fed>2.1.1.Final</version.picketlink.fed>
-      
-      
+
+      <!-- JBoss Web -->
+      <version.jboss.web>2.1.7.GA</version.jboss.web>
+
       <!-- maven-release-plugin -->
       <useReleaseProfile>false</useReleaseProfile>
       <arguments>-Prelease</arguments>
@@ -349,6 +351,13 @@
             <groupId>org.picketlink.distribution</groupId>
             <artifactId>picketlink-jbas5</artifactId>
             <version>${version.picketlink.fed}</version>
+         </dependency>
+
+         <!-- JBoss Web -->
+         <dependency>
+            <groupId>jboss.web</groupId>
+            <artifactId>jbossweb</artifactId>
+            <version>${version.jboss.web}</version>
          </dependency>
 
 		</dependencies>
