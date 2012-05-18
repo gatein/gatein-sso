@@ -22,6 +22,22 @@
          <groupId>apache-log4j</groupId>
          <artifactId>log4j</artifactId>
       </dependency>
+      <dependency>
+         <groupId>org.picketlink.distribution</groupId>
+         <artifactId>picketlink-jbas5</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.picketlink</groupId>
+         <artifactId>picketlink-core</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>jboss.web</groupId>
+         <artifactId>jbossweb</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>servlet-api</artifactId>
+      </dependency>
    </dependencies>
 
 </project>

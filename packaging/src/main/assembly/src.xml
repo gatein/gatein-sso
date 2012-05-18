@@ -24,6 +24,10 @@
        <outputDirectory>gatein-sso-${version}/spnego</outputDirectory>
     </fileSet>
     <fileSet>
+       <directory>../saml/gatein-saml-portal/target/sso-saml-pkg-${version}/</directory>
+       <outputDirectory>gatein-sso-${version}/saml</outputDirectory>
+    </fileSet>
+    <fileSet>
        <directory>src/main/resources/</directory>
        <outputDirectory>gatein-sso-${version}</outputDirectory>
     </fileSet>

@@ -14,5 +14,52 @@
    <name>GateIn SSO - SAML - Portal packaging</name>
 
    <dependencies>
+      <!-- Needed for GateIn -->
+      <dependency>
+         <groupId>org.picketlink</groupId>
+         <artifactId>picketlink-core</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.picketlink.distribution</groupId>
+         <artifactId>picketlink-jbas5</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-agent</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-auth-callback</artifactId>
+      </dependency>
+
+      <!-- Needed for IDP -->
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-saml-plugin</artifactId>
+      </dependency>
+
    </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+               <descriptors>
+                  <descriptor>src/main/assembly/src.xml</descriptor>
+               </descriptors>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                  <phase>package</phase> <!-- append to the packaging phase. -->
+                  <goals>
+                     <goal>single</goal> <!-- goals == mojos -->
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
 </project>

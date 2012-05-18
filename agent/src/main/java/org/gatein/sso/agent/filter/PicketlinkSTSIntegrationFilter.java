@@ -124,6 +124,7 @@ public class PicketlinkSTSIntegrationFilter extends AbstractFilter
 
    /**
     * JBoss specific way for obtaining a Subject.
+    * TODO: is JBoss specific way needed? subject should be available in ConversationState
     *
     * @return subject
     */
