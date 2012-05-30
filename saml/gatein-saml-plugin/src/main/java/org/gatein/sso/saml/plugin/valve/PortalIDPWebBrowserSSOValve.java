@@ -86,6 +86,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    @Override
    public void invoke(Request request, Response response) throws IOException, ServletException
    {
+      boolean valveInvocationPerformed = false;
+
       String referer = request.getHeader("Referer");
       String relayState = request.getParameter(GeneralConstants.RELAY_STATE);
 
@@ -141,6 +143,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
             try {
                // Next in the invocation chain
                getNext().invoke(request, response);
+               valveInvocationPerformed = true;
             } finally {
                userPrincipal = request.getPrincipal();
                referer = request.getHeader("Referer");
@@ -150,8 +153,13 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          }
       }
 
-      // Restore request from SP if available
-      request = restoreRequestFromSP(request, session);
+      // Restore request from SP if available and if we are in SAML mode (in the middle of SAML login,
+      // which means that we are not in standalone application mode)
+      if (session.getNote(GeneralConstants.SAML_REQUEST_KEY) != null || session.getNote(GeneralConstants.SAML_RESPONSE_KEY) != null
+            || containsSAMLRequestMessage || containsSAMLResponseMessage)
+      {
+         request = restoreRequestFromSP(request, session);
+      }
 
       IDPWebRequestUtil webRequestUtil = new IDPWebRequestUtil(request, idpConfiguration, keyManager);
 
@@ -220,7 +228,13 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
             else if (skipForwardingToHostedURL)
             {
                if (trace)
-                  log.trace("Skip forwarding to Hosted URL");
+                  log.trace("Skip forwarding to Hosted URL and continue with other valves");
+
+               // Next in the invocation chain but only in case, that valve chain haven't been invoked yet
+               if (!valveInvocationPerformed)
+               {
+                  getNext().invoke(request, response);
+               }
             }
             else
             {
