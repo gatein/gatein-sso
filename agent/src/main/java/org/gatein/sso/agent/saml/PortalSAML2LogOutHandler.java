@@ -23,8 +23,6 @@
 
 package org.gatein.sso.agent.saml;
 
-import org.apache.catalina.Session;
-import org.apache.catalina.connector.Request;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.wci.impl.DefaultServletContainerFactory;
@@ -60,14 +58,12 @@ public class PortalSAML2LogOutHandler extends SAML2LogOutHandler
       HTTPContext httpContext = (HTTPContext) request.getContext();
       HttpServletRequest servletRequest = httpContext.getRequest();
       HttpServletResponse servletResponse = httpContext.getResponse();
-
-      Session catalinaSession = getCatalinaSession(servletRequest);
       
       // Handle SAML logout request by superclass
       super.handleRequestType(request, response);
 
       // Check if session has been invalidated by superclass. If yes,we need to perform "full" logout at portal level by call WCI logout.
-      if (!catalinaSession.isValid())
+      if (servletRequest.getSession(false) == null)
       {
          portalLogout(servletRequest, servletResponse);
       }
@@ -89,13 +85,11 @@ public class PortalSAML2LogOutHandler extends SAML2LogOutHandler
       HttpServletRequest servletRequest = httpContext.getRequest();
       HttpServletResponse servletResponse = httpContext.getResponse();
 
-      Session catalinaSession = getCatalinaSession(servletRequest);
-
       // Handle SAML logout response by superclass
       super.handleStatusResponseType(request, response);
 
       // Check if session has been invalidated by superclass. If yes,we need to perform "full" logout at portal level by call WCI logout.
-      if (!catalinaSession.isValid())
+      if (servletRequest.getSession(false) == null)
       {
          portalLogout(servletRequest, servletResponse);
       }
@@ -126,17 +120,6 @@ public class PortalSAML2LogOutHandler extends SAML2LogOutHandler
             log.trace(message, e);
          }
       }
-   }
-   
-   private Session getCatalinaSession(HttpServletRequest servletRequest)
-   {
-      if (!(servletRequest instanceof Request))
-      {
-         throw new IllegalStateException("servletRequest is of class " + servletRequest.getClass() + ", which is not instanceof " + Request.class);
-      }
-
-      Request catalinaRequest = (Request)servletRequest;
-      return catalinaRequest.getSessionInternal(false);
    }
    
 }

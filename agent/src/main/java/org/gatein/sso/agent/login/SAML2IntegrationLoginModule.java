@@ -35,6 +35,7 @@ import org.picketlink.identity.federation.bindings.jboss.auth.SAML2LoginModule;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
+import java.security.Principal;
 import java.security.acl.Group;
 import java.util.Map;
 
@@ -84,7 +85,7 @@ public class SAML2IntegrationLoginModule extends SAML2LoginModule
       if (super.login())
       {
          // Username is already in sharedState thanks to superclass
-         String username = (String)sharedState.get("javax.security.auth.login.name");
+         String username = getUsernameFromSharedState();
          if (log.isTraceEnabled())
          {
             log.trace("Found user " + username + " in shared state.");
@@ -110,6 +111,23 @@ public class SAML2IntegrationLoginModule extends SAML2LoginModule
       else
       {
          return false;
+      }
+   }
+
+   protected String getUsernameFromSharedState()
+   {
+      Object tmp = sharedState.get("javax.security.auth.login.name");
+      if (tmp == null)
+      {
+         return null;
+      }
+      else if (tmp instanceof Principal)
+      {
+         return ((Principal) tmp).getName();
+      }
+      else
+      {
+         return (String)tmp;
       }
    }
 

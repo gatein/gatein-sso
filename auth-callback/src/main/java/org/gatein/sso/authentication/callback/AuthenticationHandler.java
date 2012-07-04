@@ -21,8 +21,6 @@
 */
 package org.gatein.sso.authentication.callback;
 
-import org.apache.log4j.Logger;
-
 import javax.security.auth.login.LoginException;
 
 import javax.ws.rs.GET;
@@ -42,6 +40,8 @@ import org.exoplatform.services.security.PasswordCredential;
 import org.exoplatform.services.security.UsernameCredential;
 
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
 
 import java.util.Collection;
 
@@ -55,7 +55,7 @@ import java.util.Collection;
 @Path("/sso/authcallback")
 public class AuthenticationHandler implements ResourceContainer
 {
-	 private static Logger log = Logger.getLogger(AuthenticationHandler.class);
+   private static final Logger log = LoggerFactory.getLogger(AuthenticationHandler.class);
 	
 	 @GET
 	 @Path("/auth/{1}/{2}")
