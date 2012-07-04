@@ -29,11 +29,11 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
 import org.apache.catalina.authenticator.Constants;
 import org.apache.log4j.Logger;
+import org.picketlink.identity.federation.bindings.tomcat.idp.AbstractIDPValve;
 import org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve;
 import org.picketlink.identity.federation.core.interfaces.TrustKeyManager;
 import org.picketlink.identity.federation.core.saml.v1.SAML11Constants;
 import org.picketlink.identity.federation.core.saml.v2.constants.JBossSAMLURIConstants;
-import org.picketlink.identity.federation.core.util.CoreConfigUtil;
 import org.picketlink.identity.federation.core.util.StringUtil;
 import org.picketlink.identity.federation.web.constants.GeneralConstants;
 import org.picketlink.identity.federation.web.util.IDPWebRequestUtil;
@@ -66,9 +66,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    private static final String REQUEST_FROM_SP = "requestFromSP";
    private static final String REQUEST_FROM_SP_METHOD = "requestFromSPMethod";
 
-   private boolean strictPostBinding;
    private Context context = null;
-   private String identityURL = null;
    private TrustKeyManager keyManager;
 
    /**
@@ -86,6 +84,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    @Override
    public void invoke(Request request, Response response) throws IOException, ServletException
    {
+      boolean valveInvocationPerformed = false;
+
       String referer = request.getHeader("Referer");
       String relayState = request.getParameter(GeneralConstants.RELAY_STATE);
 
@@ -95,8 +95,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
       String samlRequestMessage = request.getParameter(GeneralConstants.SAML_REQUEST_KEY);
       String samlResponseMessage = request.getParameter(GeneralConstants.SAML_RESPONSE_KEY);
 
-      String signature = request.getParameter("Signature");
-      String sigAlg = request.getParameter("SigAlg");
+      String signature = request.getParameter(GeneralConstants.SAML_SIGNATURE_REQUEST_KEY);
+      String sigAlg = request.getParameter(GeneralConstants.SAML_SIG_ALG_REQUEST_KEY);
 
       boolean containsSAMLRequestMessage = StringUtil.isNotNull(samlRequestMessage);
       boolean containsSAMLResponseMessage = StringUtil.isNotNull(samlResponseMessage);
@@ -113,9 +113,9 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          if (StringUtil.isNotNull(relayState))
             session.setNote(GeneralConstants.RELAY_STATE, relayState.trim());
          if (StringUtil.isNotNull(signature))
-            session.setNote("Signature", signature.trim());
+            session.setNote(GeneralConstants.SAML_SIGNATURE_REQUEST_KEY, signature.trim());
          if (StringUtil.isNotNull(sigAlg))
-            session.setNote("sigAlg", sigAlg.trim());
+            session.setNote(GeneralConstants.SAML_SIG_ALG_REQUEST_KEY, sigAlg.trim());
 
          // Saving request from SP for later use
          saveRequestFromSP(request, session);
@@ -131,6 +131,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          {
             userPrincipal = (Principal)session.getNote(Constants.FORM_PRINCIPAL_NOTE);
             request.setUserPrincipal(userPrincipal);
+            request.setAuthType(Constants.FORM_METHOD);
+            session.setAuthType(Constants.FORM_METHOD);
             if (trace)
             {
                log.trace("Skip processing of request by next valves. Going to SAML processing");
@@ -141,6 +143,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
             try {
                // Next in the invocation chain
                getNext().invoke(request, response);
+               valveInvocationPerformed = true;
             } finally {
                userPrincipal = request.getPrincipal();
                referer = request.getHeader("Referer");
@@ -150,8 +153,13 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          }
       }
 
-      // Restore request from SP if available
-      request = restoreRequestFromSP(request, session);
+      // Restore request from SP if available and if we are in SAML mode (in the middle of SAML login,
+      // which means that we are not in standalone application mode)
+      if (session.getNote(GeneralConstants.SAML_REQUEST_KEY) != null || session.getNote(GeneralConstants.SAML_RESPONSE_KEY) != null
+            || containsSAMLRequestMessage || containsSAMLResponseMessage)
+      {
+         request = restoreRequestFromSP(request, session);
+      }
 
       IDPWebRequestUtil webRequestUtil = new IDPWebRequestUtil(request, idpConfiguration, keyManager);
 
@@ -160,7 +168,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
       if (response.getStatus() == HttpServletResponse.SC_FORBIDDEN) {
          try {
             samlErrorResponse = webRequestUtil.getErrorResponse(referer, JBossSAMLURIConstants.STATUS_AUTHNFAILED.get(),
-                  this.identityURL, getSignOutgoingMessages());
+                  getIdentityURL(), this.idpConfiguration.isSupportsSignature());
 
             IDPWebRequestUtil.WebRequestUtilHolder holder = webRequestUtil.getHolder();
             holder.setResponseDoc(samlErrorResponse).setDestination(referer).setRelayState(relayState)
@@ -168,12 +176,12 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
                   .setServletResponse(response);
             holder.setPostBindingRequested(webRequestUtil.hasSAMLRequestInPostProfile());
 
-            if (getSignOutgoingMessages()) {
+            if (this.idpConfiguration.isSupportsSignature()) {
                holder.setSupportSignature(true).setPrivateKey(keyManager.getSigningKey());
             }
 
-            if (strictPostBinding)
-               holder.setStrictPostBinding(true);
+            holder.setStrictPostBinding(this.idpConfiguration.isStrictPostBinding());
+
             webRequestUtil.send(holder);
          } catch (GeneralSecurityException e) {
             throw new ServletException(e);
@@ -190,8 +198,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
 
          samlResponseMessage = (String) session.getNote(GeneralConstants.SAML_RESPONSE_KEY);
          relayState = (String) session.getNote(GeneralConstants.RELAY_STATE);
-         signature = (String) session.getNote("Signature");
-         sigAlg = (String) session.getNote("sigAlg");
+         signature = (String) session.getNote(GeneralConstants.SAML_SIGNATURE_REQUEST_KEY);
+         sigAlg = (String) session.getNote(GeneralConstants.SAML_SIG_ALG_REQUEST_KEY);
 
          if (trace) {
             StringBuilder builder = new StringBuilder();
@@ -220,7 +228,13 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
             else if (skipForwardingToHostedURL)
             {
                if (trace)
-                  log.trace("Skip forwarding to Hosted URL");
+                  log.trace("Skip forwarding to Hosted URL and continue with other valves");
+
+               // Next in the invocation chain but only in case, that valve chain haven't been invoked yet
+               if (!valveInvocationPerformed)
+               {
+                  getNext().invoke(request, response);
+               }
             }
             else
             {
@@ -245,11 +259,9 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    {
       super.start();
       this.context = (Context) getContainer();
-      this.identityURL = (String)getPrivateFieldOfSuperClass("identityURL");
       this.keyManager = (TrustKeyManager)getPrivateFieldOfSuperClass("keyManager");
-      this.strictPostBinding = (Boolean)getPrivateFieldOfSuperClass("strictPostBinding");
 
-      log.info("Valve started with identityURL=" + identityURL + ", strictPostBinding=" + strictPostBinding + ", keyManager="
+      log.info("Valve started with identityURL=" + getIdentityURL() + ", strictPostBinding=" + idpConfiguration.isStrictPostBinding() + ", keyManager="
             + keyManager + ", context=" + context);
    }
 
@@ -299,7 +311,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    {
       try
       {
-         Field tempField = IDPWebBrowserSSOValve.class.getDeclaredField(fieldName);
+         Field tempField = AbstractIDPValve.class.getDeclaredField(fieldName);
          tempField.setAccessible(true);
          return tempField.get(this);
       }

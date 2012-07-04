@@ -95,7 +95,7 @@
 		<version.jboss.negotiation>2.0.4.GA</version.jboss.negotiation>
 
       <!-- Picketlink federation (SAML integration) -->
-      <version.picketlink.fed>2.1.1.Final</version.picketlink.fed>
+      <version.picketlink.fed>2.1.2.Final</version.picketlink.fed>
 
       <!-- JBoss Web -->
       <version.jboss.web>2.1.7.GA</version.jboss.web>
@@ -350,6 +350,11 @@
          <dependency>
             <groupId>org.picketlink.distribution</groupId>
             <artifactId>picketlink-jbas5</artifactId>
+            <version>${version.picketlink.fed}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.picketlink.distribution</groupId>
+            <artifactId>picketlink-jbas7</artifactId>
             <version>${version.picketlink.fed}</version>
          </dependency>
 
