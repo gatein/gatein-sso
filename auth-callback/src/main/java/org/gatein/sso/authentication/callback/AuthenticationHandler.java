@@ -65,7 +65,6 @@ public class AuthenticationHandler implements ResourceContainer
    {
 		 try
 		 {
-			  log.debug("---------------------------------------");
 			  log.debug("Username: "+username);
 			  log.debug("Password: XXXXXXXXXXXXXXXX");
 
@@ -77,11 +76,16 @@ public class AuthenticationHandler implements ResourceContainer
 			  try
 			  {
 			  	authenticator.validateUser(credentials);
+            if (log.isTraceEnabled())
+            {
+               log.trace("Login successful for user " + username);
+            }
 			  	return ""+Boolean.TRUE;
 			  }
 			  catch(LoginException le)
 			  {
-			  	return ""+Boolean.FALSE;
+              log.debug("Login failed for user " + username);
+			  	  return ""+Boolean.FALSE;
 			  }			  			  			  			  
 		 }
 		 catch(Exception e)

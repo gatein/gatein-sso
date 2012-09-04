@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.GenericAgent;
-import org.gatein.wci.security.Credentials;
 
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgentRequest;

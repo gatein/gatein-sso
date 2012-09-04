@@ -21,10 +21,10 @@
 */
 package org.gatein.sso.agent.cas;
 
-import org.apache.log4j.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.GenericAgent;
 import org.gatein.wci.security.Credentials;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
@@ -35,7 +35,7 @@ import org.jasig.cas.client.validation.Assertion;
  */
 public class CASAgent extends GenericAgent
 {
-	private static Logger log = Logger.getLogger(CASAgent.class);
+	private static Logger log = LoggerFactory.getLogger(CASAgent.class);
 	private static CASAgent singleton;
 	
 	private String casServerUrl;

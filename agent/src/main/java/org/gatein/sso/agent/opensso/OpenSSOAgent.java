@@ -215,11 +215,9 @@ public class OpenSSOAgent extends GenericAgent
 			
 			int status = client.executeMethod(post);
 			String response = post.getResponseBodyAsString();
-			
-			log.debug("-------------------------------------------------------");
-			log.debug("Status: "+status);
-			log.debug("Response: "+response);
-			log.debug("-------------------------------------------------------");
+
+			log.debug("Status of token validation: " + status);
+			log.debug("Response from token validation: " + response);
 			
 			if(response.contains(Boolean.TRUE.toString()))
 			{
@@ -251,11 +249,9 @@ public class OpenSSOAgent extends GenericAgent
 			
 			int status = client.executeMethod(post);
 			String response = post.getResponseBodyAsString();
-			
-			log.debug("--------------------------------------------------------");
-			log.debug("Status: "+status);
+
+			log.debug("Status of get subject: " + status);
 			log.debug(response);
-			log.debug("--------------------------------------------------------");
 			
 			if(response != null)
 			{

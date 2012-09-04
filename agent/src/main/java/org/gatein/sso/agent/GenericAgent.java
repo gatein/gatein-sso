@@ -23,17 +23,20 @@
 
 package org.gatein.sso.agent;
 
-import org.apache.log4j.Logger;
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
 import org.gatein.wci.security.Credentials;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Base agent superclass used by other SSO agents (CAS, JOSSO, OpenAM)
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public abstract class GenericAgent
 {
-   private static Logger log = Logger.getLogger(GenericAgent.class);
+   private static Logger log = LoggerFactory.getLogger(GenericAgent.class);
    
    protected void saveSSOCredentials(String username, HttpServletRequest httpRequest)
    {
@@ -43,9 +46,8 @@ public abstract class GenericAgent
       Credentials credentials = new Credentials(username, "");
 
       httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
-      httpRequest.getSession().setAttribute("username", username);
 
-      // This is needed for using default login module stack instead of SSOLoginModule. In this case, GateIn authentication is done thanks to PortalLoginModule.
+      // This is needed when using default login module stack instead of SSOLoginModule. In this case, GateIn authentication is done thanks to PortalLoginModule.
       httpRequest.getSession().setAttribute("authenticatedCredentials", credentials);
 
       log.debug("Credentials of user " + username + " saved into HTTP session.");

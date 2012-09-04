@@ -25,9 +25,6 @@ import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.http.HttpSSOAgent;
-import org.josso.gateway.identity.service.SSOIdentityManagerService;
-
-import java.lang.reflect.Method;
 import java.security.Principal;
 
 /**

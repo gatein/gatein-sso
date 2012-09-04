@@ -36,6 +36,7 @@ import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.UsernameCredential;
 import org.exoplatform.services.security.jaas.AbstractLoginModule;
 import org.gatein.sso.agent.tomcat.ServletAccess;
+import org.gatein.wci.security.Credentials;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
@@ -86,18 +87,21 @@ public final class SSOLoginModule extends AbstractLoginModule
           return false;
        }
 
-       if (password.startsWith("wci-ticket"))
-       {
-          username = (String)request.getSession().getAttribute("username");
-       }
 
+       Credentials credsFromSession = (Credentials)request.getSession().getAttribute("authenticatedCredentials");
+       if (credsFromSession != null)
+       {
+         username = credsFromSession.getUsername();
+          if (log.isTraceEnabled())
+          {
+             log.trace("Found credentials in session. Username: " + username);
+          }
+       }
 			
 			if (username == null)
 			{
 				  //SSO token could not be validated...hence a user id cannot be found
-				  log.error("---------------------------------------------------------");
-				  log.error("SSOLogin Failed. Credential Not Found!!");
-				  log.error("---------------------------------------------------------");
+				  log.warn("SSOLogin Failed. Credential Not Found!!");
 				  return false;
 			}
 				
