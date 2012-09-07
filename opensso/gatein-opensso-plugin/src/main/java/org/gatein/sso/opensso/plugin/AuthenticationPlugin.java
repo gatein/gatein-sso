@@ -175,6 +175,8 @@ public class AuthenticationPlugin extends AMLoginModule
 				break;
 			}
 
+         System.err.println("Callback login failed. " +
+               "Response status: " + status);
 			return false;
 		}
 		finally
