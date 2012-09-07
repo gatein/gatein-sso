@@ -63,7 +63,7 @@
 		<version.cas.client>3.1.9</version.cas.client>
 
 		<!-- josso -->
-		<version.josso>1.8.2</version.josso>
+		<version.josso>1.8.5</version.josso>
 
 		<!-- xbean -->
 		<version.xbean>3.4.3</version.xbean>

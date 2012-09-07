@@ -56,6 +56,6 @@ public class GateInSSOAgent extends HttpSSOAgent
 
     protected void log(String message, Throwable throwable) 
     {
-        log.debug(message, throwable);
+        log.error(message, throwable);
     }
 }

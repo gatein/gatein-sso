@@ -59,7 +59,7 @@ public class TestAssertionValidation extends TestCase
 		lookup.init("josso-agent-config.xml");
 		
 		SSOAgent agent = lookup.lookupSSOAgent();
-		
+
 		log.info("Agent: "+agent);
 		
 		String assertionId = "";

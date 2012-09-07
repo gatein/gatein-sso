@@ -30,6 +30,7 @@ import org.gatein.sso.agent.GenericAgent;
 
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgentRequest;
+import org.josso.agent.SSOPartnerAppConfig;
 import org.josso.agent.SingleSignOnEntry;
 import org.josso.agent.http.HttpSSOAgent;
 
@@ -60,7 +61,8 @@ public class JOSSOAgent extends GenericAgent
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+
 	public static JOSSOAgent getInstance()
 	{
 		if(JOSSOAgent.singleton == null)
@@ -76,12 +78,13 @@ public class JOSSOAgent extends GenericAgent
 		return JOSSOAgent.singleton;
 	}
 
+
    public void validateTicket(HttpServletRequest httpRequest,HttpServletResponse httpResponse) throws Exception
 	{
 		String ticket = httpRequest.getParameter("josso_assertion_id");
 		log.debug("Trying to validate the following Ticket: " + ticket);
 		
-      String requester = httpRequest.getContextPath().substring(1);
+      String requester = getRequester(httpRequest);
 
 		//Use the JOSSO Client Library to validate the token and extract the subject that was authenticated
 		SSOAgentRequest agentRequest = this.doMakeSSOAgentRequest(requester, SSOAgentRequest.ACTION_RELAY,
@@ -104,10 +107,36 @@ public class JOSSOAgent extends GenericAgent
          this.saveSSOCredentials(principal, httpRequest);
 		}
 	}
-	
+
+
 	protected SSOAgentRequest doMakeSSOAgentRequest(String requester, int action, String sessionId, String assertionId,
                                                     HttpServletRequest hreq, HttpServletResponse hres) 
 	{
       return GateInJOSSOAgentFactory.getInstance().getSSOAgentRequest(requester, action, sessionId,assertionId, hreq, hres);
+   }
+
+
+   protected String getRequester(HttpServletRequest hreq)
+   {
+      String requester = null;
+
+      // Try to obtain requester from ID of partnerApp
+      SSOPartnerAppConfig partnerAppConfig = httpAgent.getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
+      if (partnerAppConfig != null)
+      {
+         requester = partnerAppConfig.getId();
+      }
+
+      // Fallback to contextPath if previous failed
+      if (requester == null)
+      {
+         requester = hreq.getContextPath().substring(1);
+      }
+
+      if (log.isTraceEnabled())
+      {
+         log.trace("Using requester " + requester);
+      }
+      return requester;
    }
 }

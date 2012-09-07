@@ -111,6 +111,12 @@ public class LocalSessionImpl implements LocalSession
 		((HttpSession) _wrapped).invalidate();
 	}
 
+   // Method "exipre" renamed to "invalidate" in josso 1.8.6. We want backwards compatibility with both old and new versions
+   public void invalidate()
+   {
+      exipre();
+   }
+
 	public void setWrapped(Object wrapped)
 	{
 		_wrapped = wrapped;

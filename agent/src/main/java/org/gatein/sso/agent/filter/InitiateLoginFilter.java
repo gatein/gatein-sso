@@ -24,7 +24,7 @@ import org.gatein.sso.agent.opensso.OpenSSOAgent;
  * @author soshah
  *
  */
-public class InitiateLoginFilter implements Filter 
+public class InitiateLoginFilter implements Filter
 {
     private static Logger log = LoggerFactory.getLogger(InitiateLoginFilter.class);
     private static final int DEFAULT_MAX_NUMBER_OF_LOGIN_ERRORS = 3;
