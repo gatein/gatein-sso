@@ -5,7 +5,6 @@ package org.gatein.sso.agent.filter;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -14,17 +13,20 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.exoplatform.container.web.AbstractFilter;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.cas.CASAgent;
 import org.gatein.sso.agent.josso.JOSSOAgent;
+import org.gatein.sso.agent.josso.JOSSOAgentImpl;
 import org.gatein.sso.agent.opensso.OpenSSOAgent;
+import org.gatein.sso.agent.opensso.OpenSSOAgentImpl;
 
 /**
  * @author soshah
  *
  */
-public class InitiateLoginFilter implements Filter
+public class InitiateLoginFilter extends AbstractFilter
 {
     private static Logger log = LoggerFactory.getLogger(InitiateLoginFilter.class);
     private static final int DEFAULT_MAX_NUMBER_OF_LOGIN_ERRORS = 3;
@@ -35,8 +37,13 @@ public class InitiateLoginFilter implements Filter
     private String casServiceUrl;
     private String loginUrl;
     private int maxNumberOfLoginErrors;
-    
-    public void init(FilterConfig filterConfig) throws ServletException 
+
+    private CASAgent casAgent;
+    private JOSSOAgent jossoAgent;
+    private OpenSSOAgent openSSOAgent;
+
+    @Override
+    protected void afterInit(FilterConfig filterConfig) throws ServletException
     {
         this.ssoServerUrl = filterConfig.getInitParameter("ssoServerUrl");
         this.ssoCookieName = filterConfig.getInitParameter("ssoCookieName");
@@ -63,6 +70,59 @@ public class InitiateLoginFilter implements Filter
                 ", casRenewTicket=" + this.casRenewTicket +
                 ", casServiceUrl=" + this.casServiceUrl +
                 ", maxNumberOfLoginErrors=" + this.maxNumberOfLoginErrors);
+    }
+
+    protected CASAgent getCasAgent()
+    {
+       if (this.casAgent == null)
+       {
+          CASAgent casAgent = (CASAgent)getContainer().getComponentInstanceOfType(CASAgent.class);
+          if (casAgent == null)
+          {
+             throw new IllegalStateException("CASAgent component not provided in PortalContainer");
+          }
+
+          casAgent.setCasServerUrl(this.ssoServerUrl);
+          casAgent.setCasServiceUrl(this.casServiceUrl);
+          casAgent.setRenewTicket(this.casRenewTicket);
+          this.casAgent = casAgent;
+       }
+
+       return this.casAgent;
+    }
+
+    protected JOSSOAgent getJOSSOAgent()
+    {
+       if (this.jossoAgent == null)
+       {
+          JOSSOAgent jossoAgent = (JOSSOAgent)getContainer().getComponentInstanceOfType(JOSSOAgent.class);
+          if (jossoAgent == null)
+          {
+             throw new IllegalStateException("JOSSOAgent component not provided in PortalContainer");
+          }
+
+          this.jossoAgent = jossoAgent;
+       }
+
+       return this.jossoAgent;
+    }
+
+    protected OpenSSOAgent getOpenSSOAgent()
+    {
+       if (this.openSSOAgent == null)
+       {
+          OpenSSOAgent openssoAgent = (OpenSSOAgent)getContainer().getComponentInstanceOfType(OpenSSOAgent.class);
+          if (openssoAgent == null)
+          {
+             throw new IllegalStateException("OpenSSOAgent component not provided in PortalContainer");
+          }
+
+          openssoAgent.setServerUrl(ssoServerUrl);
+          openssoAgent.setCookieName(ssoCookieName);
+          this.openSSOAgent = openssoAgent;
+       }
+
+       return this.openSSOAgent;
     }
 
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -110,21 +170,18 @@ public class InitiateLoginFilter implements Filter
 
         if (ticket != null && ticket.trim().length() > 0)
         {
-            CASAgent casagent = CASAgent.getInstance(this.ssoServerUrl, this.casServiceUrl);
-            casagent.setRenewTicket(this.casRenewTicket);
-            casagent.validateTicket(httpRequest, ticket);
+            getCasAgent().validateTicket(httpRequest, ticket);
         }
         else if (jossoAssertion != null && jossoAssertion.trim().length() > 0)
         {
-            //the JOSSO Agent. This will need to the new client side JOSSO stack that can run on 5.1.0.GA
-            JOSSOAgent.getInstance().validateTicket(httpRequest,httpResponse);
+           getJOSSOAgent().validateTicket(httpRequest, httpResponse);
         }
         else
         {
             try
             {
-                //See if an OpenSSO Token was used
-                OpenSSOAgent.getInstance(this.ssoServerUrl, this.ssoCookieName).validateTicket(httpRequest, httpResponse);
+               //See if an OpenSSO Token was used
+               getOpenSSOAgent().validateTicket(httpRequest, httpResponse);
             }
             catch (IllegalStateException ilse)
             {

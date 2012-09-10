@@ -25,7 +25,7 @@ package org.gatein.sso.agent.filter;
 
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
-import org.gatein.sso.agent.opensso.OpenSSOAgent;
+import org.gatein.sso.agent.opensso.OpenSSOAgentImpl;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -91,7 +91,7 @@ public class OpenSSOCDLoginRedirectFilter extends LoginRedirectFilter
          // Generate random number for parameter "inResponseTo" and save it to session. This ID must be in response message in parameter "inResponseTo"
          int requestId = random.nextInt(100000) + 1;
          urlBuilder.append("&RequestID=").append(requestId);
-         httpRequest.getSession().setAttribute(OpenSSOAgent.IN_RESPONSE_TO_ATTR, requestId);
+         httpRequest.getSession().setAttribute(OpenSSOAgentImpl.IN_RESPONSE_TO_ATTR, requestId);
 
          String issueInstant = getFormattedDate();
          urlBuilder.append("&IssueInstant=" + URLEncoder.encode(issueInstant, "UTF-8"));
