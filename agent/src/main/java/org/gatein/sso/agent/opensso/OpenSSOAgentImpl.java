@@ -38,7 +38,7 @@ import java.util.Properties;
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class OpenSSOAgentImpl extends GenericAgent
+public class OpenSSOAgentImpl extends GenericAgent implements OpenSSOAgent
 {
    // HttpSession attribute, which will be used to check that response message from CDC contains same ID of InResponseTo as the ID, which we used in OpenSSOCDLoginRedirectFilter
    public static final String IN_RESPONSE_TO_ATTR = "OpenSSOAgent.InResponseTo";
