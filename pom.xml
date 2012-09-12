@@ -71,6 +71,8 @@
       <!-- spring -->
       <version.spring>2.5.5</version.spring>
 
+      <version.atricore>1.2.2</version.atricore>
+
       <!-- commons discovery -->
       <version.commons.discovery>0.2</version.commons.discovery>
 
@@ -233,6 +235,13 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+
+         <!-- JOSSO2 -->
+         <dependency>
+            <groupId>org.atricore.idbus.kernel</groupId>
+            <artifactId>org.atricore.idbus.kernel.main</artifactId>
+            <version>${version.atricore}</version>
+         </dependency>
 
          <!-- Spring (needed for JOSSO -->
          <dependency>
@@ -405,6 +414,21 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+
+      <!-- Needed for JOSSO2 -->
+      <repository>
+         <id>atricore-m2-repo</id>
+         <name>Atricore Maven2 Repository</name>
+         <url>http://repository.atricore.org/m2-release-repository</url>
+         <releases>
+            <checksumPolicy>fail</checksumPolicy>
+            <enabled>true</enabled>
+         </releases>
+         <snapshots>
+            <checksumPolicy>fail</checksumPolicy>
+            <enabled>false</enabled>
+         </snapshots>
+      </repository>
 
 		<repository>
 			<id>exo-int</id>

@@ -21,8 +21,19 @@
 */
 package org.gatein.sso.agent.filter;
 
+import org.gatein.sso.agent.josso.JOSSOUtils;
+import org.gatein.wci.impl.DefaultServletContainerFactory;
+import org.josso.agent.AbstractSSOAgent;
+
+import java.io.IOException;
 import java.net.URLEncoder;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 //Works for GateIn Portal Logout URL = {AnyURL}?portal:componentId=UIPortal&portal:action=Logout
 
@@ -56,17 +67,85 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class JOSSOLogoutFilter extends AbstractLogoutFilter
 {
+   private AbstractSSOAgent jossoAgent;
+
+   @Override
+   public void init(FilterConfig config) throws ServletException
+   {
+      super.init(config);
+
+      try
+      {
+         // Lookup for JOSSO agent
+         jossoAgent = JOSSOUtils.lookupSSOAgent();
+
+         // If logoutURL not provided from filter configuration, fallback to obtain it from JOSSO agent
+         if (logoutUrl == null || logoutUrl.length() == 0)
+         {
+            logoutUrl = jossoAgent.getGatewayLogoutUrl();
+            log.info("Obtained logoutUrl from configuration of josso agent. logoutUrl: " + this.logoutUrl);
+         }
+      }
+      catch (Exception e)
+      {
+         log.warn("Can't obtain JOSSO agent", e);
+      }
+   }
+
+   public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException
+   {
+      HttpServletRequest httpRequest = (HttpServletRequest) request;
+      HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+      boolean isLogoutInProgress = this.isLogoutInProgress(httpRequest);
+
+      if (isLogoutInProgress)
+      {
+         boolean redirectionSent = handleLogout(httpRequest, httpResponse);
+         if (redirectionSent)
+         {
+            return;
+         }
+      }
+
+      // After JOSSO2 performs logout on it's side, it doesn't redirect to portal logout URL but to "http://localhost:8080/portal/".
+      // So we need to check if session attribute is still here, which means that we just returned from JOSSO logout.
+      // Explicit portal logout is needed in this case
+      if (httpRequest.getSession().getAttribute(SSO_LOGOUT_FLAG) != null)
+      {
+         if (log.isTraceEnabled())
+         {
+            log.trace("Perform programmatic WCI logout");
+         }
+
+         // Programmatic login in WCI
+         DefaultServletContainerFactory.getInstance().getServletContainer().logout(httpRequest, httpResponse);
+
+         String redirectUrl = httpRequest.getContextPath();
+         redirectUrl = httpResponse.encodeRedirectURL(redirectUrl);
+         httpResponse.sendRedirect(redirectUrl);
+
+         return;
+      }
+
+      chain.doFilter(request, response);
+   }
+
+   @Override
 	protected String getRedirectUrl(HttpServletRequest httpRequest)
 	{
 		try
 		{
 			String parameters = URLEncoder.encode(
 							"portal:componentId=UIPortal&portal:action=Logout", "UTF-8");
+         String partnerAppId = JOSSOUtils.getPartnerAppId(jossoAgent, httpRequest);
+
+         StringBuilder builder = new StringBuilder(this.logoutUrl).append("?josso_back_to=")
+               .append(httpRequest.getRequestURL()).append("?").append(parameters)
+               .append("&josso_partnerapp_id=").append(partnerAppId);
 			
-			String redirectUrl = this.logoutUrl + "?josso_back_to="
-							+ httpRequest.getRequestURL() + "?" + parameters;
-			
-			return redirectUrl;
+			return builder.toString();
 		}
 		catch(Exception e)
 		{

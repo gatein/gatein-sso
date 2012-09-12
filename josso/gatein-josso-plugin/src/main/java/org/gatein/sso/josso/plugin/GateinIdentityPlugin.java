@@ -22,11 +22,6 @@
  ******************************************************************************/
 package org.gatein.sso.josso.plugin;
 
-import java.io.InputStream;
-import java.util.Properties;
-
-import org.apache.log4j.Logger;
-
 import org.josso.gateway.identity.exceptions.NoSuchUserException;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
 import org.josso.gateway.identity.service.BaseRole;
@@ -42,105 +37,26 @@ import org.josso.auth.scheme.AuthenticationScheme;
 import org.josso.auth.BindableCredentialStore;
 import org.josso.auth.exceptions.SSOAuthenticationException;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
+ * Identity plugin implementation for JOSSO 1
+ *
  * @org.apache.xbean.XBean element="gatein-store"
  * 
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  * 
  */
-public class GateinIdentityPlugin implements BindableCredentialStore,IdentityStore
+public class GateinIdentityPlugin extends AbstractIdentityPlugin implements BindableCredentialStore,IdentityStore
 {
-	private static Logger log = Logger.getLogger(GateinIdentityPlugin.class);
 
 	private AuthenticationScheme authenticationScheme = null;
-
-	private String gateInHost;
-	private String gateInPort;
-	private String gateInContext;
-
-	/**
-    * 
-    *
-    */
-	public GateinIdentityPlugin()
-	{
-		InputStream is = null;
-		try
-		{
-			///Load the GateIn properties
-			Properties properties = new Properties();
-			is = Thread.currentThread().getContextClassLoader().getResourceAsStream("gatein.properties");
-			properties.load(is);
-			
-			this.gateInHost = properties.getProperty("host");
-			this.gateInPort = properties.getProperty("port");
-			this.gateInContext = properties.getProperty("context");
-
-			log
-					.info("-------------------------------------------------------------------");
-			log.info("GateIn Host: " + this.gateInHost);
-			log
-					.info("GateIn Identity Plugin successfully started........................");
-			log
-					.info("-------------------------------------------------------------------");
-		}
-		catch (Exception e)
-		{
-			this.authenticationScheme = null;
-
-			log.error(this, e);
-			throw new RuntimeException(
-					"GateIn Identity Plugin registration failed....");
-		}
-		finally
-		{
-			if(is != null)
-			{
-				try{is.close();}catch(Exception e){}
-			}
-		}
-	}
 
 	public void setAuthenticationScheme(AuthenticationScheme authenticationScheme)
 	{
 		this.authenticationScheme = authenticationScheme;
 	}
 
-	public String getGateInHost()
-	{
-		return gateInHost;
-	}
-
-	public void setGateInHost(String gateInHost)
-	{
-		this.gateInHost = gateInHost;
-	}
-
-	public String getGateInPort()
-	{
-		return gateInPort;
-	}
-
-	public void setGateInPort(String gateInPort)
-	{
-		this.gateInPort = gateInPort;
-	}
-
-	public String getGateInContext()
-	{
-		return gateInContext;
-	}
-
-	public void setGateInContext(String gateInContext)
-	{
-		this.gateInContext = gateInContext;
-	}
-
-	// ----------------IdentityStore
-	// implementation------------------------------------------------------------------------------------------------------------------------
+	// ----------------IdentityStore implementation---------------------------------------
 	public boolean userExists(UserKey userKey) throws SSOIdentityException
 	{		
 		return true;
@@ -160,8 +76,8 @@ public class GateinIdentityPlugin implements BindableCredentialStore,IdentitySto
 		user.setName(userKey.toString());
 		return user;
 	}
-	// ---------------CredentialStore
-	// implementation----------------------------------------------------------------------------------------------------------------------
+
+	// ---------------CredentialStore implementation----------------------------------------------------------
 	public Credential[] loadCredentials(CredentialKey credentialKey,
 			CredentialProvider credentialProvider) throws SSOIdentityException
 	{		
@@ -178,59 +94,15 @@ public class GateinIdentityPlugin implements BindableCredentialStore,IdentitySto
       return null;
    }
 
-	public boolean bind(String username, String password)
-			throws SSOAuthenticationException
+	public boolean bind(String username, String password) throws SSOAuthenticationException
 	{
 		try
 		{
-			// return this.portalIdentityService.authenticate(username, password);
-			log.debug("Performing Authentication........................");
-			log.debug("Username: " + username);
-			
-			StringBuilder urlBuffer = new StringBuilder();
-				urlBuffer.append("http://" + this.gateInHost + ":" + this.gateInPort + "/"
-						+ this.gateInContext + "/rest/sso/authcallback/auth/" + username + "/"
-						+ password);
-					
-			boolean success = this.executeRemoteCall(urlBuffer.toString());
-				
-			return success;
+			return bindImpl(username, password);
 		}
 		catch(Exception e)
 		{
 			throw new SSOAuthenticationException(e);
-		}
-	}
-	//------------------------------------------------------------------------------------------------------------------------------------------
-	private boolean executeRemoteCall(String authUrl) throws Exception
-	{
-		HttpClient client = new HttpClient();
-		GetMethod method = null;
-		try
-		{
-			method = new GetMethod(authUrl);
-
-			int status = client.executeMethod(method);
-			String response = method.getResponseBodyAsString();
-
-			switch (status)
-			{
-				case 200:
-				if (response.equals(Boolean.TRUE.toString()))
-				{
-					return true;
-				}
-				break;
-			}
-
-			return false;
-		}
-		finally
-		{
-			if (method != null)
-			{
-				method.releaseConnection();
-			}
 		}
 	}
 }

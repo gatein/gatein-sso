@@ -48,12 +48,10 @@ public class JOSSOAgentImpl extends GenericAgent implements JOSSOAgent
 	{
 		try
 		{
-			//Initializing the JOSSO Agent
-			Lookup lookup = Lookup.getInstance();
-	    lookup.init("josso-agent-config.xml");
-	    
-	    this.httpAgent = (HttpSSOAgent) lookup.lookupSSOAgent();
-	    this.httpAgent.start();
+	      this.httpAgent = JOSSOUtils.lookupSSOAgent();
+	      this.httpAgent.start();
+
+         log.info("JOSSO agent started successfuly!");
 		}
 		catch(Exception e)
 		{
@@ -68,7 +66,7 @@ public class JOSSOAgentImpl extends GenericAgent implements JOSSOAgent
 		String ticket = httpRequest.getParameter("josso_assertion_id");
 		log.debug("Trying to validate the following Ticket: " + ticket);
 		
-      String requester = getRequester(httpRequest);
+      String requester = JOSSOUtils.getPartnerAppId(httpAgent, httpRequest);
 
 		//Use the JOSSO Client Library to validate the token and extract the subject that was authenticated
 		SSOAgentRequest agentRequest = this.doMakeSSOAgentRequest(requester, SSOAgentRequest.ACTION_RELAY,
@@ -81,12 +79,10 @@ public class JOSSOAgentImpl extends GenericAgent implements JOSSOAgent
 			String sessionId = agentRequest.getSessionId();
 			String assertionId = agentRequest.getAssertionId();
 			String principal = entry.principal.getName();
-			
-			log.debug("-----------------------------------------------------------");
+
 			log.debug("SessionId: " + sessionId);
 			log.debug("AssertionId: " + assertionId);
 			log.debug("Principal: " + principal);
-			log.debug("-----------------------------------------------------------");
 			
          this.saveSSOCredentials(principal, httpRequest);
 		}
@@ -97,30 +93,5 @@ public class JOSSOAgentImpl extends GenericAgent implements JOSSOAgent
                                                     HttpServletRequest hreq, HttpServletResponse hres) 
 	{
       return GateInJOSSOAgentFactory.getInstance().getSSOAgentRequest(requester, action, sessionId,assertionId, hreq, hres);
-   }
-
-
-   protected String getRequester(HttpServletRequest hreq)
-   {
-      String requester = null;
-
-      // Try to obtain requester from ID of partnerApp
-      SSOPartnerAppConfig partnerAppConfig = httpAgent.getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
-      if (partnerAppConfig != null)
-      {
-         requester = partnerAppConfig.getId();
-      }
-
-      // Fallback to contextPath if previous failed
-      if (requester == null)
-      {
-         requester = hreq.getContextPath().substring(1);
-      }
-
-      if (log.isTraceEnabled())
-      {
-         log.trace("Using requester " + requester);
-      }
-      return requester;
    }
 }

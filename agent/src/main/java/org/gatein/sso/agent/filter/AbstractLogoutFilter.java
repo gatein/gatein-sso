@@ -43,8 +43,9 @@ public abstract class AbstractLogoutFilter implements Filter
 {
 	protected String logoutUrl;
 	private static final String fileEncoding = System.getProperty("file.encoding");
+   protected static final String SSO_LOGOUT_FLAG = "SSO_LOGOUT_FLAG";
 
-   private final Logger log = LoggerFactory.getLogger(this.getClass());
+   protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	public void init(FilterConfig config) throws ServletException
 	{
@@ -67,27 +68,17 @@ public abstract class AbstractLogoutFilter implements Filter
 
 		if (isLogoutInProgress)
 		{
-
-			if (httpRequest.getSession().getAttribute("SSO_LOGOUT_FLAG") == null)
-			{
-				httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
-
-            String redirectUrl = this.getRedirectUrl(httpRequest);
-            redirectUrl = httpResponse.encodeRedirectURL(redirectUrl);
-				httpResponse.sendRedirect(redirectUrl);
-				return;
-			}
-			else
-			{
-				// clear the LOGOUT flag
-				httpRequest.getSession().removeAttribute("SSO_LOGOUT_FLAG");
-			}
+         boolean redirectionSent = handleLogout(httpRequest, httpResponse);
+         if (redirectionSent)
+         {
+            return;
+         }
 		}
 
 		chain.doFilter(request, response);
 	}
 
-	private boolean isLogoutInProgress(HttpServletRequest request) throws UnsupportedEncodingException
+	protected boolean isLogoutInProgress(HttpServletRequest request) throws UnsupportedEncodingException
 	{
 		// set character encoding before retrieving request parameters
 		if(fileEncoding!=null) 
@@ -103,6 +94,45 @@ public abstract class AbstractLogoutFilter implements Filter
 
 		return false;
 	}
+
+   /**
+    * Handle logout on SSO server side
+    *
+    * @param httpRequest
+    * @param httpResponse
+    * @return true if redirection to SSO server was send. We need to return immediately from filter invocation then
+    * @throws IOException
+    */
+   protected boolean handleLogout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException
+   {
+      // We need to perform redirection to SSO server to handle logout on SSO side
+      if (httpRequest.getSession().getAttribute(SSO_LOGOUT_FLAG) == null)
+      {
+         httpRequest.getSession().setAttribute(SSO_LOGOUT_FLAG, Boolean.TRUE);
+
+         String redirectUrl = this.getRedirectUrl(httpRequest);
+         redirectUrl = httpResponse.encodeRedirectURL(redirectUrl);
+         httpResponse.sendRedirect(redirectUrl);
+
+         if (log.isTraceEnabled())
+         {
+            log.trace("Redirecting to SSO logout URL: " + redirectUrl);
+         }
+
+         return true;
+      }
+      else
+      {
+         // We returned from SSO server. Clear the LOGOUT flag
+         httpRequest.getSession().removeAttribute(SSO_LOGOUT_FLAG);
+         if (log.isTraceEnabled())
+         {
+            log.trace("SSO logout performed and SSO_LOGOUT_FLAG removed from session. Continue with portal logout");
+         }
+
+         return false;
+      }
+   }
 	
 	protected abstract String getRedirectUrl(HttpServletRequest httpRequest);
 }
