@@ -34,6 +34,7 @@
 	<modules>
 		<module>agent</module>
 		<module>auth-callback</module>
+      <module>common-plugin</module>
 		<module>cas</module>
 		<module>josso</module>
 		<!-- 
@@ -125,6 +126,11 @@
          <dependency>
             <groupId>org.gatein.sso</groupId>
             <artifactId>sso-agent</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.gatein.sso</groupId>
+            <artifactId>sso-common-plugin</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>

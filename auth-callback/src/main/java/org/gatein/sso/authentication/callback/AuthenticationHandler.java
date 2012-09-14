@@ -23,7 +23,10 @@ package org.gatein.sso.authentication.callback;
 
 import javax.security.auth.login.LoginException;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -65,8 +68,7 @@ public class AuthenticationHandler implements ResourceContainer
    {
 		 try
 		 {
-			  log.debug("Username: "+username);
-			  log.debug("Password: XXXXXXXXXXXXXXXX");
+			  log.debug("Handle SSO callback authentication. Username: "+username);
 
 			  Authenticator authenticator = (Authenticator) getContainer().getComponentInstanceOfType(Authenticator.class);
 			  			  
@@ -110,7 +112,6 @@ public class AuthenticationHandler implements ResourceContainer
    {      
       try
       {
-         log.debug("---------------------------------------");
          log.debug("Going to obtain roles for user: " + username);
 
          Authenticator authenticator = (Authenticator) getContainer().getComponentInstanceOfType(Authenticator.class);
@@ -144,6 +145,15 @@ public class AuthenticationHandler implements ResourceContainer
          log.error(this, e);
          throw new RuntimeException(e);
       }
+   }
+
+   @POST
+   @Path("/postauth/")
+   @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+   @Produces({MediaType.TEXT_PLAIN})
+   public String authenticatePost(@FormParam("username") String username, @FormParam("password") String password)
+   {
+      return authenticate(username, password);
    }
 	 
 	 private ExoContainer getContainer() throws Exception 

@@ -27,6 +27,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.gatein.sso.plugin.RestCallbackCaller;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,9 +45,7 @@ public class AbstractIdentityPlugin
    private static final Log log = LogFactory.getLog(AbstractIdentityPlugin.class);
    private static final String PROPERTIES_FILENAME = "gatein.properties";
 
-   private String gateInHost;
-   private String gateInPort;
-   private String gateInContext;
+   private RestCallbackCaller restCallbackCaller;
 
    public AbstractIdentityPlugin()
    {
@@ -58,11 +57,16 @@ public class AbstractIdentityPlugin
          is = loadInputStream();
          properties.load(is);
 
-         this.gateInHost = properties.getProperty("host");
-         this.gateInPort = properties.getProperty("port");
-         this.gateInContext = properties.getProperty("context");
+         String gateInHost = properties.getProperty("host");
+         String gateInPort = properties.getProperty("port");
+         String gateInContext = properties.getProperty("context");
+         String gateInProtocol = properties.getProperty("protocol");
+         String gateInHttpMethod = properties.getProperty("httpMethod");
 
-         log.info("GateIn Host: " + this.gateInHost + ", GateIn Port: " + gateInPort + ", GateIn context: " + gateInContext);
+         log.debug("GateIn Host: " + gateInHost + ", GateIn Port: " + gateInPort + ", GateIn context: " + gateInContext + ", Protocol=" + gateInProtocol + ", http method=" + gateInHttpMethod);
+
+         this.restCallbackCaller = new RestCallbackCaller(gateInProtocol, gateInHost, gateInPort, gateInContext, gateInHttpMethod);
+
          log.info("GateIn Identity Plugin successfully started");
       }
       catch (Exception e)
@@ -78,87 +82,15 @@ public class AbstractIdentityPlugin
       }
    }
 
-   public String getGateInHost()
-   {
-      return gateInHost;
-   }
-
-   public void setGateInHost(String gateInHost)
-   {
-      this.gateInHost = gateInHost;
-   }
-
-   public String getGateInPort()
-   {
-      return gateInPort;
-   }
-
-   public void setGateInPort(String gateInPort)
-   {
-      this.gateInPort = gateInPort;
-   }
-
-   public String getGateInContext()
-   {
-      return gateInContext;
-   }
-
-   public void setGateInContext(String gateInContext)
-   {
-      this.gateInContext = gateInContext;
-   }
-
-   protected String createCallbackURL(String username, String password)
-   {
-      StringBuilder builder = new StringBuilder("http://");
-      builder.append(this.gateInHost).append(":").append(this.gateInPort).append("/")
-            .append(this.gateInContext).append("/rest/sso/authcallback/auth/")
-            .append(username).append("/").append(password);
-      return builder.toString();
-   }
-
    protected boolean bindImpl(String username, String password)
          throws Exception
    {
       log.debug("Performing Authentication........................");
       log.debug("Username: " + username);
 
-      String restCallbackURL = createCallbackURL(username, password);
-      boolean success = this.executeRemoteCall(restCallbackURL);
+      boolean success = this.restCallbackCaller.executeRemoteCall(username, password);
 
       return success;
-   }
-
-   protected boolean executeRemoteCall(String authUrl) throws Exception
-   {
-      HttpClient client = new HttpClient();
-      GetMethod method = null;
-      try
-      {
-         method = new GetMethod(authUrl);
-
-         int status = client.executeMethod(method);
-         String response = method.getResponseBodyAsString();
-
-         switch (status)
-         {
-            case 200:
-               if (response.equals(Boolean.TRUE.toString()))
-               {
-                  return true;
-               }
-               break;
-         }
-
-         return false;
-      }
-      finally
-      {
-         if (method != null)
-         {
-            method.releaseConnection();
-         }
-      }
    }
 
    protected InputStream loadInputStream() throws FileNotFoundException
