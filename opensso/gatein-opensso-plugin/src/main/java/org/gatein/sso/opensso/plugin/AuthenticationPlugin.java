@@ -32,54 +32,22 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.gatein.sso.plugin.RestCallbackCaller;
 
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
 public class AuthenticationPlugin extends AMLoginModule
 {
-	private String gateInHost;
-	private String gateInPort;
-	private String gateInContext;
-	
+   private static final Log log = LogFactory.getLog(AuthenticationPlugin.class);
+
+   private RestCallbackCaller restCallbackCaller;
 	private String username;
-	private String password;
-
-	public String getGateInHost()
-	{
-		return gateInHost;
-	}
-
-	public void setGateInHost(String gateInHost)
-	{
-		this.gateInHost = gateInHost;
-	}
-
-	public String getGateInPort()
-	{
-		return gateInPort;
-	}
-
-	public void setGateInPort(String gateInPort)
-	{
-		this.gateInPort = gateInPort;
-	}
-
-	public String getGateInContext()
-	{
-		return gateInContext;
-	}
-
-	public void setGateInContext(String gateInContext)
-	{
-		this.gateInContext = gateInContext;
-	}
 
 	public AuthenticationPlugin()
 	{
@@ -94,14 +62,19 @@ public class AuthenticationPlugin extends AMLoginModule
 			Properties properties = new Properties();
 			is = Thread.currentThread().getContextClassLoader().getResourceAsStream("gatein.properties");
 			properties.load(is);
-			
-			this.gateInHost = properties.getProperty("host");
-			this.gateInPort = properties.getProperty("port");
-			this.gateInContext = properties.getProperty("context");
+
+         String gateInHost = properties.getProperty("host");
+         String gateInPort = properties.getProperty("port");
+         String gateInContext = properties.getProperty("context");
+         String gateInProtocol = properties.getProperty("protocol");
+         String gateInHttpMethod = properties.getProperty("httpMethod");
+
+         log.debug("GateIn Host: " + gateInHost + ", GateIn Port: " + gateInPort + ", GateIn context: " + gateInContext + ", Protocol=" + gateInProtocol + ", http method=" + gateInHttpMethod);
+         this.restCallbackCaller = new RestCallbackCaller(gateInProtocol, gateInHost, gateInPort, gateInContext, gateInHttpMethod);
 		}
 		catch(IOException ioe)
 		{
-			
+         log.error("Error during initialization of login module", ioe);
 		}
 		finally
 		{
@@ -116,6 +89,7 @@ public class AuthenticationPlugin extends AMLoginModule
 	{
 		try
 		{
+         String password = null;
 			for (int i = 0; i < callbacks.length; i++)
 			{
 				Callback callback = callbacks[i];
@@ -126,16 +100,11 @@ public class AuthenticationPlugin extends AMLoginModule
 				}
 				else if (callback instanceof PasswordCallback)
 				{
-					this.password = new String(((PasswordCallback) callback).getPassword());
+					password = new String(((PasswordCallback) callback).getPassword());
 				}
 			}
-	
-			StringBuilder urlBuffer = new StringBuilder();
-			urlBuffer.append("http://" + this.gateInHost + ":" + this.gateInPort + "/"
-					+ this.gateInContext + "/rest/sso/authcallback/auth/" + username + "/"
-					+ password);
 				
-			boolean success = this.executeRemoteCall(urlBuffer.toString());
+			boolean success = restCallbackCaller.executeRemoteCall(this.username, password);
 			if(!success)
 			{
 				throw new AuthLoginException("GateIn Login Callback Failed!!");
@@ -152,39 +121,5 @@ public class AuthenticationPlugin extends AMLoginModule
 	public Principal getPrincipal()
 	{
 		return new GateInPrincipal(this.username);
-	}
-	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	private boolean executeRemoteCall(String authUrl) throws Exception
-	{
-		HttpClient client = new HttpClient();
-		GetMethod method = null;
-		try
-		{
-			method = new GetMethod(authUrl);
-
-			int status = client.executeMethod(method);
-			String response = method.getResponseBodyAsString();
-
-			switch (status)
-			{
-				case 200:
-				if (response.equals(Boolean.TRUE.toString()))
-				{
-					return true;
-				}
-				break;
-			}
-
-         System.err.println("Callback login failed. " +
-               "Response status: " + status);
-			return false;
-		}
-		finally
-		{
-			if (method != null)
-			{
-				method.releaseConnection();
-			}
-		}
 	}
 }

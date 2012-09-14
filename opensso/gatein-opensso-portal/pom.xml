@@ -12,6 +12,10 @@
 	<name>GateIn SSO - OpenSSO - Portal packaging</name>
 
 	<dependencies>
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-common-plugin</artifactId>
+      </dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-opensso-plugin</artifactId>

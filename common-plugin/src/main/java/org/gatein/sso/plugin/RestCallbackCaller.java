@@ -112,11 +112,16 @@ public class RestCallbackCaller
             case 200:
                if (response.equals(Boolean.TRUE.toString()))
                {
+                  if (log.isTraceEnabled())
+                  {
+                     log.trace("User " + username + " authenticated successfuly via Rest callback!");
+                  }
                   return true;
                }
                break;
          }
 
+         log.debug("User " + password + " not authenticated successfuly. HTTP status: " + status + ", HTTP response: " + response);
          return false;
       }
       finally
