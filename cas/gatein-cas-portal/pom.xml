@@ -12,6 +12,10 @@
 	<name>GateIn SSO - CAS - Portal packaging</name>
 
 	<dependencies>
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-common-plugin</artifactId>
+      </dependency>
 		<dependency>
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-cas-plugin</artifactId>
@@ -29,7 +33,7 @@
 			<artifactId>sso-auth-callback</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jasig.cas</groupId>
+			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-core</artifactId>
 		</dependency>
 	</dependencies>

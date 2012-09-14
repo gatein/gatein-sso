@@ -21,11 +21,10 @@
 */
 package org.gatein.sso.cas.plugin;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-
+import org.gatein.sso.plugin.RestCallbackCaller;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -37,11 +36,14 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  */
 public class AuthenticationPlugin extends AbstractUsernamePasswordAuthenticationHandler
 {
-	private static Logger log = Logger.getLogger(AuthenticationPlugin.class);
-	
+   private static final Log log = LogFactory.getLog(AuthenticationPlugin.class);
+
+   private String gateInProtocol;
 	private String gateInHost;
 	private String gateInPort;
 	private String gateInContext;
+   private String httpMethod;
+   private RestCallbackCaller restCallbackCaller;
 	
 	public AuthenticationPlugin()
 	{
@@ -82,60 +84,62 @@ public class AuthenticationPlugin extends AbstractUsernamePasswordAuthentication
 	{
 		this.gateInContext = gateInContext;
 	}
+
+   public String getGateInProtocol()
+   {
+      return gateInProtocol;
+   }
+
+   public void setGateInProtocol(String gateInProtocol)
+   {
+      this.gateInProtocol = gateInProtocol;
+   }
+
+   public String getHttpMethod()
+   {
+      return httpMethod;
+   }
+
+   public void setHttpMethod(String httpMethod)
+   {
+      this.httpMethod = httpMethod;
+   }
+
+
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) 
 	{
-		try
-		{
-	    final String username = credentials.getUsername();
-	    final String password = credentials.getPassword();
-	    
-	    StringBuilder urlBuffer = new StringBuilder();
-	    urlBuffer.append("http://"+this.gateInHost+":"+this.gateInPort+"/"+this.gateInContext+"/rest/sso/authcallback/auth/"+username+"/"+password);
-	    
-	    log.debug("-------------------------------------------------------------------");
-	    log.debug("REST Request="+urlBuffer.toString());
-	    log.debug("-------------------------------------------------------------------");
-	
-	    return this.executeRemoteCall(urlBuffer.toString());
-		}
-		catch(Exception e)
-		{
-			log.error("Remote Authentication Failed--------------------------");
-			log.error(this, e);
-			return false;
-		}
+      getRestCallbackCaller();
+      try
+      {
+         final String username = credentials.getUsername();
+         final String password = credentials.getPassword();
+
+         return getRestCallbackCaller().executeRemoteCall(username, password);
+      }
+      catch(Exception e)
+      {
+         log.error("Remote Authentication Failed");
+         log.error(this, e);
+         return false;
+      }
   }
-	
-	private boolean executeRemoteCall(String authUrl) throws Exception
-	{
-		HttpClient client = new HttpClient();
-		GetMethod method = null;
-		try
-		{
-			method = new GetMethod(authUrl);
-			
-			int status = client.executeMethod(method);
-			String response = method.getResponseBodyAsString();
-			
-			switch(status)
-			{
-				case 200:
-					if(response.equals(Boolean.TRUE.toString()))
-					{
-						return true;
-					}
-				break;
-			}
-			
-			return false;
-		}
-		finally
-		{
-			if(method != null)
-			{
-				method.releaseConnection();
-			}
-		}
-	}
+
+   // Needs to be lazily initialized after all properties are injected by Spring
+   private RestCallbackCaller getRestCallbackCaller()
+   {
+      if (restCallbackCaller == null)
+      {
+         synchronized (this)
+         {
+            if (restCallbackCaller == null)
+            {
+               restCallbackCaller = new RestCallbackCaller(gateInProtocol, gateInHost, gateInPort,
+                     gateInContext, httpMethod);
+            }
+         }
+      }
+
+      return restCallbackCaller;
+   }
 }

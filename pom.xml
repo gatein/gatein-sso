@@ -56,12 +56,12 @@
 		<version.log4j>1.2.14</version.log4j>
 		<version.jboss.logging>2.0.5.GA</version.jboss.logging>
 		<version.apache.logging>1.0.4-jboss</version.apache.logging>
-		<version.commons-logging>1.0.4</version.commons-logging>
+		<version.commons-logging>1.1.1</version.commons-logging>
       <version.slf4j>1.5.8</version.slf4j>
 
 		<!-- cas -->
-		<version.cas>3.3.4</version.cas>
-		<version.cas.client>3.1.9</version.cas.client>
+		<version.cas>3.5.0</version.cas>
+		<version.cas.client>3.2.1</version.cas.client>
 
 		<!-- josso -->
 		<version.josso>1.8.5</version.josso>
@@ -183,7 +183,7 @@
 				<version>${version.cas}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.jasig.cas</groupId>
+				<groupId>org.jasig.cas.client</groupId>
 				<artifactId>cas-client-core</artifactId>
 				<version>${version.cas.client}</version>
 			</dependency>

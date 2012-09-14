@@ -23,7 +23,6 @@ package org.gatein.sso.cas.plugin;
 
 import junit.framework.TestCase;
 
-import org.gatein.sso.cas.plugin.AuthenticationPlugin;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**

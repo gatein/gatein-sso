@@ -31,7 +31,6 @@
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<includes>
 				<include>commons-httpclient:commons-httpclient</include>
-				<include>commons-logging:commons-logging</include>
 				<include>org.gatein.sso:sso-opensso-plugin</include>
 			</includes>
 		</dependencySet>

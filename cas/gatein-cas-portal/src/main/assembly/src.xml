@@ -21,7 +21,7 @@
 			<includes>
 				<include>org.gatein.sso:sso-agent</include>
 				<include>org.gatein.sso:sso-auth-callback</include>
-				<include>org.jasig.cas:cas-client-core</include>
+				<include>org.jasig.cas.client:cas-client-core</include>
 			</includes>
 		</dependencySet>
 
@@ -30,6 +30,7 @@
 			<useProjectArtifact>false</useProjectArtifact>
 			<useTransitiveDependencies>false</useTransitiveDependencies>
 			<includes>
+            <include>org.gatein.sso:sso-common-plugin</include>
 				<include>org.gatein.sso:sso-cas-plugin</include>
 				<include>commons-httpclient:commons-httpclient</include>
 			</includes>
