@@ -24,13 +24,19 @@
 package org.gatein.sso.spnego;
 
 import org.exoplatform.services.security.jaas.UserPrincipal;
+import org.jboss.security.negotiation.common.NegotiationContext;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import java.security.Principal;
+import java.util.Map;
 import java.util.Set;
 
 /**
+ * Modified version of {@link org.jboss.security.negotiation.spnego.SPNEGOLoginModule} customized for portal purposes
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class SPNEGOLoginModule extends org.jboss.security.negotiation.spnego.SPNEGOLoginModule

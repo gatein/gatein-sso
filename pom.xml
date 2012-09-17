@@ -95,7 +95,7 @@
       <version.security.jacc>1.0</version.security.jacc>
 		
 		<!--  SPNEGO support using JBoss Negotiation -->
-		<version.jboss.negotiation>2.0.4.GA</version.jboss.negotiation>
+		<version.jboss.negotiation>2.2.1.Final</version.jboss.negotiation>
 
       <!-- Picketlink federation (SAML integration) -->
       <version.picketlink.fed>2.1.2.Final</version.picketlink.fed>
@@ -347,7 +347,7 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.security</groupId>
-            <artifactId>jboss-negotiation</artifactId>
+            <artifactId>jboss-negotiation-common</artifactId>
             <version>${version.jboss.negotiation}</version>
          </dependency>
          <dependency>

@@ -44,14 +44,16 @@
       </includes>
     </dependencySet>
 
-    <dependencySet>
+     <!-- TODO: Remove this later (we should use version packed in AS7) -->
+    <!--<dependencySet>
       <outputDirectory>gatein-sso-${version}/spnego</outputDirectory>
       <useProjectArtifact>false</useProjectArtifact>
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <includes>
-        <include>org.jboss.security:jboss-negotiation</include>
+        <include>org.jboss.security:jboss-negotiation-spnego</include>
       </includes>
     </dependencySet>
+    -->
 
   </dependencySets>
 

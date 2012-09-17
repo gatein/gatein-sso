@@ -28,6 +28,8 @@ import org.gatein.sso.agent.filter.SPNEGOFilter;
 import org.jboss.security.negotiation.NegotiationAuthenticator;
 
 /**
+ * Modified version of {@link NegotiationAuthenticator} customized for portal purposes
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class GateInNegotiationAuthenticator extends NegotiationAuthenticator
