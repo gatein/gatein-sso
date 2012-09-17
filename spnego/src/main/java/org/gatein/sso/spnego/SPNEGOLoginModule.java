@@ -41,6 +41,55 @@ import java.util.Set;
  */
 public class SPNEGOLoginModule extends org.jboss.security.negotiation.spnego.SPNEGOLoginModule
 {
+   private String usernamePasswordDomain;
+
+   // TODO: Workaround. Remove once getIdentityFromSubject method will be added to superclass.
+   @Override
+   public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState,
+                          final Map options)
+   {
+      super.initialize(subject, callbackHandler, sharedState, options);
+      usernamePasswordDomain = (String) options.get("usernamePasswordDomain");
+   }
+
+   // TODO: Workaround. Remove once getIdentityFromSubject method will be added to superclass.
+   @Override
+   protected Object innerLogin() throws LoginException
+   {
+      NegotiationContext negotiationContext = NegotiationContext.getCurrentNegotiationContext();
+
+      if (negotiationContext == null)
+      {
+         if (usernamePasswordDomain == null)
+         {
+            throw new LoginException("No NegotiationContext and no usernamePasswordDomain defined.");
+         }
+
+         return usernamePasswordLogin();
+      }
+      else
+      {
+         return super.innerLogin();
+      }
+   }
+
+   // TODO: Workaround. Remove once getIdentityFromSubject method will be added to superclass.
+   private Object usernamePasswordLogin() throws LoginException
+   {
+      log.debug("Falling back to username/password authentication");
+
+      LoginContext lc = new LoginContext(usernamePasswordDomain, callbackHandler);
+      lc.login();
+
+      Subject userSubject = lc.getSubject();
+
+      Principal identity = getIdentityFromSubject(userSubject);
+      setIdentity(identity);
+
+      return Boolean.TRUE;
+   }
+
+
    /**
     * Obtaining identity from subject. We need to find instance of {@link UserPrincipal}
     * , which is added here during FORM authentication.
