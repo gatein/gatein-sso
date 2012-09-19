@@ -69,14 +69,6 @@ public final class SSOLoginModule extends AbstractLoginModule
 	{
 		try
 		{
-			Callback[] callbacks = new Callback[2];
-			callbacks[0] = new NameCallback("Username");
-			callbacks[1] = new PasswordCallback("Password", false);
-			callbackHandler.handle(callbacks);
-
-			String password = new String(((PasswordCallback) callbacks[1])
-					.getPassword());
-					 
        // Check credentials stored and propagated in session.
 		 String username = null;
        HttpServletRequest request = getCurrentHttpServletRequest();

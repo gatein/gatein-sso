@@ -37,6 +37,7 @@ public class InitiateLoginFilter extends AbstractFilter
     private String casServiceUrl;
     private String loginUrl;
     private int maxNumberOfLoginErrors;
+    private boolean attachUsernamePasswordToLoginURL;
 
     private CASAgent casAgent;
     private JOSSOAgent jossoAgent;
@@ -64,12 +65,17 @@ public class InitiateLoginFilter extends AbstractFilter
        String maxNumberOfLoginErrorsConfig = filterConfig.getInitParameter("maxNumberOfLoginErrors");
        this.maxNumberOfLoginErrors = maxNumberOfLoginErrorsConfig == null ? DEFAULT_MAX_NUMBER_OF_LOGIN_ERRORS : Integer.parseInt(maxNumberOfLoginErrorsConfig);
 
+       String attachUsernamePasswordToLoginURLConfig = filterConfig.getInitParameter("attachUsernamePasswordToLoginURL");
+       this.attachUsernamePasswordToLoginURL = attachUsernamePasswordToLoginURLConfig == null ? true : Boolean.parseBoolean(attachUsernamePasswordToLoginURLConfig);
+
        log.info("InitiateLoginFilter configuration: ssoServerUrl=" + this.ssoServerUrl +
                 ", ssoCookieName=" + this.ssoCookieName +
                 ", loginUrl=" + this.loginUrl +
                 ", casRenewTicket=" + this.casRenewTicket +
                 ", casServiceUrl=" + this.casServiceUrl +
-                ", maxNumberOfLoginErrors=" + this.maxNumberOfLoginErrors);
+                ", maxNumberOfLoginErrors=" + this.maxNumberOfLoginErrors +
+                ", attachUsernamePasswordToLoginURL=" + this.attachUsernamePasswordToLoginURL
+       );
     }
 
     protected CASAgent getCasAgent()
@@ -149,7 +155,8 @@ public class InitiateLoginFilter extends AbstractFilter
                 return;
             }
 
-            resp.sendRedirect(loginUrl);
+            String loginRedirectURL = resp.encodeRedirectURL(getLoginRedirectUrl(req));
+            resp.sendRedirect(loginRedirectURL);
 
             return;
         }
@@ -216,5 +223,19 @@ public class InitiateLoginFilter extends AbstractFilter
       httpRequest.getSession().setAttribute("InitiateLoginFilter.currentNumberOfErrors", currentNumberOfErrors);
 
       return currentNumberOfErrors;
+   }
+
+   protected String getLoginRedirectUrl(HttpServletRequest req)
+   {
+      StringBuilder url = new StringBuilder(this.loginUrl);
+
+      if (attachUsernamePasswordToLoginURL)
+      {
+         // Use sessionId and system millis as username and password (similar like spnego is doing)
+         String fakeUsername = req.getSession().getId() + "_" + String.valueOf(System.currentTimeMillis());
+         url.append("?username=").append(fakeUsername).append("&password=").append(fakeUsername);
+      }
+
+      return url.toString();
    }
 }
