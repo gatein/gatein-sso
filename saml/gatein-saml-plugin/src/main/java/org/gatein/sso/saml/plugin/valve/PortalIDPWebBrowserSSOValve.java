@@ -65,6 +65,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
 
    private static final String REQUEST_FROM_SP = "requestFromSP";
    private static final String REQUEST_FROM_SP_METHOD = "requestFromSPMethod";
+   private static final String PRINCIPAL_NOTE = "portal-principalNote";
 
    private Context context = null;
    private TrustKeyManager keyManager;
@@ -103,7 +104,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
 
       Session session = request.getSessionInternal();
 
-      if (containsSAMLRequestMessage || containsSAMLResponseMessage) {
+      if (containsSAMLRequestMessage || containsSAMLResponseMessage)
+      {
          if (trace)
             log.trace("Storing the SAMLRequest/SAMLResponse and RelayState in session");
          if (StringUtil.isNotNull(samlRequestMessage))
@@ -129,7 +131,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
       {
          if (skipProcessingByNextValves(session))
          {
-            userPrincipal = (Principal)session.getNote(Constants.FORM_PRINCIPAL_NOTE);
+            userPrincipal = (Principal)session.getNote(PRINCIPAL_NOTE);
             request.setUserPrincipal(userPrincipal);
             request.setAuthType(Constants.FORM_METHOD);
             session.setAuthType(Constants.FORM_METHOD);
@@ -140,15 +142,33 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          }
          else
          {
-            try {
+            try
+            {
                // Next in the invocation chain
                getNext().invoke(request, response);
                valveInvocationPerformed = true;
-            } finally {
+            }
+            finally
+            {
                userPrincipal = request.getPrincipal();
+               if (userPrincipal != null)
+               {
+                  session.setNote(PRINCIPAL_NOTE, userPrincipal);
+               }
+               else
+               {
+                  session.removeNote(PRINCIPAL_NOTE);
+               }
                referer = request.getHeader("Referer");
                if (trace)
                   log.trace("Referer in finally block=" + referer + ":user principal=" + userPrincipal);
+
+               if (response.isCommitted() || response.isAppCommitted())
+               {
+                  if (trace)
+                     log.trace("Response is already commited. Returning");
+                  return;
+               }
             }
          }
       }
@@ -165,8 +185,10 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
 
       Document samlErrorResponse = null;
       // Look for unauthorized status
-      if (response.getStatus() == HttpServletResponse.SC_FORBIDDEN) {
-         try {
+      if (response.getStatus() == HttpServletResponse.SC_FORBIDDEN)
+      {
+         try
+         {
             samlErrorResponse = webRequestUtil.getErrorResponse(referer, JBossSAMLURIConstants.STATUS_AUTHNFAILED.get(),
                   getIdentityURL(), this.idpConfiguration.isSupportsSignature());
 
@@ -176,20 +198,24 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
                   .setServletResponse(response);
             holder.setPostBindingRequested(webRequestUtil.hasSAMLRequestInPostProfile());
 
-            if (this.idpConfiguration.isSupportsSignature()) {
+            if (this.idpConfiguration.isSupportsSignature())
+            {
                holder.setSupportSignature(true).setPrivateKey(keyManager.getSigningKey());
             }
 
             holder.setStrictPostBinding(this.idpConfiguration.isStrictPostBinding());
 
             webRequestUtil.send(holder);
-         } catch (GeneralSecurityException e) {
+         }
+         catch (GeneralSecurityException e)
+         {
             throw new ServletException(e);
          }
          return;
       }
 
-      if (userPrincipal != null) {
+      if (userPrincipal != null)
+      {
          /**
           * Since the container has finished the authentication, we can retrieve the original saml message as well as any
           * relay state from the SP
@@ -201,7 +227,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          signature = (String) session.getNote(GeneralConstants.SAML_SIGNATURE_REQUEST_KEY);
          sigAlg = (String) session.getNote(GeneralConstants.SAML_SIG_ALG_REQUEST_KEY);
 
-         if (trace) {
+         if (trace)
+         {
             StringBuilder builder = new StringBuilder();
             builder.append("Retrieved saml messages and relay state from session");
             builder.append("saml Request message=").append(samlRequestMessage);
@@ -213,11 +240,16 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          }
 
          // Send valid saml response after processing the request
-         if (samlRequestMessage != null) {
+         if (samlRequestMessage != null)
+         {
             processSAMLRequestMessage(webRequestUtil, request, response);
-         } else if (StringUtil.isNotNull(samlResponseMessage)) {
+         }
+         else if (StringUtil.isNotNull(samlResponseMessage))
+         {
             processSAMLResponseMessage(webRequestUtil, request, response);
-         } else {
+         }
+         else
+         {
             String target = request.getParameter(SAML11Constants.TARGET);
             if (StringUtil.isNotNull(target))
             {
@@ -242,9 +274,12 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
                if (trace)
                   log.trace("SAML 1.1::Proceeding to IDP index page");
                RequestDispatcher dispatch = context.getServletContext().getRequestDispatcher("/hosted/");
-               try {
+               try
+               {
                   dispatch.forward(request, response);
-               } catch (Exception e) {
+               }
+               catch (Exception e)
+               {
                   // JBAS5.1 and 6 quirkiness
                   dispatch.forward(request.getRequest(), response);
                }
@@ -299,7 +334,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    // In this case, we won't process request with other valves, but we will go directly to SAML processing
    protected boolean skipProcessingByNextValves(Session session)
    {
-      Principal principal = (Principal)session.getNote(Constants.FORM_PRINCIPAL_NOTE);
+      Principal principal = (Principal)session.getNote(PRINCIPAL_NOTE);
       String samlRequest = (String)session.getNote(GeneralConstants.SAML_REQUEST_KEY);
       String samlResponse = (String)session.getNote(GeneralConstants.SAML_RESPONSE_KEY);
       return (principal != null && (samlRequest != null || samlResponse != null));

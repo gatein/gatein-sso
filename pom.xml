@@ -374,11 +374,6 @@
          </dependency>
          <dependency>
             <groupId>org.picketlink.distribution</groupId>
-            <artifactId>picketlink-jbas5</artifactId>
-            <version>${version.picketlink.fed}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.picketlink.distribution</groupId>
             <artifactId>picketlink-jbas7</artifactId>
             <version>${version.picketlink.fed}</version>
          </dependency>

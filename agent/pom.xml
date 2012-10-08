@@ -76,10 +76,6 @@
       </dependency>
       <dependency>
          <groupId>org.picketlink.distribution</groupId>
-         <artifactId>picketlink-jbas5</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.picketlink.distribution</groupId>
          <artifactId>picketlink-jbas7</artifactId>
       </dependency>
 

@@ -16,18 +16,6 @@
    <dependencies>
       <!-- Needed for GateIn -->
       <dependency>
-         <groupId>org.picketlink</groupId>
-         <artifactId>picketlink-core</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.picketlink.distribution</groupId>
-         <artifactId>picketlink-jbas5</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.picketlink.distribution</groupId>
-         <artifactId>picketlink-jbas7</artifactId>
-      </dependency>
-      <dependency>
          <groupId>org.gatein.sso</groupId>
          <artifactId>sso-agent</artifactId>
       </dependency>

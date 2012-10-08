@@ -18,8 +18,6 @@
          <useProjectArtifact>false</useProjectArtifact>
          <useTransitiveDependencies>false</useTransitiveDependencies>
          <includes>
-            <include>org.picketlink:picketlink-core</include>
-            <include>org.picketlink.distribution:picketlink-jbas5</include>
             <include>org.gatein.sso:sso-agent</include>
             <include>org.gatein.sso:sso-auth-callback</include>
          </includes>
