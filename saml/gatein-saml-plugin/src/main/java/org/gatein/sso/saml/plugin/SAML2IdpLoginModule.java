@@ -23,8 +23,13 @@
 
 package org.gatein.sso.saml.plugin;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import javax.security.auth.Subject;
@@ -187,7 +192,8 @@ public class SAML2IdpLoginModule implements LoginModule
 
 
    // ********** PROTECTED HELPER METHODS ****************************   
-   
+
+   // TODO: use common-plugin
    protected boolean validateUser(String username, String password)
    {
       StringBuilder urlBuffer = new StringBuilder();
@@ -254,14 +260,17 @@ public class SAML2IdpLoginModule implements LoginModule
 
    private ResponseContext executeRemoteCall(String authUrl)
    {
-      HttpClient client = new HttpClient();
-      GetMethod method = null;
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpGet method;
+
       try
       {
-         method = new GetMethod(authUrl);
+         method = new HttpGet(authUrl);
+         HttpResponse httpResponse = client.execute(method);
 
-         int status = client.executeMethod(method);
-         String response = method.getResponseBodyAsString();
+         int status = httpResponse.getStatusLine().getStatusCode();
+         HttpEntity entity = httpResponse.getEntity();
+         String response = entity == null ? null : EntityUtils.toString(entity);
 
          if (log.isTraceEnabled())
          {
@@ -277,10 +286,7 @@ public class SAML2IdpLoginModule implements LoginModule
       }
       finally
       {
-         if(method != null)
-         {
-            method.releaseConnection();
-         }
+         client.getConnectionManager().shutdown();
       }
    }
 

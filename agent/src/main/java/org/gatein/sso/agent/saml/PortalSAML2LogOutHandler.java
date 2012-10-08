@@ -25,7 +25,7 @@ package org.gatein.sso.agent.saml;
 
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
-import org.gatein.wci.impl.DefaultServletContainerFactory;
+import org.gatein.wci.ServletContainerFactory;
 import org.picketlink.identity.federation.core.exceptions.ProcessingException;
 import org.picketlink.identity.federation.core.saml.v2.interfaces.SAML2HandlerRequest;
 import org.picketlink.identity.federation.core.saml.v2.interfaces.SAML2HandlerResponse;
@@ -109,7 +109,7 @@ public class PortalSAML2LogOutHandler extends SAML2LogOutHandler
 
       try
       {
-         DefaultServletContainerFactory.getInstance().getServletContainer().logout(request, response);
+         ServletContainerFactory.getServletContainer().logout(request, response);
       }
       catch (Exception e)
       {

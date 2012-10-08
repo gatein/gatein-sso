@@ -22,7 +22,7 @@
 package org.gatein.sso.agent.filter;
 
 import org.gatein.sso.agent.josso.JOSSOUtils;
-import org.gatein.wci.impl.DefaultServletContainerFactory;
+import org.gatein.wci.ServletContainerFactory;
 import org.josso.agent.AbstractSSOAgent;
 
 import java.io.IOException;
@@ -120,7 +120,7 @@ public class JOSSOLogoutFilter extends AbstractLogoutFilter
          }
 
          // Programmatic login in WCI
-         DefaultServletContainerFactory.getInstance().getServletContainer().logout(httpRequest, httpResponse);
+         ServletContainerFactory.getServletContainer().logout(httpRequest, httpResponse);
 
          String redirectUrl = httpRequest.getContextPath();
          redirectUrl = httpResponse.encodeRedirectURL(redirectUrl);

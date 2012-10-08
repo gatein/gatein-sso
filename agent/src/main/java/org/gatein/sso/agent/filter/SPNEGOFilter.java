@@ -39,6 +39,8 @@ import org.exoplatform.container.web.AbstractFilter;
  * Filter is needed because when fallback to FORM authentication, we don't need to redirect request to /dologin, which is secured URI,
  * but we need to go directly to /initiatelogin without going again through Tomcat authenticator.
  *
+ * TODO: Suggest removing this filter as with new GateIn (Servlet 3.0 authentication) it may not be needed anymore
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class SPNEGOFilter extends AbstractFilter
