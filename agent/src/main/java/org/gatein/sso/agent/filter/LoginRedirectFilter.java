@@ -59,18 +59,10 @@ public class LoginRedirectFilter implements Filter
 	{
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		
-		boolean isLoginInProgress = this.isLoginInProgress(httpRequest);
-		if(isLoginInProgress)
-		{
-         String urlToRedirect = getLoginRedirectURL(httpRequest);
-         urlToRedirect = httpResponse.encodeRedirectURL(urlToRedirect);
-			httpResponse.sendRedirect(urlToRedirect);
-			
-			return;
-		}
-		
-		chain.doFilter(request, response);
+
+      String urlToRedirect = getLoginRedirectURL(httpRequest);
+      urlToRedirect = httpResponse.encodeRedirectURL(urlToRedirect);
+      httpResponse.sendRedirect(urlToRedirect);
 	}
 
    /**
@@ -80,16 +72,5 @@ public class LoginRedirectFilter implements Filter
    {
       return this.loginUrl;
    }
-	
-	private boolean isLoginInProgress(HttpServletRequest request)
-	{
-		String action = request.getRequestURI();
 
-		if (action != null && action.equals(request.getContextPath() + "/sso"))
-		{
-			return true;
-		}
-
-		return false;
-	}
 }
