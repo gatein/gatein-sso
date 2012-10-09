@@ -65,7 +65,7 @@ public class SSOFilterIntegratorPlugin extends BaseComponentPlugin
       this.filterMapping = filterMapping.getValue();
       String filterClazz = filterClass.getValue();
       log.debug("SSOFilterIntegratorPlugin initialization with parameters filterClass: " + filterClazz + ", filterMapping: " + filterMapping);
-      Class<SSOInterceptor> ssoInterceptorCl = SSOUtils.loadClass(filterClazz);
+      Class<SSOInterceptor> ssoInterceptorCl = (Class<SSOInterceptor>)SSOUtils.loadClass(filterClazz);
       try
       {
          this.filter = ssoInterceptorCl.newInstance();

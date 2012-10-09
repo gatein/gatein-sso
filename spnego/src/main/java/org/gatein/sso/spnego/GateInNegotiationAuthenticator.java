@@ -48,16 +48,16 @@ public class GateInNegotiationAuthenticator extends NegotiationAuthenticator
     {
        String savedURI = super.savedRequestURL(session);
 
-       // use url saved by SPNEGOFilter if saved request not found
+       // Use url saved by SPNEGOFilter if saved request not found
        if (savedURI == null)
        {
           savedURI = (String)session.getSession().getAttribute(SPNEGOFilter.ATTR_INITIAL_URI);
        }
 
-       // using default context if nothing else found
+       // Using default context if nothing else found
        if (savedURI == null)
        {
-          savedURI = session.getSession().getServletContext().getContextPath();
+          savedURI = "/" + session.getSession().getServletContext().getServletContextName();
        }
 
        return savedURI;

@@ -31,12 +31,12 @@
          <artifactId>picketlink-core</artifactId>
       </dependency>
       <dependency>
-         <groupId>jboss.web</groupId>
+         <groupId>org.jboss.web</groupId>
          <artifactId>jbossweb</artifactId>
       </dependency>
       <dependency>
          <groupId>javax.servlet</groupId>
-         <artifactId>servlet-api</artifactId>
+         <artifactId>javax.servlet-api</artifactId>
       </dependency>
    </dependencies>
 

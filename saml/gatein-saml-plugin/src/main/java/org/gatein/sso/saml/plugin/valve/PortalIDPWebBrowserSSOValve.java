@@ -27,7 +27,6 @@ package org.gatein.sso.saml.plugin.valve;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
-import org.apache.catalina.authenticator.Constants;
 import org.apache.log4j.Logger;
 import org.picketlink.identity.federation.bindings.tomcat.idp.AbstractIDPValve;
 import org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve;
@@ -45,6 +44,7 @@ import org.apache.catalina.connector.Response;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -133,8 +133,8 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          {
             userPrincipal = (Principal)session.getNote(PRINCIPAL_NOTE);
             request.setUserPrincipal(userPrincipal);
-            request.setAuthType(Constants.FORM_METHOD);
-            session.setAuthType(Constants.FORM_METHOD);
+            request.setAuthType(HttpServletRequest.FORM_AUTH);
+            session.setAuthType(HttpServletRequest.FORM_AUTH);
             if (trace)
             {
                log.trace("Skip processing of request by next valves. Going to SAML processing");

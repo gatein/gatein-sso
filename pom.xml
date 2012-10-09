@@ -85,15 +85,15 @@
       <version.axis>1.4</version.axis>
 
 		<!-- exo -->
-		<org.exoplatform.core.version>2.4.6-GA</org.exoplatform.core.version>
-		<org.exoplatform.ws.version>2.2.6-GA</org.exoplatform.ws.version>
+		<org.exoplatform.core.version>2.5.0-CR1</org.exoplatform.core.version>
+		<org.exoplatform.ws.version>2.3.0-CR1</org.exoplatform.ws.version>
 		<org.gatein.wci.version>2.3.0.Alpha04</org.gatein.wci.version>
 
 		<!-- JAX-RS jsr-311 -->
 		<version.javax.ws.rs>1.0</version.javax.ws.rs>
 
 		<!-- servlet-api -->
-		<version.servlet-api>2.5</version.servlet-api>
+		<version.servlet-api>3.0.1</version.servlet-api>
 
       <!-- JACC -->
       <version.security.jacc>1.0</version.security.jacc>
@@ -105,7 +105,7 @@
       <version.picketlink.fed>2.1.4.Final</version.picketlink.fed>
 
       <!-- JBoss Web -->
-      <version.jboss.web>2.1.7.GA</version.jboss.web>
+      <version.jboss.web>7.0.16.Final</version.jboss.web>
 
       <!-- maven-release-plugin -->
       <useReleaseProfile>false</useReleaseProfile>
@@ -351,7 +351,7 @@
 			<!-- servlet-api -->
 			<dependency>
 				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
+				<artifactId>javax.servlet-api</artifactId>
 				<version>${version.servlet-api}</version>
 			</dependency>
 			
@@ -386,7 +386,7 @@
 
          <!-- JBoss Web -->
          <dependency>
-            <groupId>jboss.web</groupId>
+            <groupId>org.jboss.web</groupId>
             <artifactId>jbossweb</artifactId>
             <version>${version.jboss.web}</version>
          </dependency>
