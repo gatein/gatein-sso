@@ -23,9 +23,10 @@
 
 package org.gatein.sso.agent.filter.api;
 
+import org.exoplatform.container.ExoContainer;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.web.AbstractFilter;
 import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.container.xml.ValueParam;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 
@@ -39,8 +40,9 @@ import javax.servlet.ServletException;
  */
 public abstract class AbstractSSOInterceptor extends AbstractFilter implements SSOInterceptor
 {
-   private FilterConfig filterConfig;
-   private InitParams params;
+   public static final String PORTAL_CONTAINER_SUBSTITUTION_PATTERN = "@@portal.container.name@@";
+
+   private SSOInterceptorInitializationContext interceptorContext;
 
    private static final Logger log = LoggerFactory.getLogger(AbstractSSOInterceptor.class);
 
@@ -51,37 +53,18 @@ public abstract class AbstractSSOInterceptor extends AbstractFilter implements S
    @Override
    protected final void afterInit(FilterConfig filterConfig) throws ServletException
    {
-      initImpl(filterConfig, null);
+      this.interceptorContext = new SSOInterceptorInitializationContext(filterConfig, null, null);
+      log.debug("Interceptor initialized with context " + interceptorContext);
+      initImpl();
    }
 
    /**
     * Method is invoked if we are performing initialization through exo kernel
     */
-   public final void initWithParams(InitParams params)
+   public final void initWithParams(InitParams params, ExoContainerContext containerContext)
    {
-      initImpl(null, params);
-   }
-
-   /**
-    * initialization for both cases. Exactly one parameter (filterConfig or params) must be non-null
-    *
-    * @param filterConfig parameter is non-null if we initialize through servlet api
-    * @param params  parameter is non-null if we initialize through kernel
-    */
-   private void initImpl(FilterConfig filterConfig, InitParams params)
-   {
-      if (filterConfig != null)
-      {
-         this.filterConfig = filterConfig;
-         log.debug(this + " interceptor initialized through Servlet API");
-      }
-
-      if (params != null)
-      {
-         this.params = params;
-         log.debug(this + " interceptor initialized through eXo kernel");
-      }
-
+      this.interceptorContext = new SSOInterceptorInitializationContext(null, params, containerContext);
+      log.debug("Interceptor initialized with context " + interceptorContext);
       initImpl();
    }
 
@@ -100,21 +83,21 @@ public abstract class AbstractSSOInterceptor extends AbstractFilter implements S
     */
    protected String getInitParameter(String paramName)
    {
-      if (params != null)
-      {
-         ValueParam param = params.getValueParam(paramName);
-         return param==null ? null : param.getValue();
-      }
-
-      return filterConfig.getInitParameter(paramName);
+      return interceptorContext.getInitParameter(paramName);
    }
 
    /**
-    * {@inheritDoc}
+    * Need to use different method name because method "super.getContainer()" is final :-/
     */
-   public void setFilterConfig(FilterConfig config)
+   protected ExoContainer getExoContainer()
    {
-      // Updating config of AbstractFilter
-      this.config = config;
+      if (interceptorContext.isInitializedFromServletAPI())
+      {
+         return super.getContainer();
+      }
+      else
+      {
+         return interceptorContext.getExoContainer();
+      }
    }
 }

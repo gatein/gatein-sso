@@ -23,6 +23,7 @@
 
 package org.gatein.sso.integration;
 
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.component.BaseComponentPlugin;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
@@ -44,7 +45,7 @@ public class SSOFilterIntegratorPlugin extends BaseComponentPlugin
 
    private static final Logger log = LoggerFactory.getLogger(SSOFilterIntegratorPlugin.class);
 
-   public SSOFilterIntegratorPlugin(InitParams params)
+   public SSOFilterIntegratorPlugin(InitParams params, ExoContainerContext containerContext)
    {
       ValueParam filterClass = params.getValueParam("filterClass");
       ValueParam enabled = params.getValueParam("enabled");
@@ -75,7 +76,7 @@ public class SSOFilterIntegratorPlugin extends BaseComponentPlugin
          throw new RuntimeException("Can't instantiate " + ssoInterceptorCl, e);
       }
 
-      this.filter.initWithParams(params);
+      this.filter.initWithParams(params, containerContext);
    }
 
    public boolean isEnabled()

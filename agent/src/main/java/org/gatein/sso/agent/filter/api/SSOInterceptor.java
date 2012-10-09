@@ -23,10 +23,10 @@
 
 package org.gatein.sso.agent.filter.api;
 
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.xml.InitParams;
 
 import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
 
 /**
  * SSOInterceptor is actually filter, which can be configured through exo kernel
@@ -35,13 +35,5 @@ import javax.servlet.FilterConfig;
  */
 public interface SSOInterceptor extends Filter
 {
-   public void initWithParams(InitParams params);
-
-   /**
-    * filter config is needed even if we use kernel (no servlet API) because of calls to getContainer()
-    *
-    * @param config config passed from SSODelegateFilter
-    */
-   public void setFilterConfig(FilterConfig config);
-
+   public void initWithParams(InitParams params, ExoContainerContext containerContext);
 }

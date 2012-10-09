@@ -79,7 +79,7 @@ public class InitiateLoginFilter extends AbstractSSOInterceptor
     {
        if (this.casAgent == null)
        {
-          CASAgent casAgent = (CASAgent)getContainer().getComponentInstanceOfType(CASAgent.class);
+          CASAgent casAgent = (CASAgent)getExoContainer().getComponentInstanceOfType(CASAgent.class);
           if (casAgent == null)
           {
              throw new IllegalStateException("CASAgent component not provided in PortalContainer");
@@ -98,7 +98,7 @@ public class InitiateLoginFilter extends AbstractSSOInterceptor
     {
        if (this.jossoAgent == null)
        {
-          JOSSOAgent jossoAgent = (JOSSOAgent)getContainer().getComponentInstanceOfType(JOSSOAgent.class);
+          JOSSOAgent jossoAgent = (JOSSOAgent)getExoContainer().getComponentInstanceOfType(JOSSOAgent.class);
           if (jossoAgent == null)
           {
              throw new IllegalStateException("JOSSOAgent component not provided in PortalContainer");
@@ -114,7 +114,7 @@ public class InitiateLoginFilter extends AbstractSSOInterceptor
     {
        if (this.openSSOAgent == null)
        {
-          OpenSSOAgent openssoAgent = (OpenSSOAgent)getContainer().getComponentInstanceOfType(OpenSSOAgent.class);
+          OpenSSOAgent openssoAgent = (OpenSSOAgent)getExoContainer().getComponentInstanceOfType(OpenSSOAgent.class);
           if (openssoAgent == null)
           {
              throw new IllegalStateException("OpenSSOAgent component not provided in PortalContainer");

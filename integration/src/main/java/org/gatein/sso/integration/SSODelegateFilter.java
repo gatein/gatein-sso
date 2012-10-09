@@ -71,13 +71,6 @@ public class SSODelegateFilter extends AbstractFilter
             {
                SSOFilterIntegrator ssoFilterIntegrator = (SSOFilterIntegrator)getContainer().getComponentInstanceOfType(SSOFilterIntegrator.class);
                ssoInterceptors = ssoFilterIntegrator.getSSOInterceptors();
-
-               // Not pretty, but we need to pass filterConfig to underlying interceptors, so they are able to call getContainer()
-               for (SSOInterceptor interceptor : ssoInterceptors.keySet())
-               {
-                  interceptor.setFilterConfig(this.config);
-               }
-
                log.info("Initialized SSO integrator with interceptors: " + ssoInterceptors);
             }
          }

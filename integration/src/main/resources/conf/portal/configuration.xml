@@ -45,7 +45,7 @@
         </value-param>
         <value-param>
           <name>enabled</name>
-          <value>true</value>
+          <value>${gatein.sso.filter.login.enabled:true}</value>
         </value-param>
         <value-param>
           <name>filterMapping</name>
@@ -53,7 +53,7 @@
         </value-param>
         <value-param>
           <name>LOGIN_URL</name>
-          <value>http://localhost:8888/cas/login?service=http://localhost:8080/portal/initiatessologin</value>
+          <value>${gatein.sso.cas.server.url}/login?service=${gatein.sso.portal.url}/@@portal.container.name@@/initiatessologin</value>
         </value-param>
       </init-params>
     </component-plugin>
@@ -68,11 +68,11 @@
       <init-params>
         <value-param>
           <name>filterClass</name>
-          <value>org.gatein.sso.agent.filter.CASLogoutFilter</value>
+          <value>${gatein.sso.filter.logout.class}</value>
         </value-param>
         <value-param>
           <name>enabled</name>
-          <value>true</value>
+          <value>${gatein.sso.filter.logout.enabled:true}</value>
         </value-param>
         <value-param>
           <name>filterMapping</name>
@@ -80,7 +80,7 @@
         </value-param>
         <value-param>
           <name>LOGOUT_URL</name>
-          <value>http://localhost:8888/cas/logout</value>
+          <value>${gatein.sso.filter.logout.url}</value>
         </value-param>
       </init-params>
     </component-plugin>
@@ -99,7 +99,7 @@
         </value-param>
         <value-param>
           <name>enabled</name>
-          <value>true</value>
+          <value>${gatein.sso.filter.initiatelogin.enabled:true}</value>
         </value-param>
         <value-param>
           <name>filterMapping</name>
@@ -107,19 +107,19 @@
         </value-param>
         <value-param>
           <name>ssoServerUrl</name>
-          <value>http://localhost:8888/cas</value>
+          <value>${gatein.sso.cas.server.url}</value>
         </value-param>
         <value-param>
           <name>casRenewTicket</name>
-          <value>false</value>
+          <value>${gatein.sso.cas.renew.ticket:false}</value>
         </value-param>
         <value-param>
           <name>casServiceUrl</name>
-          <value>http://localhost:8080/portal/initiatessologin</value>
+          <value>${gatein.sso.portal.url}/@@portal.container.name@@/initiatessologin</value>
         </value-param>
         <value-param>
           <name>loginUrl</name>
-          <value>http://localhost:8080/portal/dologin</value>
+          <value>${gatein.sso.portal.url}/@@portal.container.name@@/dologin</value>
         </value-param>
       </init-params>
     </component-plugin>
