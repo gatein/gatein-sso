@@ -28,7 +28,6 @@ import org.josso.agent.AbstractSSOAgent;
 import java.io.IOException;
 import java.net.URLEncoder;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -70,9 +69,9 @@ public class JOSSOLogoutFilter extends AbstractLogoutFilter
    private AbstractSSOAgent jossoAgent;
 
    @Override
-   public void init(FilterConfig config) throws ServletException
+   protected void initImpl()
    {
-      super.init(config);
+      super.initImpl();
 
       try
       {

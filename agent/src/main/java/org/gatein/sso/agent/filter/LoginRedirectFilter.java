@@ -23,12 +23,11 @@ package org.gatein.sso.agent.filter;
 
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
+import org.gatein.sso.agent.filter.api.AbstractSSOInterceptor;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -39,14 +38,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
-public class LoginRedirectFilter implements Filter
+public class LoginRedirectFilter extends AbstractSSOInterceptor
 {
 	String loginUrl;
    private static final Logger log = LoggerFactory.getLogger(LoginRedirectFilter.class);
 	
-	public void init(FilterConfig config) throws ServletException
+	protected void initImpl()
 	{
-		this.loginUrl = config.getInitParameter("LOGIN_URL");
+		this.loginUrl = getInitParameter("LOGIN_URL");
       log.info("Filter configuration: loginUrl=" + loginUrl);
 	}
 	

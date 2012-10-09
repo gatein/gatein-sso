@@ -27,8 +27,6 @@ import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.opensso.OpenSSOAgentImpl;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -55,12 +53,12 @@ public class OpenSSOCDLoginRedirectFilter extends LoginRedirectFilter
    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", new Locale("en"));
 
    @Override
-   public void init(FilterConfig config) throws ServletException
+   public void initImpl()
    {
-      super.init(config);
+      super.initImpl();
 
-      this.openSSORealm = config.getInitParameter("OpenSSORealm");
-      this.agentUrl = config.getInitParameter("AgentUrl");
+      this.openSSORealm = getInitParameter("OpenSSORealm");
+      this.agentUrl = getInitParameter("AgentUrl");
       log.info("Filter configuration: loginUrl=" + loginUrl +
                ", openSSORealm=" + openSSORealm +
                ", agentUrl=" + agentUrl);

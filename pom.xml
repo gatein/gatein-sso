@@ -44,7 +44,8 @@
 		<module>spnego</module>
       <module>saml</module>
 		<module>packaging</module>
-   </modules>
+    <module>integration</module>
+  </modules>
 
 	<properties>
 		<version.junit>3.8.2</version.junit>
@@ -130,6 +131,11 @@
             <groupId>org.gatein.sso</groupId>
             <artifactId>sso-agent</artifactId>
             <version>${project.version}</version>
+         </dependency>
+         <dependency>
+           <groupId>org.gatein.sso</groupId>
+           <artifactId>sso-integration</artifactId>
+           <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.gatein.sso</groupId>

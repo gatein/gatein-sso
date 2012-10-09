@@ -6,27 +6,24 @@ package org.gatein.sso.agent.filter;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.exoplatform.container.web.AbstractFilter;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.cas.CASAgent;
+import org.gatein.sso.agent.filter.api.AbstractSSOInterceptor;
 import org.gatein.sso.agent.josso.JOSSOAgent;
-import org.gatein.sso.agent.josso.JOSSOAgentImpl;
 import org.gatein.sso.agent.opensso.OpenSSOAgent;
-import org.gatein.sso.agent.opensso.OpenSSOAgentImpl;
 
 /**
  * @author soshah
  *
  */
-public class InitiateLoginFilter extends AbstractFilter
+public class InitiateLoginFilter extends AbstractSSOInterceptor
 {
     private static Logger log = LoggerFactory.getLogger(InitiateLoginFilter.class);
     private static final int DEFAULT_MAX_NUMBER_OF_LOGIN_ERRORS = 3;
@@ -44,28 +41,28 @@ public class InitiateLoginFilter extends AbstractFilter
     private OpenSSOAgent openSSOAgent;
 
     @Override
-    protected void afterInit(FilterConfig filterConfig) throws ServletException
+    protected void initImpl()
     {
-        this.ssoServerUrl = filterConfig.getInitParameter("ssoServerUrl");
-        this.ssoCookieName = filterConfig.getInitParameter("ssoCookieName");
-        this.loginUrl = filterConfig.getInitParameter("loginUrl");
+        this.ssoServerUrl = getInitParameter("ssoServerUrl");
+        this.ssoCookieName = getInitParameter("ssoCookieName");
+        this.loginUrl = getInitParameter("loginUrl");
         
-        String casRenewTicketConfig = filterConfig.getInitParameter("casRenewTicket");
+        String casRenewTicketConfig = getInitParameter("casRenewTicket");
         if(casRenewTicketConfig != null)
         {
             this.casRenewTicket = Boolean.parseBoolean(casRenewTicketConfig);
         }
         
-        String casServiceUrlConfig = filterConfig.getInitParameter("casServiceUrl");
+        String casServiceUrlConfig = getInitParameter("casServiceUrl");
         if(casServiceUrlConfig != null && casServiceUrlConfig.trim().length()>0)
         {
             casServiceUrl = casServiceUrlConfig;
         }
 
-       String maxNumberOfLoginErrorsConfig = filterConfig.getInitParameter("maxNumberOfLoginErrors");
+       String maxNumberOfLoginErrorsConfig = getInitParameter("maxNumberOfLoginErrors");
        this.maxNumberOfLoginErrors = maxNumberOfLoginErrorsConfig == null ? DEFAULT_MAX_NUMBER_OF_LOGIN_ERRORS : Integer.parseInt(maxNumberOfLoginErrorsConfig);
 
-       String attachUsernamePasswordToLoginURLConfig = filterConfig.getInitParameter("attachUsernamePasswordToLoginURL");
+       String attachUsernamePasswordToLoginURLConfig = getInitParameter("attachUsernamePasswordToLoginURL");
        this.attachUsernamePasswordToLoginURL = attachUsernamePasswordToLoginURLConfig == null ? true : Boolean.parseBoolean(attachUsernamePasswordToLoginURLConfig);
 
        log.info("InitiateLoginFilter configuration: ssoServerUrl=" + this.ssoServerUrl +
