@@ -21,8 +21,16 @@
 */
 package org.gatein.sso.agent.opensso;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
@@ -33,6 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -202,16 +212,21 @@ public class OpenSSOAgentImpl extends GenericAgent implements OpenSSOAgent
 	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	protected boolean isTokenValid(String token) throws Exception
 	{
-		HttpClient client = new HttpClient();
-		PostMethod post = null;
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post;
 		try
 		{			
 			String url = this.serverUrl+"/identity/isTokenValid";
-			post = new PostMethod(url);
-			post.addParameter("tokenid", token);
-			
-			int status = client.executeMethod(post);
-			String response = post.getResponseBodyAsString();
+			post = new HttpPost(url);
+
+         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+         nameValuePairs.add(new BasicNameValuePair("tokenid", token));
+         post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+         HttpResponse httpResponse = client.execute(post);
+         int status = httpResponse.getStatusLine().getStatusCode();
+         HttpEntity entity = httpResponse.getEntity();
+         String response = entity == null ? null : EntityUtils.toString(entity);
 
 			log.debug("Status of token validation: " + status);
 			log.debug("Response from token validation: " + response);
@@ -225,27 +240,29 @@ public class OpenSSOAgentImpl extends GenericAgent implements OpenSSOAgent
 		}
 		finally
 		{
-			if(post != null)
-			{
-				post.releaseConnection();
-			}
+         client.getConnectionManager().shutdown();
 		}
 	}	
 	
 	protected String getSubject(String token) throws Exception
 	{
-		HttpClient client = new HttpClient();
-		PostMethod post = null;
+      DefaultHttpClient client = new DefaultHttpClient();
+      HttpPost post;
 		try
 		{	
 			String uid = null;
 			String url = this.serverUrl+"/identity/attributes";
-			post = new PostMethod(url);
-			post.addParameter("subjectid", token);
-			post.addParameter("attributes_names", "uid");
-			
-			int status = client.executeMethod(post);
-			String response = post.getResponseBodyAsString();
+			post = new HttpPost(url);
+
+         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+         nameValuePairs.add(new BasicNameValuePair("subjectid", token));
+         nameValuePairs.add(new BasicNameValuePair("attributes_names", "uid"));
+         post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+         HttpResponse httpResponse =  client.execute(post);
+         int status = httpResponse.getStatusLine().getStatusCode();
+         HttpEntity entity = httpResponse.getEntity();
+         String response = entity == null ? null : EntityUtils.toString(entity);
 
 			log.debug("Status of get subject: " + status);
 			log.debug(response);
@@ -261,10 +278,7 @@ public class OpenSSOAgentImpl extends GenericAgent implements OpenSSOAgent
 		}
 		finally
 		{
-			if(post != null)
-			{
-				post.releaseConnection();
-			}
+         client.getConnectionManager().shutdown();
 		}		
 	}
 	
