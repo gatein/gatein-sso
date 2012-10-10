@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * Delegates work to another login module configured through option 'delegateClass'
+ * Delegates work to another login module configured through option 'delegateClassName'
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */

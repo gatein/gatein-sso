@@ -23,6 +23,8 @@
 
 package org.gatein.sso.integration;
 
+import org.apache.catalina.Contained;
+import org.apache.catalina.Container;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -30,67 +32,202 @@ import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.jboss.servlet.http.HttpEvent;
 
+import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
- * Delegates work to another valve configured through option 'delegateClass'
+ * Delegates work to another valve configured through option 'delegateValveClassName'. It's possible to disable
+ * delegation by boolean parameter 'ssoDelegationEnabled'.
+ *
+ * Actually delegation will be enabled only for SSO scenario, which require integration with Tomcat valves (SAML, SPNEGO)
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class SSODelegateValve implements Valve
+public class SSODelegateValve implements Valve, Contained, MBeanRegistration
 {
    private static final Logger log = LoggerFactory.getLogger(SSODelegateValve.class);
 
-   private Valve delegate;
+   // Injected by container
+   // If true, then we are in SSO and we have delegate valve where we should resend all method calls
+   // If false, we are not in SSO and we don't have delegate
+   private boolean delegationEnabled;
+
+   // Injected by container
    private String delegateValveClassName;
 
-   public String getDelegateValve()
+   // Delegate valve is not null only if we are in SSO mode and delegation is enabled
+   // Delegate will be either SAML or SPNEGO valve
+   private Valve delegate;
+
+   // This is not null only if delegation is disabled
+   private Valve next;
+
+   // Catalina context
+   private Container context;
+
+   public void setDelegateValveClassName(String delegateValve)
    {
-      return delegateValveClassName;
+      // We need to replace system properties by ourselves, so we need to define in configuration like #{prop} instead of ${prop}
+      delegateValve = delegateValve.replace("#", "$");
+      delegateValve = SSOUtils.substituteSystemProperty(delegateValve);
+      this.delegateValveClassName = delegateValve;
+      log.debug("delegateValveClassName: " + delegateValveClassName);
    }
 
-   public void setDelegateValve(String delegateValve)
+   public void setSsoDelegationEnabled(String enabled)
    {
-      this.delegateValveClassName = delegateValve;
+      // We need to replace system properties by ourselves, so we need to define in configuration like #{prop} instead of ${prop}
+      enabled = enabled.replace("#", "$");
+      enabled = SSOUtils.substituteSystemProperty(enabled);
+      this.delegationEnabled = Boolean.parseBoolean(enabled);
+      log.debug("ssoDelegationEnabled: " + delegationEnabled);
    }
 
    public String getInfo()
    {
-      Valve delegate = getOrLoadDelegate(delegateValveClassName);
-      return delegate.getInfo();
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         return delegate.getInfo();
+      }
+      else
+      {
+         return "SSODelegateValve with disabled delegation";
+      }
    }
 
    public Valve getNext()
    {
-      Valve delegate = getOrLoadDelegate(delegateValveClassName);
-      return delegate.getNext();
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         return delegate.getNext();
+      }
+      else
+      {
+         return next;
+      }
    }
 
    public void setNext(Valve valve)
    {
-      Valve delegate = getOrLoadDelegate(delegateValveClassName);
-      delegate.setNext(valve);
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         delegate.setNext(valve);
+      }
+      else
+      {
+         this.next = valve;
+      }
+
    }
 
    public void backgroundProcess()
    {
-      Valve delegate = getOrLoadDelegate(delegateValveClassName);
-      delegate.backgroundProcess();
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         delegate.backgroundProcess();
+      }
    }
 
    public void invoke(Request request, Response response) throws IOException, ServletException
    {
-      Valve delegate = getOrLoadDelegate(delegateValveClassName);
-      delegate.invoke(request, response);
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         delegate.invoke(request, response);
+      }
+      else
+      {
+         next.invoke(request, response);
+      }
    }
 
    public void event(Request request, Response response, HttpEvent event) throws IOException, ServletException
    {
-      Valve delegate = getOrLoadDelegate(delegateValveClassName);
-      delegate.event(request, response, event);
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         delegate.event(request, response, event);
+      }
+      else
+      {
+         next.event(request, response, event);
+      }
    }
 
+   public Container getContainer()
+   {
+      return context;
+   }
+
+   public void setContainer(Container container)
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof Contained)
+         {
+            ((Contained) delegate).setContainer(container);
+         }
+      }
+      this.context = container;
+
+   }
+
+   public ObjectName preRegister(MBeanServer server, ObjectName name) throws Exception
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof MBeanRegistration)
+         {
+            return ((MBeanRegistration) delegate).preRegister(server,name);
+         }
+      }
+      return name;
+   }
+
+   public void postRegister(Boolean registrationDone)
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof MBeanRegistration)
+         {
+            ((MBeanRegistration) delegate).postRegister(registrationDone);
+         }
+      }
+   }
+
+   public void preDeregister() throws Exception
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof MBeanRegistration)
+         {
+            ((MBeanRegistration) delegate).preDeregister();
+         }
+      }
+   }
+
+   public void postDeregister()
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof MBeanRegistration)
+         {
+            ((MBeanRegistration) delegate).postDeregister();
+         }
+      }
+   }
 
    private Valve getOrLoadDelegate(String className)
    {
@@ -105,10 +242,7 @@ public class SSODelegateValve implements Valve
          try
          {
             this.delegate = delegateClass.newInstance();
-            if (log.isTraceEnabled())
-            {
-               log.trace("Delegating valve created successfuly: " + delegate);
-            }
+            log.info("Delegating valve created successfuly: " + delegate);
          }
          catch (Exception e)
          {
