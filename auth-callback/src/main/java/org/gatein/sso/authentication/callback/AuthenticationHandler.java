@@ -36,6 +36,7 @@ import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.RootContainer;
 
+import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.Credential;
 import org.exoplatform.services.security.Identity;
@@ -59,13 +60,28 @@ import java.util.Collection;
 public class AuthenticationHandler implements ResourceContainer
 {
    private static final Logger log = LoggerFactory.getLogger(AuthenticationHandler.class);
-	
+
+   // If false, then rest callbacks are disabled
+   private final boolean callbackEnabled;
+
+   public AuthenticationHandler(InitParams params)
+   {
+      String callbackEnabledParam = params.getValueParam("ssoCallbackEnabled").getValue();
+       this.callbackEnabled = Boolean.parseBoolean(callbackEnabledParam);
+   }
+
 	 @GET
 	 @Path("/auth/{1}/{2}")
    @Produces(
    {MediaType.TEXT_PLAIN})
    public String authenticate(@PathParam("1") String username, @PathParam("2") String password)
    {
+      if (!callbackEnabled)
+      {
+         log.warn("SSO callbacks are disabled!");
+         return "Error! SSO callbacks are disabled!";
+      }
+
 		 try
 		 {
 			  log.debug("Handle SSO callback authentication. Username: "+username);
@@ -109,7 +125,13 @@ public class AuthenticationHandler implements ResourceContainer
    @Path("/roles/{1}")
    @Produces({MediaType.TEXT_PLAIN})
    public String getJAASRoles(@PathParam("1") String username)
-   {      
+   {
+      if (!callbackEnabled)
+      {
+         log.warn("SSO callbacks are disabled!");
+         return "Error! SSO callbacks are disabled!";
+      }
+
       try
       {
          log.debug("Going to obtain roles for user: " + username);
@@ -159,7 +181,7 @@ public class AuthenticationHandler implements ResourceContainer
 	 private ExoContainer getContainer() throws Exception 
 	 {
     ExoContainer container = ExoContainerContext.getCurrentContainer();
-    if (container instanceof RootContainer) 
+    if (container instanceof RootContainer)
     {
       container = RootContainer.getInstance().getPortalContainer("portal");
     }
