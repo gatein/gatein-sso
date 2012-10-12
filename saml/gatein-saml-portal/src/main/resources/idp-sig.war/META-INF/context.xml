@@ -1,0 +1,4 @@
+<Context>
+	<Valve
+		className="org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve"/>
+</Context>

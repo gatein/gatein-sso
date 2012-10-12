@@ -21,31 +21,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.gatein.sso.agent.filter;
+package org.gatein.sso.saml.plugin.listener;
 
-import javax.servlet.http.HttpServletRequest;
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
+import org.gatein.sso.integration.SSOUtils;
+
+import javax.servlet.http.HttpSessionEvent;
 
 /**
- * Filter for redirecting GateIn logout request (triggered from GateIn UI by user) to SAML2 global logout request.
- * Filter is usable only if we want to enable SAML2 global logout.
+ * Class exists only to avoid dependency on picketlink module from gatein.ear
+ * TODO: Better solution...
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class SAML2LogoutFilter extends AbstractLogoutFilter
+public class IDPHttpSessionListener extends org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener
 {
+   private static final Logger log = LoggerFactory.getLogger(IDPHttpSessionListener.class);
+
+   private static final String PROPERTY_IDP_ENABLED = "gatein.sso.idp.listener.enabled";
 
    @Override
-   protected String getRedirectUrl(HttpServletRequest httpRequest)
+   public void sessionDestroyed(HttpSessionEvent se)
    {
-      String logoutURL =  this.logoutUrl;
-
-      // URL from filter init parameter has priority, but if not provided, we will use SAML global logout.
-      // Second condition means that System property was not provided (In this case we also won't use logoutUrl)
-      if (logoutURL == null || logoutUrl.startsWith("${"))
+      if ("true".equals(SSOUtils.getSystemProperty(PROPERTY_IDP_ENABLED, "false")))
       {
-         logoutURL = httpRequest.getContextPath() + "/dologin?GLO=true";
+         super.sessionDestroyed(se);
       }
-
-      return logoutURL;
+      else
+      {
+         log.debug("Portal is not acting as SAML2 IDP. Ignore this listener");
+      }
    }
 }

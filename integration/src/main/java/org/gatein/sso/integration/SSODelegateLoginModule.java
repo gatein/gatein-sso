@@ -30,6 +30,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,6 +42,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class SSODelegateLoginModule implements LoginModule
 {
+   private static final String OPTION_DELEGATE_CLASSNAME = "delegateClassName";
+   private static final String OPTION_ENABLED = "enabled";
 
    private static final ConcurrentMap<String, Class<LoginModule>> delegateClasses = new ConcurrentHashMap<String, Class<LoginModule>>();
    private static final Logger log = LoggerFactory.getLogger(SSODelegateLoginModule.class);
@@ -63,7 +66,7 @@ public class SSODelegateLoginModule implements LoginModule
 
    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options)
    {
-      String enabledParam = (String)options.get("ssoEnabled");
+      String enabledParam = (String)options.get(OPTION_ENABLED);
       enabledParam = SSOUtils.substituteSystemProperty(enabledParam);
       this.enabled = Boolean.parseBoolean(enabledParam);
       if (!this.enabled)
@@ -75,11 +78,11 @@ public class SSODelegateLoginModule implements LoginModule
          return;
       }
 
-      String delegateClazz = (String)options.get("delegateClassName");
+      String delegateClazz = (String)options.get(OPTION_DELEGATE_CLASSNAME);
       delegateClazz = SSOUtils.substituteSystemProperty(delegateClazz);
       if (delegateClazz == null)
       {
-         throw new IllegalArgumentException("Option 'delegateClassName' is not available");
+         throw new IllegalArgumentException("Option '" + OPTION_DELEGATE_CLASSNAME + "' is not available");
       }
       Class<LoginModule> delegateClass = getOrLoadDelegateClass(delegateClazz);
 
@@ -96,8 +99,20 @@ public class SSODelegateLoginModule implements LoginModule
          throw new RuntimeException("Can't instantiate " + delegateClass, e);
       }
 
+      // Remove options for 'delegateClassName' and 'enabled' to be passed to delegate
+      options = removeUnneededOptions(options);
+
       // Finally invoke method on delegate
       delegate.initialize(subject, callbackHandler, sharedState, options);
+   }
+
+   private Map<String, ?> removeUnneededOptions(Map<String, ?> oldMap)
+   {
+      Map<String, Object> newMap = new HashMap<String, Object>();
+      newMap.putAll(oldMap);
+      newMap.remove(OPTION_DELEGATE_CLASSNAME);
+      newMap.remove(OPTION_ENABLED);
+      return newMap;
    }
 
    public boolean login() throws LoginException

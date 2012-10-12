@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Built-By: pedroigor
+Build-Jdk: 1.7.0_05-icedtea
+Created-By: Apache Maven 3.0.4
+Archiver-Version: Plexus Archiver
+

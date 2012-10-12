@@ -6,10 +6,14 @@
    </formats>
 
    <fileSets>
-      <fileSet>
-         <directory>src/main/resources/gatein.ear</directory>
-         <outputDirectory>gatein.ear</outputDirectory>
-      </fileSet>
+     <fileSet>
+       <directory>src/main/resources/gatein.ear</directory>
+       <outputDirectory>gatein.ear</outputDirectory>
+     </fileSet>
+     <fileSet>
+       <directory>src/main/resources/idp-sig.war</directory>
+       <outputDirectory>idp-sig.war</outputDirectory>
+     </fileSet>
    </fileSets>
 
    <dependencySets>
@@ -31,6 +35,15 @@
             <include>org.gatein.sso:sso-saml-plugin</include>
          </includes>
       </dependencySet>
+
+     <dependencySet>
+       <outputDirectory>idp-sig.war/WEB-INF/lib</outputDirectory>
+       <useProjectArtifact>false</useProjectArtifact>
+       <useTransitiveDependencies>false</useTransitiveDependencies>
+       <includes>
+         <include>org.gatein.sso:sso-saml-plugin</include>
+       </includes>
+     </dependencySet>
 
    </dependencySets>
 

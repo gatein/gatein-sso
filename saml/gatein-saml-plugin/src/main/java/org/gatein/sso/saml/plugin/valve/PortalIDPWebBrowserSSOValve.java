@@ -27,14 +27,18 @@ package org.gatein.sso.saml.plugin.valve;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
-import org.apache.log4j.Logger;
+import org.gatein.common.logging.Logger;
+import org.gatein.common.logging.LoggerFactory;
 import org.picketlink.identity.federation.bindings.tomcat.idp.AbstractIDPValve;
 import org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve;
+import org.picketlink.identity.federation.core.config.IDPType;
+import org.picketlink.identity.federation.core.exceptions.ParsingException;
 import org.picketlink.identity.federation.core.interfaces.TrustKeyManager;
 import org.picketlink.identity.federation.core.saml.v1.SAML11Constants;
 import org.picketlink.identity.federation.core.saml.v2.constants.JBossSAMLURIConstants;
 import org.picketlink.identity.federation.core.util.StringUtil;
 import org.picketlink.identity.federation.web.constants.GeneralConstants;
+import org.picketlink.identity.federation.web.util.ConfigurationUtil;
 import org.picketlink.identity.federation.web.util.IDPWebRequestUtil;
 import org.picketlink.identity.federation.web.util.RedirectBindingUtil;
 import org.w3c.dom.Document;
@@ -47,6 +51,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
@@ -60,7 +65,7 @@ import java.security.Principal;
 public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
 {
 
-   private static final Logger log = Logger.getLogger(PortalIDPWebBrowserSSOValve.class);
+   private static final Logger log = LoggerFactory.getLogger(PortalIDPWebBrowserSSOValve.class);
    private static final boolean trace = log.isTraceEnabled();
 
    private static final String REQUEST_FROM_SP = "requestFromSP";
@@ -69,6 +74,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
 
    private Context context = null;
    private TrustKeyManager keyManager;
+   private String configFile = GeneralConstants.CONFIG_FILE_LOCATION;
 
    /**
     * Defines whether we should forward to URL "/hosted" when no SAMLRequest or SAMLResponse are found.
@@ -79,6 +85,11 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    public void setSkipForwardingToHostedURL(Boolean skipForwardingToHostedURL)
    {
       this.skipForwardingToHostedURL = skipForwardingToHostedURL;
+   }
+
+   public void setConfigFile(String configFile)
+   {
+      this.configFile = configFile;
    }
 
 
@@ -298,6 +309,37 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
 
       log.info("Valve started with identityURL=" + getIdentityURL() + ", strictPostBinding=" + idpConfiguration.isStrictPostBinding() + ", keyManager="
             + keyManager + ", context=" + context);
+   }
+
+   /**
+    * Overriden only because we want custom location of configuration file
+    */
+   protected void initIDPConfiguration()
+   {
+      InputStream is = getContext().getServletContext().getResourceAsStream(configFile);
+
+      if (idpConfiguration == null)
+      {
+         if (is != null)
+         {
+            try
+            {
+               picketLinkConfiguration = ConfigurationUtil.getConfiguration(is);
+               idpConfiguration = (IDPType) picketLinkConfiguration.getIdpOrSP();
+            }
+            catch (ParsingException e)
+            {
+               log.error("Failed to initialize Picketlink IDM from config file located in " + configFile, e);
+            }
+         }
+         else
+         {
+            throw new RuntimeException("Failed to locate configuration file " + configFile);
+         }
+      }
+
+      // Finish initialization of superclass
+      super.initIDPConfiguration();
    }
 
 

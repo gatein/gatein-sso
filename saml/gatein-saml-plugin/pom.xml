@@ -38,6 +38,16 @@
          <groupId>javax.servlet</groupId>
          <artifactId>javax.servlet-api</artifactId>
       </dependency>
+      <!-- We need only gatein common-logging, but we don't have dependency on gatein-common in parent for now... -->
+      <dependency>
+         <groupId>org.gatein.wci</groupId>
+         <artifactId>wci-wci</artifactId>
+      </dependency>
+      <!-- Needed only for SSOUtils. TODO: Try to improve to avoid this dependency maybe -->
+      <dependency>
+         <groupId>org.gatein.sso</groupId>
+         <artifactId>sso-integration</artifactId>
+      </dependency>
    </dependencies>
 
 </project>

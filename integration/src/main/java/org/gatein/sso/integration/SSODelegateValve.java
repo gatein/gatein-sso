@@ -25,18 +25,24 @@ package org.gatein.sso.integration;
 
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
+import org.apache.catalina.util.LifecycleSupport;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.jboss.servlet.http.HttpEvent;
+import org.picketlink.identity.federation.bindings.tomcat.sp.BaseFormAuthenticator;
 
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 /**
  * Delegates work to another valve configured through option 'delegateValveClassName'. It's possible to disable
@@ -46,7 +52,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class SSODelegateValve implements Valve, Contained, MBeanRegistration
+public class SSODelegateValve implements Valve, Contained, MBeanRegistration, Lifecycle
 {
    private static final Logger log = LoggerFactory.getLogger(SSODelegateValve.class);
 
@@ -68,23 +74,30 @@ public class SSODelegateValve implements Valve, Contained, MBeanRegistration
    // Catalina context
    private Container context;
 
+   // Used only for SAML2 when acting as SP
+   private String samlSPConfigFile;
+
+   private LifecycleSupport lifecycle = new LifecycleSupport(this);
+
    public void setDelegateValveClassName(String delegateValve)
    {
-      // We need to replace system properties by ourselves, so we need to define in configuration like #{prop} instead of ${prop}
-      delegateValve = delegateValve.replace("#", "$");
-      delegateValve = SSOUtils.substituteSystemProperty(delegateValve);
-      this.delegateValveClassName = delegateValve;
+      this.delegateValveClassName = substituteSystemProperty(delegateValve);
       log.debug("delegateValveClassName: " + delegateValveClassName);
    }
 
    public void setSsoDelegationEnabled(String enabled)
    {
-      // We need to replace system properties by ourselves, so we need to define in configuration like #{prop} instead of ${prop}
-      enabled = enabled.replace("#", "$");
-      enabled = SSOUtils.substituteSystemProperty(enabled);
+      enabled = substituteSystemProperty(enabled);
       this.delegationEnabled = Boolean.parseBoolean(enabled);
       log.debug("ssoDelegationEnabled: " + delegationEnabled);
    }
+
+   public void setSamlSPConfigFile(String configFile)
+   {
+      this.samlSPConfigFile = substituteSystemProperty(configFile);
+   }
+
+   // Valve methods
 
    public String getInfo()
    {
@@ -161,6 +174,8 @@ public class SSODelegateValve implements Valve, Contained, MBeanRegistration
       }
    }
 
+   // CONTAINED methods
+
    public Container getContainer()
    {
       return context;
@@ -179,6 +194,8 @@ public class SSODelegateValve implements Valve, Contained, MBeanRegistration
       this.context = container;
 
    }
+
+   // MBeanRegistration methods
 
    public ObjectName preRegister(MBeanServer server, ObjectName name) throws Exception
    {
@@ -229,6 +246,84 @@ public class SSODelegateValve implements Valve, Contained, MBeanRegistration
       }
    }
 
+   public void addLifecycleListener(LifecycleListener listener)
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof Lifecycle)
+         {
+            ((Lifecycle) delegate).addLifecycleListener(listener);
+            return;
+         }
+      }
+      else
+      {
+         lifecycle.addLifecycleListener(listener);
+      }
+   }
+
+   public LifecycleListener[] findLifecycleListeners()
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof Lifecycle)
+         {
+            return ((Lifecycle) delegate).findLifecycleListeners();
+         }
+         else
+         {
+            return new LifecycleListener[0];
+         }
+      }
+      else
+      {
+         return lifecycle.findLifecycleListeners();
+      }
+   }
+
+   public void removeLifecycleListener(LifecycleListener listener)
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof Lifecycle)
+         {
+            ((Lifecycle) delegate).removeLifecycleListener(listener);
+            return;
+         }
+      }
+      else
+      {
+         lifecycle.removeLifecycleListener(listener);
+      }
+   }
+
+   public void start() throws LifecycleException
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof Lifecycle)
+         {
+            ((Lifecycle) delegate).start();
+         }
+      }
+   }
+
+   public void stop() throws LifecycleException
+   {
+      if (delegationEnabled)
+      {
+         Valve delegate = getOrLoadDelegate(delegateValveClassName);
+         if (delegate instanceof Lifecycle)
+         {
+            ((Lifecycle) delegate).stop();
+         }
+      }
+   }
+
    private Valve getOrLoadDelegate(String className)
    {
       if (delegate == null)
@@ -248,8 +343,30 @@ public class SSODelegateValve implements Valve, Contained, MBeanRegistration
          {
             throw new RuntimeException("Can't instantiate " + delegateClass, e);
          }
+
+         // Update location of configFile for SAML2 SP. Little hack but sufficient for our purpose
+         if (this.samlSPConfigFile != null)
+         {
+            try
+            {
+               Method m = delegateClass.getMethod("setConfigFile", String.class);
+               m.invoke(delegate, samlSPConfigFile);
+               log.info("Picketlink configuration file successfuly set to location: " + samlSPConfigFile);
+            }
+            catch (Exception e)
+            {
+               log.trace("Can't set SAML config file. Method 'setConfigFile' not supported on class " + delegateClass, e);
+            }
+         }
       }
 
       return delegate;
+   }
+
+   private String substituteSystemProperty(String input)
+   {
+      // We need to replace system properties by ourselves, so we need to define in configuration like #{prop} instead of ${prop}
+      input = input.replace("#", "$");
+      return SSOUtils.substituteSystemProperty(input);
    }
 }

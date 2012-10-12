@@ -37,6 +37,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -46,6 +48,8 @@ import java.util.Map;
  */
 public class SAML2IntegrationLoginModule extends SAML2LoginModule
 {
+   // Name of security-domain (actually not used by this impl)
+   private static final String OPTION_REALM_NAME = "realmName";
 
    // Name of portalContainer
    private static final String OPTION_PORTAL_CONTAINER_NAME = "portalContainerName";
@@ -56,6 +60,13 @@ public class SAML2IntegrationLoginModule extends SAML2LoginModule
    // Default value is false, so we are preferring delegation to JbossLoginModule and using roles from portal DB.
    private static final String OPTION_USE_SAML_ROLES = "useSAMLRoles";
 
+   private static final String[] ALL_VALID_OPTIONS =
+   {
+         OPTION_PORTAL_CONTAINER_NAME,
+         OPTION_REALM_NAME,
+         OPTION_USE_SAML_ROLES
+   };
+
    private String portalContainerName;
    private boolean useSAMLRoles;
    
@@ -63,6 +74,7 @@ public class SAML2IntegrationLoginModule extends SAML2LoginModule
    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState,
                           Map<String, ?> options)
    {
+      addValidOptions(ALL_VALID_OPTIONS);
       super.initialize(subject, callbackHandler, sharedState, options);
    
       // GateIn integration
