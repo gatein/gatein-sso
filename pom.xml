@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>org.gatein</groupId>
 		<artifactId>gatein-parent</artifactId>
-		<version>1.1.0-GA</version>
+    <version>1.2.0.Alpha03</version>
 	</parent>
 
 
@@ -87,7 +87,7 @@
 		<!-- exo -->
 		<org.exoplatform.core.version>2.5.0-CR1</org.exoplatform.core.version>
 		<org.exoplatform.ws.version>2.3.0-CR1</org.exoplatform.ws.version>
-		<org.gatein.wci.version>2.3.0.Alpha04</org.gatein.wci.version>
+		<org.gatein.wci.version>2.3.0.Beta01</org.gatein.wci.version>
 
 		<!-- JAX-RS jsr-311 -->
 		<version.javax.ws.rs>1.0</version.javax.ws.rs>
@@ -486,11 +486,6 @@
                <artifactId>maven-xbean-plugin</artifactId>
                <version>${version.xbean}</version>
             </plugin>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-compiler-plugin</artifactId>
-               <version>2.0.2</version>
-            </plugin>
          </plugins>
       </pluginManagement>
 		<plugins>
@@ -498,8 +493,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+          <fork>true</fork>
+          <meminitial>256m</meminitial>
+          <maxmem>1024m</maxmem>
 				</configuration>
 			</plugin>
 		</plugins>
