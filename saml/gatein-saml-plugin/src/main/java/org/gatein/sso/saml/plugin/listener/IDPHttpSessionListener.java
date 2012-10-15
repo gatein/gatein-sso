@@ -28,29 +28,54 @@ import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.integration.SSOUtils;
 
 import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 /**
- * Class exists only to avoid dependency on picketlink module from gatein.ear
- * TODO: Better solution...
+ * Class exists to avoid dependency on picketlink module from gatein.ear and use it only during SAML2 setup
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class IDPHttpSessionListener extends org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener
+public class IDPHttpSessionListener implements HttpSessionListener
 {
    private static final Logger log = LoggerFactory.getLogger(IDPHttpSessionListener.class);
 
    private static final String PROPERTY_IDP_ENABLED = "gatein.sso.idp.listener.enabled";
 
-   @Override
+   private HttpSessionListener delegate;
+
    public void sessionDestroyed(HttpSessionEvent se)
    {
       if ("true".equals(SSOUtils.getSystemProperty(PROPERTY_IDP_ENABLED, "false")))
       {
-         super.sessionDestroyed(se);
+         HttpSessionListener delegate = getOrInitDelegate();
+         delegate.sessionDestroyed(se);
       }
       else
       {
-         log.debug("Portal is not acting as SAML2 IDP. Ignore this listener");
+         if (log.isTraceEnabled())
+         {
+            log.trace("Portal is not acting as SAML2 IDP. Ignore this listener");
+         }
       }
+   }
+
+   public void sessionCreated(HttpSessionEvent se)
+   {
+   }
+
+   private HttpSessionListener getOrInitDelegate()
+   {
+      if (delegate == null)
+      {
+         synchronized (this)
+         {
+            if (delegate == null)
+            {
+               delegate = new org.picketlink.identity.federation.web.listeners.IDPHttpSessionListener();
+            }
+         }
+      }
+
+      return delegate;
    }
 }
