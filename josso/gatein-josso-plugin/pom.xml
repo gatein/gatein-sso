@@ -52,25 +52,5 @@
 		</plugins>
 	</build>
 
-	<!--
-		profile for packaging and deploying this plugin into a josso server
-	-->
-	<!--
-   		TODO: move this into the packaging module 
-    -->
-	<!--
-		<profiles> <profile> <id>plugin-tomcat-deploy</id> <properties>
-		<tomcat60.josso.location>/home/soshah/projects/gatein/runtime/tomcat-josso-1.8.1</tomcat60.josso.location>
-		</properties> <build> <plugins> <plugin>
-		<groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
-		<artifactId>maven-antrun-extended-plugin</artifactId> <executions>
-		<execution> <id>plugin-tomcat-package</id> <phase>package</phase>
-		<configuration> <tasks> <echo message="Preparing the JOSSO Plugin for Tomcat 6.0.2......" /> <delete dir="${basedir}/target/plugin" /> <mkdir dir="${basedir}/target/plugin" /> <copy todir="${basedir}/target/plugin/lib"> <fileset dir="${basedir}/src/main/config"> <include name="josso-gateway-*.xml" /> </fileset> </copy> <copy todir="${basedir}/target/plugin/webapps/josso/WEB-INF"> <fileset dir="${basedir}/src/main/config/WEB-INF" /> </copy> <copy tofile="${basedir}/target/plugin/webapps/josso/WEB-INF/lib/gatein-josso-plugin.jar" file="${basedir}/target/gatein-josso-plugin-${project.version}.jar" overwrite="true" /> <copy tofile="${basedir}/target/plugin/webapps/josso/WEB-INF/lib/log4j.jar" file="${settings.localRepository}/apache-log4j/log4j/${version.log4j}/log4j-${version.log4j}.jar" overwrite="true" /> </tasks> </configuration> <goals> <goal>run</goal>
-		</goals> </execution> <execution> <id>plugin-tomcat-install</id>
-		<phase>install</phase> <configuration> <tasks> <echo message="Starting JOSSO Plugin Deployment into Tomcat 6.0.2......" /> <jar destfile="${basedir}/target/plugin.jar" basedir="${basedir}/target/plugin" /> <unjar src="${basedir}/target/plugin.jar" dest="${tomcat60.josso.location}" overwrite="true" /> <delete dir="${tomcat60.josso.location}/META-INF" />
-		</tasks> </configuration> <goals> <goal>run</goal> </goals>
-		</execution> </executions> </plugin> </plugins> </build> </profile>
-		</profiles>
-	-->
 </project>
 

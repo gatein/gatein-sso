@@ -107,6 +107,8 @@
       <!-- JBoss Web -->
       <version.jboss.web>7.0.16.Final</version.jboss.web>
 
+    <version.org.jboss.jandex>1.0.0.Beta6</version.org.jboss.jandex>
+
       <!-- maven-release-plugin -->
       <useReleaseProfile>false</useReleaseProfile>
       <arguments>-Prelease</arguments>

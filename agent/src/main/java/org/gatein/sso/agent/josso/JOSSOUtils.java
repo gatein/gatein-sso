@@ -31,6 +31,8 @@ import org.josso.agent.SSOPartnerAppConfig;
 import org.josso.agent.http.HttpSSOAgent;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * Utils for JOSSO
@@ -41,7 +43,7 @@ public class JOSSOUtils
 {
    private static Logger log = LoggerFactory.getLogger(JOSSOUtils.class);
 
-   private static final String JOSSO_AGENT_CONFIG_FILE = "josso-agent-config.xml";
+   private static final String PROPERTY_AGENT_CONFIG_FILE = "gatein.sso.josso.agent.config.file";
 
    /**
     * Lookup for SSO agent from Spring configuration file
@@ -51,7 +53,9 @@ public class JOSSOUtils
    public static HttpSSOAgent lookupSSOAgent() throws Exception
    {
       Lookup lookup = Lookup.getInstance();
-      lookup.init(JOSSO_AGENT_CONFIG_FILE);
+      String location = getSystemProperty(PROPERTY_AGENT_CONFIG_FILE, "josso-agent-config.xml");
+      log.info("Using JOSSO agent from location " + location);
+      lookup.init(location);
       return (HttpSSOAgent)lookup.lookupSSOAgent();
    }
 
@@ -84,5 +88,16 @@ public class JOSSOUtils
          log.trace("Using partnerAppId " + requester);
       }
       return requester;
+   }
+
+   public static String getSystemProperty(final String key, final String defaultValue)
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<String>()
+      {
+         public String run()
+         {
+            return System.getProperty(key, defaultValue);
+         }
+      });
    }
 }

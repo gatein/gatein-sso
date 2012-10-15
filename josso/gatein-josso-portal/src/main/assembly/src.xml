@@ -7,12 +7,12 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>src/main/resources/gatein.ear</directory>
-			<outputDirectory>josso-181/gatein.ear</outputDirectory>
+			<directory>../gatein-agent-josso181/target/josso-181</directory>
+			<outputDirectory>gatein-josso-181</outputDirectory>
 		</fileSet>
       <fileSet>
-         <directory>src/main/resources/gatein.ear</directory>
-         <outputDirectory>josso-182/gatein.ear</outputDirectory>
+         <directory>../gatein-agent-josso182/target/josso-182</directory>
+         <outputDirectory>gatein-josso-182</outputDirectory>
       </fileSet>
       <fileSet>
          <directory>src/main/resources/plugin</directory>
@@ -29,56 +29,9 @@
          <directory>src/main/resources/plugin-182/lib</directory>
          <outputDirectory>josso-182/plugin/lib</outputDirectory>
       </fileSet>
-
-      <!-- We need to use old josso libraries for josso 1.8.1 packaging. Libraries  are included in dependencies of project gatein-agent-josso181
-           and downloaded thanks to maven-dependency-plugin declared in pom.xml of gatein-agent-josso181 module. -->
-      <fileSet>
-         <directory>../gatein-agent-josso181/target/dependency</directory>
-         <outputDirectory>josso-181/gatein.ear/lib</outputDirectory>
-         <includes>
-            <include>josso-agents-bin-1.8.0.jar</include>
-            <include>josso-agent-shared-1.8.1.jar</include>
-         </includes>
-      </fileSet>
 	</fileSets>
 
 	<dependencySets>
-
-		<dependencySet>
-			<outputDirectory>josso-181/gatein.ear/lib</outputDirectory>
-			<useProjectArtifact>false</useProjectArtifact>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<includes>
-				<include>org.springframework:spring-beans</include>
-				<include>org.springframework:spring-context</include>
-				<include>org.springframework:spring-core</include>
-				<include>commons-discovery:commons-discovery</include>
-				<include>org.apache.axis:axis</include>
-				<include>org.apache.xbean:xbean-spring</include>
-				<include>org.gatein.sso:sso-agent</include>
-				<include>org.gatein.sso:sso-auth-callback</include>
-            <include>org.gatein.sso:sso-agent-josso181</include>
-			</includes>
-		</dependencySet>
-
-      <dependencySet>
-         <outputDirectory>josso-182/gatein.ear/lib</outputDirectory>
-         <useProjectArtifact>false</useProjectArtifact>
-         <useTransitiveDependencies>false</useTransitiveDependencies>
-         <includes>
-            <include>org.josso:josso-agents-bin</include>
-            <include>org.josso:josso-agent-shared</include>
-            <include>org.springframework:spring-beans</include>
-            <include>org.springframework:spring-context</include>
-            <include>org.springframework:spring-core</include>
-            <include>commons-discovery:commons-discovery</include>
-            <include>org.apache.axis:axis</include>
-            <include>org.apache.xbean:xbean-spring</include>
-            <include>org.gatein.sso:sso-agent</include>
-            <include>org.gatein.sso:sso-auth-callback</include>
-            <include>org.gatein.sso:sso-agent-josso182</include>
-         </includes>
-      </dependencySet>
 
 		<dependencySet>
 			<outputDirectory>josso-181/plugin/webapps/josso/WEB-INF/lib</outputDirectory>
@@ -87,7 +40,7 @@
 			<includes>
 				<include>commons-httpclient:commons-httpclient</include>
 				<include>commons-logging:commons-logging</include>
-            <include>org.gatein.sso:sso-common-plugin</include>
+        <include>org.gatein.sso:sso-common-plugin</include>
 				<include>org.gatein.sso:sso-josso-plugin</include>
 			</includes>
 		</dependencySet>

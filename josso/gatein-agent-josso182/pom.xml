@@ -13,9 +13,92 @@
    <name>GateIn JOSSO agent for JOSSO 1.8.2 and newer</name>
 
    <dependencies>
-      <dependency>
-         <groupId>org.gatein.sso</groupId>
-         <artifactId>sso-agent</artifactId>
-      </dependency>
+     <dependency>
+       <groupId>org.josso</groupId>
+       <artifactId>josso-agents-bin</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.josso</groupId>
+       <artifactId>josso-agent-shared</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-beans</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-context</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-core</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>commons-discovery</groupId>
+       <artifactId>commons-discovery</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.axis</groupId>
+       <artifactId>axis</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.xbean</groupId>
+       <artifactId>xbean-spring</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-agent</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-auth-callback</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-integration</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-saml-plugin</artifactId>
+     </dependency>
+     <!-- Dependency on itself. It's strange, but seems to be necessary for jandex -->
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-agent-josso182</artifactId>
+     </dependency>
    </dependencies>
+
+  <build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-antrun-plugin</artifactId>
+      <inherited>false</inherited>
+      <executions>
+        <execution>
+          <id>build-dist</id>
+          <goals>
+            <goal>run</goal>
+          </goals>
+          <phase>package</phase>
+          <configuration>
+            <tasks>
+              <ant antfile="build.xml" inheritRefs="true">
+                <target name="all" />
+              </ant>
+            </tasks>
+          </configuration>
+        </execution>
+      </executions>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss</groupId>
+          <artifactId>jandex</artifactId>
+          <version>${version.org.jboss.jandex}</version>
+        </dependency>
+      </dependencies>
+    </plugin>
+  </plugins>
+  </build>
+
 </project>

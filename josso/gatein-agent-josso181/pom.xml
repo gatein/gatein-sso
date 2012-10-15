@@ -13,59 +13,103 @@
    <name>GateIn JOSSO agent for JOSSO 1.8.1 and older</name>
 
    <dependencies>
+     <dependency>
+       <groupId>org.josso</groupId>
+       <artifactId>josso-agent-shared</artifactId>
+       <version>1.8.1</version>
+     </dependency>
+     <dependency>
+       <groupId>org.josso</groupId>
+       <artifactId>josso-core</artifactId>
+       <version>1.8.1</version>
+     </dependency>
+     <dependency>
+       <groupId>org.josso</groupId>
+       <artifactId>josso-agent</artifactId>
+       <version>1.8.1</version>
+     </dependency>
+     <dependency>
+       <groupId>org.josso</groupId>
+       <artifactId>josso-agents-bin</artifactId>
+       <version>1.8.0</version>
+     </dependency>
       <dependency>
          <groupId>org.gatein.sso</groupId>
          <artifactId>sso-agent</artifactId>
-         <exclusions>
-            <exclusion>
-               <groupId>org.josso</groupId>
-               <artifactId>josso-core</artifactId>
-            </exclusion>
-            <exclusion>
-               <groupId>org.josso</groupId>
-               <artifactId>josso-agent</artifactId>
-            </exclusion>
-         </exclusions>
       </dependency>
-      <dependency>
-         <groupId>org.josso</groupId>
-         <artifactId>josso-core</artifactId>
-         <version>1.8.1</version>
-      </dependency>
-      <dependency>
-         <groupId>org.josso</groupId>
-         <artifactId>josso-agent</artifactId>
-         <version>1.8.1</version>
-      </dependency>
-      <dependency>
-         <groupId>org.josso</groupId>
-         <artifactId>josso-agent-shared</artifactId>
-         <version>1.8.1</version>
-      </dependency>
-      <dependency>
-         <groupId>org.josso</groupId>
-         <artifactId>josso-agents-bin</artifactId>
-         <version>1.8.0</version>
-      </dependency>
+     <!-- Dependency on itself. It's strange, but seems to be necessary for jandex -->
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-agent-josso181</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-auth-callback</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-integration</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.gatein.sso</groupId>
+       <artifactId>sso-saml-plugin</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-beans</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-context</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.springframework</groupId>
+       <artifactId>spring-core</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>commons-discovery</groupId>
+       <artifactId>commons-discovery</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.axis</groupId>
+       <artifactId>axis</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.xbean</groupId>
+       <artifactId>xbean-spring</artifactId>
+     </dependency>
    </dependencies>
 
    <build>
       <plugins>
-         <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>copy-deps-to-lib</id>
-                  <phase>generate-resources</phase>
-                  <goals>
-                     <goal>copy-dependencies</goal>
-                  </goals>
-                  <configuration>
-                     <excludeTransitive>true</excludeTransitive>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <inherited>false</inherited>
+          <executions>
+            <execution>
+              <id>build-dist</id>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <phase>package</phase>
+              <configuration>
+                <tasks>
+                  <ant antfile="build.xml" inheritRefs="true">
+                    <target name="all" />
+                  </ant>
+                </tasks>
+              </configuration>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.jboss</groupId>
+              <artifactId>jandex</artifactId>
+              <version>${version.org.jboss.jandex}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
    </build>
 </project>
