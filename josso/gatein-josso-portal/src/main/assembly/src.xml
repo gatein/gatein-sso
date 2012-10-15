@@ -7,11 +7,11 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>../gatein-agent-josso181/target/josso-181</directory>
+			<directory>../gatein-josso-181/target/josso-181</directory>
 			<outputDirectory>gatein-josso-181</outputDirectory>
 		</fileSet>
       <fileSet>
-         <directory>../gatein-agent-josso182/target/josso-182</directory>
+         <directory>../gatein-josso-182/target/josso-182</directory>
          <outputDirectory>gatein-josso-182</outputDirectory>
       </fileSet>
       <fileSet>

@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.gatein.sso</groupId>
 		<artifactId>sso-parent</artifactId>
-		<version>1.2.0-Beta02-SNAPSHOT</version>
+		<version>1.3.0.Beta01-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -16,10 +16,12 @@
 	<name>GateIn SSO - JOSSO</name>
 
 	<modules>
-      <module>gatein-agent-josso181</module>
-      <module>gatein-agent-josso182</module>
-		<module>gatein-josso-portal</module>
-		<module>gatein-josso-plugin</module>
-   </modules>
+    <module>gatein-agent-josso181</module>
+    <module>gatein-agent-josso182</module>
+    <module>gatein-josso-plugin</module>
+    <module>gatein-josso-181</module>
+    <module>gatein-josso-182</module>
+    <module>gatein-josso-portal</module>
+  </modules>
 
 </project>
