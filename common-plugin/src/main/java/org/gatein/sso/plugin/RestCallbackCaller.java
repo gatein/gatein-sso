@@ -121,7 +121,7 @@ public class RestCallbackCaller
                break;
          }
 
-         log.debug("User " + password + " not authenticated successfuly. HTTP status: " + status + ", HTTP response: " + response);
+         log.debug("User " + username + " not authenticated successfuly. HTTP status: " + status + ", HTTP response: " + response);
          return false;
       }
       catch (Exception e)

@@ -35,7 +35,6 @@ import org.apache.catalina.util.LifecycleSupport;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.jboss.servlet.http.HttpEvent;
-import org.picketlink.identity.federation.bindings.tomcat.sp.BaseFormAuthenticator;
 
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
