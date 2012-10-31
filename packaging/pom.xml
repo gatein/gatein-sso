@@ -12,14 +12,6 @@
 	<name>GateIn SSO - Packaging</name>
 
         <dependencies>
-                <dependency>
-                        <groupId>org.gatein.sso</groupId>
-                        <artifactId>sso-agent</artifactId>
-                </dependency>
-                <dependency>
-                        <groupId>org.gatein.sso</groupId>
-                        <artifactId>spnego</artifactId>
-                </dependency>
          </dependencies>
 
 

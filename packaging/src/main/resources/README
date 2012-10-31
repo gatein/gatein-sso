@@ -3,7 +3,7 @@ GateIn - SSO Integration
 This package provides the necessary files for integration of various SSO frameworks
 with GateIn portal authentication mechanism
 
- - OpenSSO
+ - OpenAM (OpenSSO)
  - JOSSO
  - CAS
  - SPNEGO

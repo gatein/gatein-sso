@@ -14,15 +14,6 @@
    <name>GateIn SSO - SAML - Portal packaging</name>
 
    <dependencies>
-      <!-- Needed for GateIn -->
-      <dependency>
-         <groupId>org.gatein.sso</groupId>
-         <artifactId>sso-agent</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.gatein.sso</groupId>
-         <artifactId>sso-auth-callback</artifactId>
-      </dependency>
 
       <!-- Needed for IDP -->
       <dependency>
