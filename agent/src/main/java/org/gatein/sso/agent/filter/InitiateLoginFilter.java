@@ -14,10 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
+import org.gatein.sso.agent.GenericAgent;
 import org.gatein.sso.agent.cas.CASAgent;
 import org.gatein.sso.agent.filter.api.AbstractSSOInterceptor;
 import org.gatein.sso.agent.josso.JOSSOAgent;
 import org.gatein.sso.agent.opensso.OpenSSOAgent;
+import org.gatein.wci.security.Credentials;
 
 /**
  * @author soshah
@@ -228,9 +230,23 @@ public class InitiateLoginFilter extends AbstractSSOInterceptor
 
       if (attachUsernamePasswordToLoginURL)
       {
-         // Use sessionId and system millis as username and password (similar like spnego is doing)
-         String fakeUsername = req.getSession().getId() + "_" + String.valueOf(System.currentTimeMillis());
-         url.append("?username=").append(fakeUsername).append("&password=").append(fakeUsername);
+         String fakePassword = req.getSession().getId() + "_" + String.valueOf(System.currentTimeMillis());
+
+         // Try to use username from authenticated credentials
+         String username;
+         Credentials creds = (Credentials)req.getSession().getAttribute(GenericAgent.AUTHENTICATED_CREDENTIALS);
+         if (creds != null)
+         {
+            username = creds.getUsername();
+         }
+         else
+         {
+            // Fallback to fakePassword, but this should't happen (credentials should always be available when this method is called)
+            username = fakePassword;
+         }
+
+         // Use sessionId and system millis as password (similar like spnego is doing)
+         url.append("?username=").append(username).append("&password=").append(fakePassword);
       }
 
       return url.toString();

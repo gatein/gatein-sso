@@ -124,6 +124,12 @@ public class RestCallbackCaller
          log.debug("User " + password + " not authenticated successfuly. HTTP status: " + status + ", HTTP response: " + response);
          return false;
       }
+      catch (Exception e)
+      {
+         log.warn("Can't authenticate because of error: " + e.getMessage());
+         e.printStackTrace();
+         throw e;
+      }
       finally
       {
          if (method != null)

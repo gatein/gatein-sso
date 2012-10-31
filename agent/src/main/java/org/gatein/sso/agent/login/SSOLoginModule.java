@@ -35,6 +35,7 @@ import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.UsernameCredential;
 import org.exoplatform.services.security.jaas.AbstractLoginModule;
+import org.gatein.sso.agent.GenericAgent;
 import org.gatein.sso.agent.tomcat.ServletAccess;
 import org.gatein.wci.security.Credentials;
 
@@ -80,7 +81,7 @@ public final class SSOLoginModule extends AbstractLoginModule
        }
 
 
-       Credentials credsFromSession = (Credentials)request.getSession().getAttribute("authenticatedCredentials");
+       Credentials credsFromSession = (Credentials)request.getSession().getAttribute(GenericAgent.AUTHENTICATED_CREDENTIALS);
        if (credsFromSession != null)
        {
          username = credsFromSession.getUsername();

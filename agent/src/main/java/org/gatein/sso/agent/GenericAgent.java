@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class GenericAgent
 {
    private static Logger log = LoggerFactory.getLogger(GenericAgent.class);
+
+   public static final String AUTHENTICATED_CREDENTIALS = "authenticatedCredentials";
    
    protected void saveSSOCredentials(String username, HttpServletRequest httpRequest)
    {
@@ -48,7 +50,7 @@ public abstract class GenericAgent
       httpRequest.getSession().setAttribute(Credentials.CREDENTIALS, credentials);
 
       // This is needed when using default login module stack instead of SSOLoginModule. In this case, GateIn authentication is done thanks to PortalLoginModule.
-      httpRequest.getSession().setAttribute("authenticatedCredentials", credentials);
+      httpRequest.getSession().setAttribute(GenericAgent.AUTHENTICATED_CREDENTIALS, credentials);
 
       log.debug("Credentials of user " + username + " saved into HTTP session.");
    }

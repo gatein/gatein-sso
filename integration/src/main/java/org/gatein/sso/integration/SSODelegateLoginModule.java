@@ -67,7 +67,7 @@ public class SSODelegateLoginModule implements LoginModule
    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options)
    {
       String enabledParam = (String)options.get(OPTION_ENABLED);
-      enabledParam = SSOUtils.substituteSystemProperty(enabledParam);
+      enabledParam = substituteSystemProperty(enabledParam);
       this.enabled = Boolean.parseBoolean(enabledParam);
       if (!this.enabled)
       {
@@ -79,7 +79,7 @@ public class SSODelegateLoginModule implements LoginModule
       }
 
       String delegateClazz = (String)options.get(OPTION_DELEGATE_CLASSNAME);
-      delegateClazz = SSOUtils.substituteSystemProperty(delegateClazz);
+      delegateClazz = substituteSystemProperty(delegateClazz);
       if (delegateClazz == null)
       {
          throw new IllegalArgumentException("Option '" + OPTION_DELEGATE_CLASSNAME + "' is not available");
@@ -133,5 +133,13 @@ public class SSODelegateLoginModule implements LoginModule
    public boolean logout() throws LoginException
    {
       return enabled ? delegate.logout() : false;
+   }
+
+   private String substituteSystemProperty(String prop)
+   {
+      // Sun JAAS parsing is throwing exception when property ${foo} is not set. So we are using #{foo} in config and replace it here
+      prop = prop.replace('#', '$');
+
+      return SSOUtils.substituteSystemProperty(prop);
    }
 }
