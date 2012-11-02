@@ -57,11 +57,11 @@
     <version.apache.httpclient.new>4.1.2</version.apache.httpclient.new>
 
 		<!-- logging -->
-		<version.log4j>1.2.14</version.log4j>
-		<version.jboss.logging>2.0.5.GA</version.jboss.logging>
+		<version.log4j>1.2.16</version.log4j>
+		<version.jboss.logging>3.1.2.GA</version.jboss.logging>
 		<version.apache.logging>1.0.4-jboss</version.apache.logging>
 		<version.commons-logging>1.1.1</version.commons-logging>
-      <version.slf4j>1.5.8</version.slf4j>
+      <version.slf4j>1.6.1</version.slf4j>
 
 		<!-- cas -->
 		<version.cas>3.5.0</version.cas>
@@ -105,7 +105,7 @@
       <version.picketlink.fed>2.1.4.Final</version.picketlink.fed>
 
       <!-- JBoss Web -->
-      <version.jboss.web>7.0.16.Final</version.jboss.web>
+      <version.jboss.web>7.0.17.Final</version.jboss.web>
 
     <version.org.jboss.jandex>1.0.0.Beta6</version.org.jboss.jandex>
 
@@ -299,7 +299,7 @@
 
 			<!--  logging -->
 			<dependency>
-				<groupId>apache-log4j</groupId>
+				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
 				<version>${version.log4j}</version>
 			</dependency>
