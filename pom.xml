@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.gatein.sso</groupId>
 	<artifactId>sso-parent</artifactId>
-	<version>1.3.0.CR03</version>
+	<version>1.3.0.CR04-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
