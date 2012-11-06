@@ -137,6 +137,11 @@ public class SSODelegateLoginModule implements LoginModule
 
    private String substituteSystemProperty(String prop)
    {
+      if (prop == null)
+      {
+         return prop;
+      }
+
       // Sun JAAS parsing is throwing exception when property ${foo} is not set. So we are using #{foo} in config and replace it here
       prop = prop.replace('#', '$');
 
