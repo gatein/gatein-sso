@@ -68,7 +68,6 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    private static final Logger log = LoggerFactory.getLogger(PortalIDPWebBrowserSSOValve.class);
    private static final boolean trace = log.isTraceEnabled();
 
-   private static final String REQUEST_FROM_SP = "requestFromSP";
    private static final String REQUEST_FROM_SP_METHOD = "requestFromSPMethod";
    private static final String PRINCIPAL_NOTE = "portal-principalNote";
 
@@ -131,7 +130,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
             session.setNote(GeneralConstants.SAML_SIG_ALG_REQUEST_KEY, sigAlg.trim());
 
          // Saving request from SP for later use
-         saveRequestFromSP(request, session);
+         saveRequestInfoFromSP(request, session);
       }
 
       // Lets check if the user has been authenticated
@@ -189,7 +188,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
       if (session.getNote(GeneralConstants.SAML_REQUEST_KEY) != null || session.getNote(GeneralConstants.SAML_RESPONSE_KEY) != null
             || containsSAMLRequestMessage || containsSAMLResponseMessage)
       {
-         request = restoreRequestFromSP(request, session);
+         request = restoreRequestInfoFromSP(request, session);
       }
 
       IDPWebRequestUtil webRequestUtil = new IDPWebRequestUtil(request, idpConfiguration, keyManager);
@@ -305,7 +304,7 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    {
       super.start();
       this.context = (Context) getContainer();
-      this.keyManager = (TrustKeyManager)getPrivateFieldOfSuperClass("keyManager");
+      this.keyManager = getKeyManager();
 
       log.info("Valve started with identityURL=" + getIdentityURL() + ", strictPostBinding=" + idpConfiguration.isStrictPostBinding() + ", keyManager="
             + keyManager + ", context=" + context);
@@ -343,27 +342,25 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
    }
 
 
-   protected void saveRequestFromSP(Request request, Session session)
+   protected void saveRequestInfoFromSP(Request request, Session session)
    {
-      session.setNote(REQUEST_FROM_SP, request);
       session.setNote(REQUEST_FROM_SP_METHOD, request.getMethod());
       if (trace)
       {
-         log.trace("Saving request from SP. RequestUrl=" + request.getRequestURI() + ", HTTPMethod=" + request.getMethod());
+         log.trace("Saving request info from SP. RequestUrl=" + request.getRequestURI() + ", HTTPMethod=" + request.getMethod());
       }
    }
 
 
-   protected Request restoreRequestFromSP(Request request, Session session)
+   protected Request restoreRequestInfoFromSP(Request request, Session session)
    {
-      Object tempRequest = session.getNote(REQUEST_FROM_SP);
-      if (tempRequest != null)
+      Object requestMethod = session.getNote(REQUEST_FROM_SP_METHOD);
+      if (requestMethod != null)
       {
-         request = (Request)tempRequest;
-         request.getCoyoteRequest().method().setString((String)session.getNote(REQUEST_FROM_SP_METHOD));
+         request.getCoyoteRequest().method().setString((String)requestMethod);
          if (trace)
          {
-            log.trace("Restore original request from SP. RequestUrl=" + request.getRequestURI() + ", HTTPMethod=" + request.getMethod());
+            log.trace("Restore original request info from SP. RequestUrl=" + request.getRequestURI() + ", HTTPMethod=" + request.getMethod());
          }
       }
 
@@ -380,21 +377,5 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
       String samlRequest = (String)session.getNote(GeneralConstants.SAML_REQUEST_KEY);
       String samlResponse = (String)session.getNote(GeneralConstants.SAML_RESPONSE_KEY);
       return (principal != null && (samlRequest != null || samlResponse != null));
-   }
-
-
-   // Hack to obtain values of private fields from superclass
-   private Object getPrivateFieldOfSuperClass(String fieldName)
-   {
-      try
-      {
-         Field tempField = AbstractIDPValve.class.getDeclaredField(fieldName);
-         tempField.setAccessible(true);
-         return tempField.get(this);
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
    }
 }
