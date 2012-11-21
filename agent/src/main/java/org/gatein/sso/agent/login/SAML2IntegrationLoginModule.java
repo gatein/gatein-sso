@@ -74,7 +74,15 @@ public class SAML2IntegrationLoginModule extends SAML2LoginModule
    public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState,
                           Map<String, ?> options)
    {
-      addValidOptions(ALL_VALID_OPTIONS);
+      try
+      {
+         addValidOptions(ALL_VALID_OPTIONS);
+      }
+      catch (NoSuchMethodError ignore)
+      {
+         // Method addValidOptions is new in picketbox. Not supported on older AS 7.1.1
+      }
+
       super.initialize(subject, callbackHandler, sharedState, options);
    
       // GateIn integration
