@@ -156,7 +156,7 @@ public class RestCallbackCaller
          try {
            requestURL = URIUtil.encodeAll(builder.toString());
          } catch (Exception e) {
-        	String errorMessage = "an Exception occurred trying to encode the POST URL.";
+            String errorMessage = "an Exception occurred trying to encode the POST URL.";
             if (log.isDebugEnabled()) {
                log.debug(errorMessage, e);
 		    } else {
@@ -189,7 +189,7 @@ public class RestCallbackCaller
          try {
             requestURL = URIUtil.encodeAll(builder.toString());
          } catch (Exception e) {
-        	String errorMessage = "an Exception occurred trying to encode the GET URL.";
+            String errorMessage = "an Exception occurred trying to encode the GET URL.";
             if (log.isDebugEnabled()) {
                log.debug(errorMessage, e);
             } else {
