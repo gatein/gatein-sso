@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -151,7 +152,20 @@ public class RestCallbackCaller
          // builder.append("/").append(this.pathContext)
 
          builder.append("/rest/sso/authcallback/postauth/");
-         String requestURL = builder.toString();
+         String requestURL;
+         try {
+           requestURL = URIUtil.encodeAll(builder.toString());
+         } catch (Exception e) {
+            String errorMessage = "an Exception occurred trying to encode the POST URL.";
+            if (log.isDebugEnabled()) {
+               log.debug(errorMessage, e);
+            } else {
+               log.error(errorMessage +
+                        " The exception is hidden for security reasons." +
+                        " To see the actual exception, enable DEBUG logging.");
+            }
+            throw new RuntimeException(errorMessage);
+         }
 
          if (log.isDebugEnabled())
          {
@@ -171,7 +185,20 @@ public class RestCallbackCaller
          builder.append(this.host).append(":").append(this.port).append("/")
                .append(this.pathContext).append("/rest/sso/authcallback/auth/")
                .append(username).append("/").append(password);
-         String requestURL = builder.toString();
+         String requestURL;
+         try {
+            requestURL = URIUtil.encodeAll(builder.toString());
+         } catch (Exception e) {
+            String errorMessage = "an Exception occurred trying to encode the GET URL.";
+            if (log.isDebugEnabled()) {
+               log.debug(errorMessage, e);
+            } else {
+               log.error(errorMessage +
+                        " The exception is hidden for security reasons." +
+                        " To see the actual exception, enable DEBUG logging.");
+            }
+            throw new RuntimeException(errorMessage);
+         }
 
          if (log.isDebugEnabled())
          {
