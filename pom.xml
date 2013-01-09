@@ -74,7 +74,7 @@
 		<version.xbean>3.4.3</version.xbean>
 
       <!-- spring -->
-      <version.spring>2.5.5</version.spring>
+      <version.spring>2.5.6.SEC03</version.spring>
 
       <version.atricore>1.2.2</version.atricore>
 
