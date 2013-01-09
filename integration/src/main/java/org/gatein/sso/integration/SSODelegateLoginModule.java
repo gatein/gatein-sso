@@ -58,7 +58,7 @@ public class SSODelegateLoginModule implements LoginModule
       {
          clazz = (Class<LoginModule>)SSOUtils.loadClass(className);
          delegateClasses.putIfAbsent(className, clazz);
-         log.debug("Class " + className + " loaded successfuly");
+         log.debug("Class " + className + " loaded successfully");
       }
 
       return clazz;
@@ -91,7 +91,7 @@ public class SSODelegateLoginModule implements LoginModule
          this.delegate = delegateClass.newInstance();
          if (log.isTraceEnabled())
          {
-            log.trace("Delegating login module created successfuly: " + delegate);
+            log.trace("Delegating login module created successfully: " + delegate);
          }
       }
       catch (Exception e)

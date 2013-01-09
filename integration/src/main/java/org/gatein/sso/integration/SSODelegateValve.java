@@ -336,7 +336,7 @@ public class SSODelegateValve implements Valve, Contained, MBeanRegistration, Li
          try
          {
             this.delegate = delegateClass.newInstance();
-            log.info("Delegating valve created successfuly: " + delegate);
+            log.info("Delegating valve created successfully: " + delegate);
          }
          catch (Exception e)
          {
@@ -350,7 +350,7 @@ public class SSODelegateValve implements Valve, Contained, MBeanRegistration, Li
             {
                Method m = delegateClass.getMethod("setConfigFile", String.class);
                m.invoke(delegate, samlSPConfigFile);
-               log.info("Picketlink configuration file successfuly set to location: " + samlSPConfigFile);
+               log.info("Picketlink configuration file successfully set to location: " + samlSPConfigFile);
             }
             catch (Exception e)
             {
