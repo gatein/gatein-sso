@@ -115,14 +115,14 @@ public class RestCallbackCaller
                {
                   if (log.isTraceEnabled())
                   {
-                     log.trace("User " + username + " authenticated successfuly via Rest callback!");
+                     log.trace("User " + username + " authenticated successfully via Rest callback!");
                   }
                   return true;
                }
                break;
          }
 
-         log.debug("User " + username + " not authenticated successfuly. HTTP status: " + status + ", HTTP response: " + response);
+         log.debug("Authentication failed for user " + username + ". HTTP status: " + status + ", HTTP response: " + response);
          return false;
       }
       catch (Exception e)
@@ -153,19 +153,8 @@ public class RestCallbackCaller
 
          builder.append("/rest/sso/authcallback/postauth/");
          String requestURL;
-         try {
-           requestURL = URIUtil.encodeAll(builder.toString());
-         } catch (Exception e) {
-        	String errorMessage = "an Exception occurred trying to encode the POST URL.";
-            if (log.isDebugEnabled()) {
-               log.debug(errorMessage, e);
-		    } else {
-		       log.error(errorMessage +
-		       " The exception is hidden for security reasons." +
-		       " To see the actual exception, enable DEBUG logging.");
-		    }
-            throw new RuntimeException(errorMessage);
-         }
+
+         requestURL = builder.toString();
 
          if (log.isDebugEnabled())
          {
@@ -186,16 +175,21 @@ public class RestCallbackCaller
                .append(this.pathContext).append("/rest/sso/authcallback/auth/")
                .append(username).append("/").append(password);
          String requestURL;
-         try {
-            requestURL = URIUtil.encodeAll(builder.toString());
-         } catch (Exception e) {
+         try
+         {
+            requestURL = URIUtil.encodePath(builder.toString());
+         }
+         catch (Exception e)
+         {
         	String errorMessage = "an Exception occurred trying to encode the GET URL.";
-            if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled())
+            {
                log.debug(errorMessage, e);
-            } else {
-               log.error(errorMessage +
-                        " The exception is hidden for security reasons." +
-                        " To see the actual exception, enable DEBUG logging.");
+            }
+            else
+            {
+               log.error(errorMessage + " The exception is hidden for security reasons." +
+                       "To see the actual exception, enable DEBUG logging.");
             }
             throw new RuntimeException(errorMessage);
          }
