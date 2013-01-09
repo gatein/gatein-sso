@@ -173,11 +173,19 @@ public class InitiateLoginFilter extends AbstractSSOInterceptor
     {
         String ticket = httpRequest.getParameter("ticket");
         String jossoAssertion = httpRequest.getParameter("josso_assertion_id");
+        String logoutRequest = httpRequest.getParameter("logoutRequest");
 
+        // CAS login attempt
         if (ticket != null && ticket.trim().length() > 0)
         {
             getCasAgent().validateTicket(httpRequest, ticket);
         }
+        // Workaround to handle CAS saml logout requests (TODO: needs to be handled and investigated more properly)
+        else if (logoutRequest != null && logoutRequest.trim().length() > 0)
+        {
+            httpResponse.getWriter().close();
+        }
+        // JOSSO login attempt
         else if (jossoAssertion != null && jossoAssertion.trim().length() > 0)
         {
            getJOSSOAgent().validateTicket(httpRequest, httpResponse);

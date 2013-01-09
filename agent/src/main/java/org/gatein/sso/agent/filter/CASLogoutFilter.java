@@ -60,10 +60,7 @@ public class CASLogoutFilter extends AbstractLogoutFilter
 	{
 		try
 		{
-			String redirectUrl = this.logoutUrl+"?service="+httpRequest.getRequestURL() + "&url="+httpRequest.getRequestURL();
-			
-			httpRequest.getSession().invalidate();
-			
+			String redirectUrl = this.logoutUrl + "?service=" + httpRequest.getRequestURL();
 			return redirectUrl;
 		}
 		catch(Exception e)
