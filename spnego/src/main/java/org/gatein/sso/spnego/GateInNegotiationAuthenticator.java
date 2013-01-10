@@ -23,8 +23,18 @@
 
 package org.gatein.sso.spnego;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.security.Principal;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.catalina.Session;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.realm.GenericPrincipal;
 import org.gatein.sso.agent.filter.SPNEGOFilter;
+import org.jboss.logging.Logger;
 import org.jboss.security.negotiation.NegotiationAuthenticator;
 
 /**
@@ -34,6 +44,47 @@ import org.jboss.security.negotiation.NegotiationAuthenticator;
  */
 public class GateInNegotiationAuthenticator extends NegotiationAuthenticator
 {
+    private static final Logger log = Logger.getLogger(GateInNegotiationAuthenticator.class);
+
+    @Override
+    public boolean authenticate(final Request request, final HttpServletResponse response, final LoginConfig config)
+            throws IOException
+    {
+        boolean superResult = super.authenticate(request, response, config);
+
+        // Workaround for SECURITY-719 (TODO: Remove once SECURITY-719 is properly handled in negotiation or jbossweb)
+        if (superResult)
+        {
+            Principal principal = request.getPrincipal();
+
+            if (principal instanceof GenericPrincipal)
+            {
+                GenericPrincipal genPrincipal = (GenericPrincipal) principal;
+                String userPrincipalName = genPrincipal.getUserPrincipal().getName();
+
+                // In latest negotiation+jbossas genPrincipal.getName() is the session token instead of real kerberos username
+                if (!genPrincipal.getName().equals(userPrincipalName))
+                {
+                    if (log.isTraceEnabled())
+                    {
+                        log.trace("GenericPrincipal name: " + genPrincipal.getName() + " will be changed to name: " + userPrincipalName);
+                    }
+                    try
+                    {
+                        Field nameField = GenericPrincipal.class.getDeclaredField("name");
+                        nameField.setAccessible(true);
+                        nameField.set(genPrincipal, userPrincipalName);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.error(ex.getMessage(), ex);
+                    }
+                }
+            }
+        }
+
+        return superResult;
+    }
 
     /**
      * Return the request URI (with the corresponding query string, if any)
