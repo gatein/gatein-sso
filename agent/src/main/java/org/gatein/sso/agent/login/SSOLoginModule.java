@@ -94,7 +94,7 @@ public final class SSOLoginModule extends AbstractLoginModule
 			if (username == null)
 			{
 				  //SSO token could not be validated...hence a user id cannot be found
-				  log.warn("SSOLogin Failed. Credential Not Found!!");
+				  log.debug("SSOLogin Failed. Credential Not Found!!");
 				  return false;
 			}
 				

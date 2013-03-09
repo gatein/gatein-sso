@@ -50,7 +50,7 @@ public class SSODelegateFilter extends AbstractFilter
 
    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
    {
-      if (SSOUtils.isSSOEnabled())
+      if (SSOUtils.isSSOEnabled() || SSOUtils.isOAuthEnabled())
       {
          SSOFilterChain ssoChain = new SSOFilterChain(chain, getInterceptors());
          ssoChain.doFilter(request, response);

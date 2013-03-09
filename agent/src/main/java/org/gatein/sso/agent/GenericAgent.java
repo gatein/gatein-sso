@@ -40,7 +40,7 @@ public abstract class GenericAgent
 
    public static final String AUTHENTICATED_CREDENTIALS = "authenticatedCredentials";
    
-   protected void saveSSOCredentials(String username, HttpServletRequest httpRequest)
+   public void saveSSOCredentials(String username, HttpServletRequest httpRequest)
    {
       //Use empty password....it shouldn't be needed...this is a SSO login. The password has
       //already been presented with the SSO server. It should not be passed around for

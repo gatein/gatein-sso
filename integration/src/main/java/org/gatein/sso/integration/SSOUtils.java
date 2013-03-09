@@ -42,16 +42,24 @@ public class SSOUtils
 {
    private static final Logger log = LoggerFactory.getLogger(SSOUtils.class);
    private static boolean ssoEnabled;
+   private static boolean oauthEnabled;
 
    static
    {
       String ssoEnabledParam = getSystemProperty("gatein.sso.enabled", "false");
       ssoEnabled = Boolean.parseBoolean(ssoEnabledParam);
+      String oauthEnabledParam = getSystemProperty("gatein.oauth.enabled", "false");
+      oauthEnabled = Boolean.parseBoolean(oauthEnabledParam);
    }
 
    public static boolean isSSOEnabled()
    {
       return ssoEnabled;
+   }
+
+   public static boolean isOAuthEnabled()
+   {
+      return oauthEnabled;
    }
 
    public static String getSystemProperty(final String key, final String defaultValue)
