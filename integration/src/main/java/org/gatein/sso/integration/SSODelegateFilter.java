@@ -50,9 +50,9 @@ public class SSODelegateFilter extends AbstractFilter
 
    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
    {
-      if (SSOUtils.isSSOEnabled() || SSOUtils.isOAuthEnabled())
+      if (SSOUtils.isSSOEnabled())
       {
-         SSOFilterChain ssoChain = new SSOFilterChain(chain, getInterceptors());
+         SSOFilterChain ssoChain = new SSOFilterChain(chain, getInterceptors(), this);
          ssoChain.doFilter(request, response);
       }
       else
@@ -83,16 +83,18 @@ public class SSODelegateFilter extends AbstractFilter
    {
    }
 
-   private class SSOFilterChain implements FilterChain
+   public static class SSOFilterChain implements FilterChain
    {
 
       private final FilterChain containerChain;
       private final Iterator<Map.Entry<SSOInterceptor, String>> iterator;
+      private final SSODelegateFilter ssoDelegateFilter;
 
-      private SSOFilterChain(FilterChain containerChain, Map<SSOInterceptor, String> interceptors)
+      public SSOFilterChain(FilterChain containerChain, Map<SSOInterceptor, String> interceptors, SSODelegateFilter ssoDelegateFilter)
       {
          this.containerChain = containerChain;
          this.iterator = interceptors.entrySet().iterator();
+         this.ssoDelegateFilter = ssoDelegateFilter;
       }
 
       public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException
@@ -107,7 +109,7 @@ public class SSODelegateFilter extends AbstractFilter
                      + ". Request URI is " + hRequest.getRequestURI());
             }
 
-            if (isMappedTo(current.getValue(), hRequest.getServletPath()))
+            if (ssoDelegateFilter.isMappedTo(current.getValue(), hRequest.getServletPath()))
             {
                SSOInterceptor interceptor = current.getKey();
                if (log.isTraceEnabled())

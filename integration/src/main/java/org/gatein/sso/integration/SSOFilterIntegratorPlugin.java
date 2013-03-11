@@ -50,14 +50,15 @@ public class SSOFilterIntegratorPlugin extends BaseComponentPlugin
       ValueParam filterClass = params.getValueParam("filterClass");
       ValueParam enabled = params.getValueParam("enabled");
       ValueParam filterMapping = params.getValueParam("filterMapping");
-      if (filterClass == null || enabled == null || filterMapping == null)
+      if (filterClass == null || filterMapping == null)
       {
-         throw new IllegalArgumentException("Parameters 'filterClass', 'enabled' and 'filterMapping' needs to be provided");
+         throw new IllegalArgumentException("Parameters 'filterClass' and 'filterMapping' need to be provided");
       }
 
-      this.enabled = Boolean.parseBoolean(enabled.getValue());
-      if (!this.enabled)
+      this.enabled = enabled != null ? Boolean.parseBoolean(enabled.getValue()) : false;
+      if (!isEnabled())
       {
+         log.debug("Filter " + filterClass.getValue() + " disabled");
          this.filter = null;
          this.filterMapping = null;
          return;
@@ -65,7 +66,7 @@ public class SSOFilterIntegratorPlugin extends BaseComponentPlugin
 
       this.filterMapping = filterMapping.getValue();
       String filterClazz = filterClass.getValue();
-      log.debug("SSOFilterIntegratorPlugin initialization with parameters filterClass: " + filterClazz + ", filterMapping: " + filterMapping);
+      log.debug("Plugin initialization with parameters filterClass: " + filterClazz + ", filterMapping: " + filterMapping);
       Class<SSOInterceptor> ssoInterceptorCl = (Class<SSOInterceptor>)SSOUtils.loadClass(filterClazz);
       try
       {
