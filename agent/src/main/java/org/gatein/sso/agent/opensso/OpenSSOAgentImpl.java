@@ -28,10 +28,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValueParam;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.GenericAgent;
@@ -53,17 +52,41 @@ public class OpenSSOAgentImpl extends GenericAgent implements OpenSSOAgent
    // HttpSession attribute, which will be used to check that response message from CDC contains same ID of InResponseTo as the ID, which we used in OpenSSOCDLoginRedirectFilter
    public static final String IN_RESPONSE_TO_ATTR = "OpenSSOAgent.InResponseTo";
 
+    // Possible line separators on various OS
+    private static final String WINDOWS_SEPARATOR = "\r\n";
+    private static final String UNIX_SEPARATOR = "\n";
+    private static final String MAC_SEPARATOR = "\r";
+
+    private static final String[] LINE_SEPARATORS = new String[] { WINDOWS_SEPARATOR, UNIX_SEPARATOR, MAC_SEPARATOR };
+
    private static Logger log = LoggerFactory.getLogger(OpenSSOAgentImpl.class);
-	private static OpenSSOAgentImpl singleton;
 	
 	private String cookieName;
 	private String serverUrl;
+    private final String lineSeparator;
 
    private CDMessageParser cdcMessageParser = new CDMessageParser();
-	
+
 	public OpenSSOAgentImpl(InitParams params)
 	{
-      // TODO: Read serverUrl and cookieName from params
+        // TODO: Read serverUrl and cookieName from params
+        if (params == null)
+        {
+            this.lineSeparator = null;
+            return;
+        }
+
+        ValueParam lineSeparatorParam = params.getValueParam("lineSeparator");
+        if (lineSeparatorParam != null)
+        {
+            this.lineSeparator = lineSeparatorParam.getValue();
+        }
+        else
+        {
+            this.lineSeparator = null;
+        }
+
+        log.debug("Agent configured with line separator: " + this.lineSeparator);
 	}
 
    public void setCookieName(String cookieName)
@@ -289,7 +312,7 @@ public class OpenSSOAgentImpl extends GenericAgent implements OpenSSOAgent
 		{
 			Properties properties = new Properties();		
 			
-			String[] tokens = response.split(System.getProperty("line.separator"));
+			String[] tokens = response.split(getLineSeparator(response));
 			String name = null;
 			for(String token: tokens)
 			{
@@ -321,6 +344,27 @@ public class OpenSSOAgentImpl extends GenericAgent implements OpenSSOAgent
 			}
 		}
 	}
+
+    // Use configured line separator or try to "guess" it from LINE_SEPARATORS set
+    private String getLineSeparator(String response)
+    {
+        if (this.lineSeparator != null)
+        {
+            return lineSeparator;
+        }
+        else
+        {
+            for (String current : LINE_SEPARATORS)
+            {
+                if (response.contains(current))
+                {
+                    return current;
+                }
+            }
+
+            throw new IllegalArgumentException("Can't obtain line separator from response string: " + response);
+        }
+    }
 
    private void throwIllegalStateException(String message)
    {
