@@ -20,10 +20,6 @@
 			<groupId>org.gatein.sso</groupId>
 			<artifactId>sso-opensso-plugin</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-		</dependency>
 	</dependencies>
  
 	<build>

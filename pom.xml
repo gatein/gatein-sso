@@ -50,9 +50,6 @@
 	<properties>
 		<version.junit>3.8.2</version.junit>
 
-		<!--  http client TODO: Remove and migrate everything to newer client if possible -->
-		<version.commons-httpclient>3.1</version.commons-httpclient>
-
     <!-- http client new -->
     <version.apache.httpclient.new>4.1.2</version.apache.httpclient.new>
 
@@ -313,13 +310,6 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${version.slf4j}</version>
          </dependency>
-
-			<!-- httpclient -->
-			<dependency>
-				<groupId>commons-httpclient</groupId>
-				<artifactId>commons-httpclient</artifactId>
-				<version>${version.commons-httpclient}</version>
-			</dependency>
 
       <!-- httpclient new -->
       <dependency>

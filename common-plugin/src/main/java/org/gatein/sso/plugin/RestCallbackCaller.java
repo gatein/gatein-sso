@@ -23,12 +23,14 @@
 
 package org.gatein.sso.plugin;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.util.URIUtil;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,6 +42,8 @@ import org.apache.commons.logging.LogFactory;
 public class RestCallbackCaller
 {
    private static final Log log = LogFactory.getLog(RestCallbackCaller.class);
+
+   private static final String ENCODING_CHARSET = "UTF-8";
 
    // If true, we use "https". If false, we use "http"
    private final String protocol;
@@ -99,14 +103,12 @@ public class RestCallbackCaller
 
    public boolean executeRemoteCall(String username, String password) throws Exception
    {
-      HttpClient client = new HttpClient();
-      HttpMethod method = null;
       try
       {
-         method = createHttpMethodForSend(username, password);
+         HttpResponseContext httpResponse = sendPortalCallbackRequest(username, password);
 
-         int status = client.executeMethod(method);
-         String response = method.getResponseBodyAsString();
+         int status = httpResponse.getResponseCode();
+         String response = httpResponse.getResponse();
 
          switch (status)
          {
@@ -131,17 +133,13 @@ public class RestCallbackCaller
          e.printStackTrace();
          throw e;
       }
-      finally
-      {
-         if (method != null)
-         {
-            method.releaseConnection();
-         }
-      }
    }
 
-   private HttpMethod createHttpMethodForSend(String username, String password)
+   private HttpResponseContext sendPortalCallbackRequest(String username, String password) throws IOException
    {
+      String requestURL = null;
+      String queryString = null;
+
       if (isPostHttpMethod)
       {
          StringBuilder builder = new StringBuilder(this.protocol).append("://");
@@ -150,58 +148,109 @@ public class RestCallbackCaller
          // Don't append portal context for now. We need the request to be served by rest.war application on portal side
          // because here we can't call request.getParameter("something") before request is processed by RestServlet
          // builder.append("/").append(this.pathContext)
-
          builder.append("/rest/sso/authcallback/postauth/");
-         String requestURL;
 
          requestURL = builder.toString();
 
-         if (log.isDebugEnabled())
-         {
-            log.debug("Rest callback URL: " + requestURL);
-         }
-
-         PostMethod postMethod = new PostMethod(requestURL);
-         NameValuePair usernamePair = new NameValuePair("username", username);
-         NameValuePair passwordPair = new NameValuePair("password", password);
-         NameValuePair[] params = new NameValuePair[] {usernamePair, passwordPair};
-         postMethod.setRequestBody(params);
-         return postMethod;
+         queryString = new StringBuilder("username=")
+                 .append(URLEncoder.encode(username, ENCODING_CHARSET))
+                 .append("&password=")
+                 .append(URLEncoder.encode(password, ENCODING_CHARSET))
+                 .toString();
       }
       else
       {
          StringBuilder builder = new StringBuilder(this.protocol).append("://");
          builder.append(this.host).append(":").append(this.port).append("/")
                .append(this.pathContext).append("/rest/sso/authcallback/auth/")
-               .append(username).append("/").append(password);
-         String requestURL;
-         try
-         {
-            requestURL = URIUtil.encodePath(builder.toString());
-         }
-         catch (Exception e)
-         {
-        	String errorMessage = "an Exception occurred trying to encode the GET URL.";
-            if (log.isDebugEnabled())
+               .append(URLEncoder.encode(username, ENCODING_CHARSET))
+               .append("/")
+               .append(URLEncoder.encode(password, ENCODING_CHARSET));
+         requestURL =  builder.toString();
+      }
+
+      if (log.isTraceEnabled())
+      {
+         log.trace("Rest callback URL: " + requestURL + ", query string: " + queryString + ", isPostMethod: " + isPostHttpMethod);
+      }
+
+      return sendHttpRequest(requestURL, queryString);
+   }
+
+    private HttpResponseContext sendHttpRequest(String url, String urlParameters) throws IOException
+    {
+        Reader reader = null;
+        DataOutputStream wr = null;
+        StringBuilder result = new StringBuilder();
+
+        try
+        {
+            HttpURLConnection connection;
+
+            if (isPostHttpMethod)
             {
-               log.debug(errorMessage, e);
+                URL tempURL = new URL(url);
+                connection = (HttpURLConnection)tempURL.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
             }
             else
             {
-               log.error(errorMessage + " The exception is hidden for security reasons." +
-                       "To see the actual exception, enable DEBUG logging.");
+                if (urlParameters != null)
+                {
+                   url = url + "?" + urlParameters;
+                }
+
+                URL tempURL = new URL(url);
+                connection = (HttpURLConnection)tempURL.openConnection();
             }
-            throw new RuntimeException(errorMessage);
-         }
 
-         if (log.isDebugEnabled())
-         {
-            log.debug("Rest callback URL: " + requestURL);
-         }
+            connection.setUseCaches (false);
+            connection.setDoInput(true);
 
-         return new GetMethod(requestURL);
-      }
-   }
+            if (isPostHttpMethod)
+            {
+                connection.setDoOutput(true);
+
+                //Send request
+                wr = new DataOutputStream(connection.getOutputStream ());
+                wr.writeBytes(urlParameters);
+                wr.flush();
+            }
+
+            int statusCode = connection.getResponseCode();
+
+            try
+            {
+                reader = new InputStreamReader(connection.getInputStream());
+            }
+            catch (IOException ioe)
+            {
+                reader = new InputStreamReader(connection.getErrorStream());
+            }
+
+            char[] buffer = new char[50];
+            int nrOfChars;
+            while ((nrOfChars = reader.read(buffer)) != -1)
+            {
+                result.append(buffer, 0, nrOfChars);
+            }
+
+            String response = result.toString();
+            return new HttpResponseContext(statusCode, response);
+        }
+        finally
+        {
+            if (reader != null)
+            {
+                reader.close();
+            }
+            if (wr != null) {
+                wr.close();
+            }
+        }
+    }
 
 
    @Override

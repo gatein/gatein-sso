@@ -23,8 +23,6 @@
 
 package org.gatein.sso.josso.plugin;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.gatein.sso.plugin.RestCallbackCaller;
