@@ -39,7 +39,7 @@ public class TestParseSubject extends TestCase
 
     public void testParseSubject() throws Exception
     {
-        TestOpenSSOAgentImpl agent = new TestOpenSSOAgentImpl();
+        OpenSSOAgentImpl agent = new OpenSSOAgentImpl(null);
 
         // Test linux properties
         Properties linuxProps = agent.loadAttributes(LINUX_STRING);
@@ -57,19 +57,4 @@ public class TestParseSubject extends TestCase
         assertEquals("marysn", macProps.get("sn"));
     }
 
-    // Just to access protected method
-    private class TestOpenSSOAgentImpl extends OpenSSOAgentImpl
-    {
-
-        public TestOpenSSOAgentImpl()
-        {
-            super(null);
-        }
-
-        protected Properties loadAttributes(String response) throws Exception
-        {
-            return super.loadAttributes(response);
-        }
-
-    }
 }
