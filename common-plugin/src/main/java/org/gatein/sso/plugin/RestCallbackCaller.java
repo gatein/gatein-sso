@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -76,19 +77,7 @@ public class RestCallbackCaller
       this.port = port;
       this.pathContext = pathContext;
 
-      // Default to GET method if not provided
-      if (httpMethod == null || "GET".equalsIgnoreCase(httpMethod))
-      {
-         isPostHttpMethod = false;
-      }
-      else if ("POST".equalsIgnoreCase(httpMethod))
-      {
-         isPostHttpMethod = true;
-      }
-      else
-      {
-         throw new IllegalArgumentException("Illegal httpMethod: " + httpMethod + ". Only GET or POST are allowed");
-      }
+      this.isPostHttpMethod = isPostHttpMethod(httpMethod);
 
       // Default to http if not provided
       if (protocol == null)
@@ -99,6 +88,63 @@ public class RestCallbackCaller
 
 
       log.info("RestCallbackCaller initialized: " + this);
+   }
+
+    /**
+     * @param callbackURL expected in format like "http://www.sp.com:8080/portal"
+     * @param httpMethod
+     */
+   public RestCallbackCaller(String callbackURL, String httpMethod)
+   {
+       try
+       {
+           URL url = new URL(callbackURL);
+           this.protocol = url.getProtocol();
+           this.host = url.getHost();
+
+           int port = url.getPort();
+           if (port == -1) {
+               port = 80;
+           }
+           this.port = String.valueOf(port);
+
+           String path = url.getPath();
+           if (path.startsWith("/")) {
+               path = path.substring(1);
+           }
+           if (path.endsWith("/")) {
+               path = path.substring(0, path.length() - 1);
+           }
+           this.pathContext = path;
+
+           this.isPostHttpMethod = isPostHttpMethod(httpMethod);
+       }
+       catch (MalformedURLException mfe)
+       {
+           throw new IllegalArgumentException("Bad URL format: " + callbackURL, mfe);
+       }
+
+       log.debug("RestCallbackCaller initialized: " + this);
+   }
+
+   private boolean isPostHttpMethod(String httpMethod)
+   {
+       boolean isPostHttpMethod;
+
+       // Default to GET method if not provided
+       if (httpMethod == null || "GET".equalsIgnoreCase(httpMethod))
+       {
+           isPostHttpMethod = false;
+       }
+       else if ("POST".equalsIgnoreCase(httpMethod))
+       {
+           isPostHttpMethod = true;
+       }
+       else
+       {
+           throw new IllegalArgumentException("Illegal httpMethod: " + httpMethod + ". Only GET or POST are allowed");
+       }
+       return isPostHttpMethod;
    }
 
    public boolean executeRemoteCall(String username, String password) throws Exception

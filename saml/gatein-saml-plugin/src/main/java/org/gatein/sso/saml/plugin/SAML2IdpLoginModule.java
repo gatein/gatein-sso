@@ -25,12 +25,11 @@ package org.gatein.sso.saml.plugin;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.gatein.sso.plugin.RestCallbackCaller;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -68,6 +67,9 @@ public class SAML2IdpLoginModule implements LoginModule
    //  gateIn URL related property, which will be used to send REST callback requests
    private static final String OPTION_GATEIN_URL = "gateInURL";
 
+   // HTTP method ("POST" or "GET") which will be used to send REST callback requests
+   private static final String OPTION_HTTP_METHOD = "httpMethod";
+
    private static Logger log = Logger.getLogger(SAML2IdpLoginModule.class);
 
    private Subject subject;
@@ -80,6 +82,7 @@ public class SAML2IdpLoginModule implements LoginModule
    private Map options;
 
    private String gateInURL;
+   private String httpMethod;
 
    private ROLES_PROCESSING_TYPE rolesProcessingType;
    private List<String> staticRolesList;
@@ -107,6 +110,7 @@ public class SAML2IdpLoginModule implements LoginModule
       this.staticRolesList = Arrays.asList(staticRoles.split(","));
 
       this.gateInURL = readOption(OPTION_GATEIN_URL, "http://localhost:8080/portal");
+      this.httpMethod = readOption(OPTION_HTTP_METHOD, "POST");
    }   
 
    public boolean login() throws LoginException
@@ -193,18 +197,10 @@ public class SAML2IdpLoginModule implements LoginModule
 
    // ********** PROTECTED HELPER METHODS ****************************   
 
-   // TODO: use common-plugin
-   protected boolean validateUser(String username, String password)
+   protected boolean validateUser(String username, String password) throws Exception
    {
-      StringBuilder urlBuffer = new StringBuilder();
-      urlBuffer.append(this.gateInURL
-            + "/rest/sso/authcallback/auth/" + username + "/" + password);
-      String url = urlBuffer.toString();
-      log.debug("Execute callback HTTP for authentication of user: " + username);
-
-      ResponseContext responseContext = this.executeRemoteCall(urlBuffer.toString()); 
-      
-      return responseContext.status == 200 && "true".equals(responseContext.response.trim());
+       RestCallbackCaller restCallbackCaller = new RestCallbackCaller(this.gateInURL, this.httpMethod);
+       return restCallbackCaller.executeRemoteCall(username, password);
    }
    
    protected Collection<String> getRoles(String username)
@@ -215,6 +211,7 @@ public class SAML2IdpLoginModule implements LoginModule
       }
       else
       {
+         // TODO: Use RestCallbackCaller here as well
          // We need to execute REST callback to GateIn to ask for roles
          StringBuilder urlBuffer = new StringBuilder();
          urlBuffer.append(this.gateInURL
