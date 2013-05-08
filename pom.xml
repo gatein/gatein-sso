@@ -84,7 +84,7 @@
 		<!-- exo -->
 		<org.exoplatform.core.version>2.5.3-GA</org.exoplatform.core.version>
 		<org.exoplatform.ws.version>2.3.3-GA</org.exoplatform.ws.version>
-		<org.gatein.wci.version>2.3.1.CR04</org.gatein.wci.version>
+		<org.gatein.wci.version>2.3.1.CR05</org.gatein.wci.version>
 
 		<!-- JAX-RS jsr-311 -->
 		<version.javax.ws.rs>1.0</version.javax.ws.rs>
