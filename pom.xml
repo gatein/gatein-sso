@@ -1,511 +1,432 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<!--
-		This pom functions as a default configuration. The subproject poms
-		each inherit configuration from this one. When adding version
-		information for an artifact please do the following - add a version
-		property for the specific version - add a dependency in the
-		dependencyManagement section which refers to the property
-	-->
+<!--
+    This pom functions as a default configuration. The subproject poms
+    each inherit configuration from this one. When adding version
+    information for an artifact please do the following - add a version
+    property for the specific version - add a dependency in the
+    dependencyManagement section which refers to the property
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.gatein.sso</groupId>
-	<artifactId>sso-parent</artifactId>
-	<version>1.3.3.CR03-SNAPSHOT</version>
-	<packaging>pom</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.gatein.sso</groupId>
+  <artifactId>sso-parent</artifactId>
+  <version>1.3.3.CR03-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-	<parent>
-		<groupId>org.gatein</groupId>
-		<artifactId>gatein-parent</artifactId>
+  <parent>
+    <groupId>org.gatein</groupId>
+    <artifactId>gatein-parent</artifactId>
     <version>1.2.0.Final</version>
-	</parent>
+  </parent>
 
 
-	<name>Gatein - Single Sign On Integration</name>
-	<description>GateIn Single Sign On Integration</description>
+  <name>Gatein - Single Sign On Integration</name>
+  <description>GateIn Single Sign On Integration</description>
 
 
-    <scm>
-        <connection>scm:git:git://github.com/gatein/gatein-sso.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/gatein/gatein-sso.git</developerConnection>
-        <url>https://github.com/gatein/gatein-sso</url>
-    </scm>
+  <scm>
+    <connection>scm:git:git://github.com/gatein/gatein-sso.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/gatein/gatein-sso.git</developerConnection>
+    <url>https://github.com/gatein/gatein-sso</url>
+  </scm>
 
 
-	<modules>
-		<module>agent</module>
-		<module>auth-callback</module>
-      <module>common-plugin</module>
-		<module>cas</module>
-		<module>josso</module>
-		<!-- 
-   		OpenSSO requires manual installation
-    -->
-		<module>opensso</module>
-		<module>spnego</module>
-      <module>saml</module>
-		<module>packaging</module>
+  <modules>
+    <module>agent</module>
+    <module>auth-callback</module>
+    <module>common-plugin</module>
+    <module>cas</module>
+    <module>josso</module>
+    <module>opensso</module>
+    <module>spnego</module>
+    <module>saml</module>
+    <module>packaging</module>
     <module>integration</module>
   </modules>
 
-	<properties>
-		<version.junit>3.8.2</version.junit>
+  <properties>
 
-    <!-- http client new -->
-    <version.apache.httpclient.new>4.1.2</version.apache.httpclient.new>
+    <!-- logging -->
+    <version.slf4j>1.6.1</version.slf4j>
 
-		<!-- logging -->
-		<version.log4j>1.2.16</version.log4j>
-		<version.jboss.logging>3.1.2.GA</version.jboss.logging>
-		<version.apache.logging>1.0.4-jboss</version.apache.logging>
-		<version.commons-logging>1.1.1</version.commons-logging>
-      <version.slf4j>1.6.1</version.slf4j>
+    <!-- logging -->
+    <version.commons-logging>1.1.1</version.commons-logging>
+    <version.slf4j>1.6.1</version.slf4j>
 
-		<!-- cas -->
-		<version.cas>3.5.0</version.cas>
-		<version.cas.client>3.2.1</version.cas.client>
+    <!-- cas -->
+    <version.cas>3.5.0</version.cas>
 
-		<!-- josso -->
-		<version.josso>1.8.5</version.josso>
+    <!-- josso -->
+    <version.josso>1.8.5</version.josso>
 
-		<!-- xbean -->
-		<version.xbean>3.4.3</version.xbean>
+    <!-- xbean -->
+    <version.xbean>3.4.3</version.xbean>
 
-      <!-- spring -->
-      <version.spring>2.5.6.SEC03</version.spring>
+    <!-- spring -->
+    <version.spring>2.5.6.SEC03</version.spring>
 
-      <version.atricore>1.2.2</version.atricore>
+    <version.atricore>1.2.2</version.atricore>
 
-      <!-- commons discovery -->
-      <version.commons.discovery>0.2</version.commons.discovery>
+    <!-- commons discovery -->
+    <version.commons.discovery>0.2</version.commons.discovery>
 
-      <!-- apache axis -->
-      <version.axis>1.4</version.axis>
+    <!-- apache axis -->
+    <version.axis>1.4</version.axis>
 
-		<!-- exo -->
-		<org.exoplatform.core.version>2.5.3-GA</org.exoplatform.core.version>
-		<org.exoplatform.ws.version>2.3.3-GA</org.exoplatform.ws.version>
-		<org.gatein.wci.version>2.3.1.CR05</org.gatein.wci.version>
+    <!-- exo -->
+    <org.exoplatform.core.version>2.5.3-GA</org.exoplatform.core.version>
+    <org.exoplatform.ws.version>2.3.3-GA</org.exoplatform.ws.version>
+    <org.gatein.wci.version>2.3.1.CR05</org.gatein.wci.version>
 
-		<!-- JAX-RS jsr-311 -->
-		<version.javax.ws.rs>1.0</version.javax.ws.rs>
+    <!-- JACC -->
+    <version.security.jacc>1.0</version.security.jacc>
 
-		<!-- servlet-api -->
-		<version.servlet-api>3.0.1</version.servlet-api>
+    <!--  SPNEGO support using JBoss Negotiation -->
+    <version.jboss.negotiation>2.2.5.Final</version.jboss.negotiation>
 
-      <!-- JACC -->
-      <version.security.jacc>1.0</version.security.jacc>
-		
-		<!--  SPNEGO support using JBoss Negotiation -->
-		<version.jboss.negotiation>2.2.1.Final</version.jboss.negotiation>
+    <!-- JBoss Web -->
+    <version.jboss.web>7.2.0.Final</version.jboss.web>
 
-      <!-- Picketlink federation (SAML integration) -->
-      <version.picketlink.fed>2.1.4.Final</version.picketlink.fed>
+    <version.org.jboss.jandex>1.0.3.Final</version.org.jboss.jandex>
 
-      <!-- JBoss Web -->
-      <version.jboss.web>7.0.17.Final</version.jboss.web>
+    <!-- maven-release-plugin -->
+    <useReleaseProfile>false</useReleaseProfile>
+    <version.release.plugin>2.2.1</version.release.plugin>
+    <pushChanges>false</pushChanges>
 
-    <version.org.jboss.jandex>1.0.0.Beta6</version.org.jboss.jandex>
+    <!-- buildnumber-maven-plugin : needs 1.0 for git -->
+    <version.buildnumber.plugin>1.0</version.buildnumber.plugin>
 
-      <!-- maven-release-plugin -->
-      <useReleaseProfile>false</useReleaseProfile>
-      <version.release.plugin>2.2.1</version.release.plugin>
-      <pushChanges>false</pushChanges>
-      
-      <!-- buildnumber-maven-plugin : needs 1.0 for git -->
-      <version.buildnumber.plugin>1.0</version.buildnumber.plugin>
+  </properties>
 
-	</properties>
+  <dependencyManagement>
+    <dependencies>
 
-	<dependencyManagement>
-		<dependencies>
-         <!-- internal -->
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-auth-callback</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-agent</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-           <groupId>org.gatein.sso</groupId>
-           <artifactId>sso-integration</artifactId>
-           <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-common-plugin</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-cas-plugin</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-josso-plugin</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-agent-josso181</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-agent-josso182</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-josso-181</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-josso-182</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-opensso-plugin</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>spnego</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.gatein.sso</groupId>
-            <artifactId>sso-saml-plugin</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-
-			<!--  junit -->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${version.junit}</version>
-			</dependency>
-
-			<!-- cas -->
-			<dependency>
-				<groupId>org.jasig.cas</groupId>
-				<artifactId>cas-server-core</artifactId>
-				<version>${version.cas}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jasig.cas.client</groupId>
-				<artifactId>cas-client-core</artifactId>
-				<version>${version.cas.client}</version>
-			</dependency>
-
-			<!-- josso -->
-			<dependency>
-				<groupId>org.josso</groupId>
-				<artifactId>josso-core</artifactId>
-				<version>${version.josso}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.josso</groupId>
-				<artifactId>josso-basic-authscheme</artifactId>
-				<version>${version.josso}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.josso</groupId>
-				<artifactId>josso-agent</artifactId>
-				<version>${version.josso}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.josso</groupId>
-				<artifactId>josso-agent-shared</artifactId>
-				<version>${version.josso}</version>
-			</dependency>
-         <dependency>
-            <groupId>org.josso</groupId>
-            <artifactId>josso-agents-bin</artifactId>
-            <version>${version.josso}</version>
-         </dependency>
-			<dependency>
-				<groupId>org.josso</groupId>
-				<artifactId>josso-servlet-agent</artifactId>
-				<version>${version.josso}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.josso</groupId>
-				<artifactId>josso-protocol-client</artifactId>
-				<version>${version.josso}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.josso</groupId>
-				<artifactId>josso-common</artifactId>
-				<version>${version.josso}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.xbean</groupId>
-				<artifactId>xbean-spring</artifactId>
-				<version>${version.xbean}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-         <!-- JOSSO2 -->
-         <dependency>
-            <groupId>org.atricore.idbus.kernel</groupId>
-            <artifactId>org.atricore.idbus.kernel.main</artifactId>
-            <version>${version.atricore}</version>
-         </dependency>
-
-         <!-- Spring (needed for JOSSO -->
-         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${version.spring}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${version.spring}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${version.spring}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <version>${version.commons.discovery}</version>
-         </dependency>
-
-         <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis</artifactId>
-            <version>${version.axis}</version>
-         </dependency>
-
-			<!--  logging -->
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${version.log4j}</version>
-			</dependency>
-         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>${version.commons-logging}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${version.slf4j}</version>
-         </dependency>
-
-      <!-- httpclient new -->
+      <!-- Import dependency management configuration -->
       <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${version.apache.httpclient.new}</version>
+        <groupId>org.gatein</groupId>
+        <artifactId>gatein-dep</artifactId>
+        <version>1.2.1.CR03</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
-			<!-- jax-rs api -->
-			<dependency>
-				<groupId>javax.ws.rs</groupId>
-				<artifactId>jsr311-api</artifactId>
-				<version>${version.javax.ws.rs}</version>
-			</dependency>
+      <!-- internal -->
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-auth-callback</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-agent</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-integration</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-common-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-cas-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-josso-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-agent-josso181</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-agent-josso182</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-josso-181</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-josso-182</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-opensso-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>spnego</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-saml-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
-			<!-- exo -->
-			<dependency>
-				<groupId>org.exoplatform.ws</groupId>
-				<artifactId>exo.ws.rest.core</artifactId>
-				<version>${org.exoplatform.ws.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.exoplatform.core</groupId>
-				<artifactId>exo.core.component.security.core</artifactId>
-				<version>${org.exoplatform.core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.exoplatform.core</groupId>
-				<artifactId>exo.core.component.organization.api</artifactId>
-				<version>${org.exoplatform.core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.gatein.wci</groupId>
-				<artifactId>wci-wci</artifactId>
-				<version>${org.gatein.wci.version}</version>
-			</dependency>
+      <!-- cas -->
+      <dependency>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server-core</artifactId>
+        <version>${version.cas}</version>
+      </dependency>
+
+      <!-- josso -->
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-core</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-basic-authscheme</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-agent</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-agent-shared</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-agents-bin</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-servlet-agent</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-protocol-client</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-common</artifactId>
+        <version>${version.josso}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-spring</artifactId>
+        <version>${version.xbean}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <!-- JOSSO2 -->
+      <dependency>
+        <groupId>org.atricore.idbus.kernel</groupId>
+        <artifactId>org.atricore.idbus.kernel.main</artifactId>
+        <version>${version.atricore}</version>
+      </dependency>
+
+      <!-- Spring (needed for JOSSO -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${version.spring}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${version.spring}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${version.spring}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-discovery</groupId>
+        <artifactId>commons-discovery</artifactId>
+        <version>${version.commons.discovery}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.axis</groupId>
+        <artifactId>axis</artifactId>
+        <version>${version.axis}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${version.slf4j}</version>
+      </dependency>
+
+      <!-- exo -->
+      <dependency>
+        <groupId>org.exoplatform.ws</groupId>
+        <artifactId>exo.ws.rest.core</artifactId>
+        <version>${org.exoplatform.ws.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.core</groupId>
+        <artifactId>exo.core.component.security.core</artifactId>
+        <version>${org.exoplatform.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.core</groupId>
+        <artifactId>exo.core.component.organization.api</artifactId>
+        <version>${org.exoplatform.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.wci</groupId>
+        <artifactId>wci-wci</artifactId>
+        <version>${org.gatein.wci.version}</version>
+      </dependency>
 
 
-			<!-- servlet-api -->
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>${version.servlet-api}</version>
-			</dependency>
-			
-			<!-- SPNEGO support using JBoss Negotiation -->
-         <dependency>
-            <groupId>org.jboss.security</groupId>
-            <artifactId>jboss-negotiation-spnego</artifactId>
-            <version>${version.jboss.negotiation}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.security</groupId>
-            <artifactId>jboss-negotiation-common</artifactId>
-            <version>${version.jboss.negotiation}</version>
-         </dependency>
-         <dependency>
-            <groupId>javax.security</groupId>
-            <artifactId>jacc</artifactId>
-            <version>${version.security.jacc}</version>
-         </dependency>
+      <!-- SPNEGO support using JBoss Negotiation -->
+      <dependency>
+        <groupId>org.jboss.security</groupId>
+        <artifactId>jboss-negotiation-spnego</artifactId>
+        <version>${version.jboss.negotiation}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.security</groupId>
+        <artifactId>jboss-negotiation-common</artifactId>
+        <version>${version.jboss.negotiation}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.security</groupId>
+        <artifactId>jacc</artifactId>
+        <version>${version.security.jacc}</version>
+      </dependency>
 
-         <!-- Picketlink federation (SAML) -->
-         <dependency>
-            <groupId>org.picketlink</groupId>
-            <artifactId>picketlink-core</artifactId>
-            <version>${version.picketlink.fed}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.picketlink.distribution</groupId>
-            <artifactId>picketlink-jbas7</artifactId>
-            <version>${version.picketlink.fed}</version>
-         </dependency>
+      <!-- JBoss Web -->
+      <dependency>
+        <groupId>org.jboss.web</groupId>
+        <artifactId>jbossweb</artifactId>
+        <version>${version.jboss.web}</version>
+      </dependency>
 
-         <!-- JBoss Web -->
-         <dependency>
-            <groupId>org.jboss.web</groupId>
-            <artifactId>jbossweb</artifactId>
-            <version>${version.jboss.web}</version>
-         </dependency>
+      <!-- SSO plugins -->
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${version.commons-logging}</version>
+      </dependency>
 
-		</dependencies>
-	</dependencyManagement>
+    </dependencies>
+  </dependencyManagement>
 
-	<repositories>
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Repository</name>
-			<layout>default</layout>
-			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+  <repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Repository</name>
+      <layout>default</layout>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
 
-		<repository>
-			<id>snapshots.jboss.org</id>
-			<name>JBoss Snapshots Repository</name>
-			<layout>default</layout>
-			<url>http://snapshots.jboss.org/maven2/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
+    <repository>
+      <id>josso-m2-repo</id>
+      <name>JOSSO Maven2 Repository</name>
+      <url>http://repository.josso.org</url>
+      <releases>
+        <checksumPolicy>fail</checksumPolicy>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <checksumPolicy>fail</checksumPolicy>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
 
-		<repository>
-			<id>josso-m2-repo</id>
-			<name>JOSSO Maven2 Repository</name>
-			<url>http://repository.josso.org</url>
-			<releases>
-				<checksumPolicy>fail</checksumPolicy>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<checksumPolicy>fail</checksumPolicy>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+    <!-- Needed for JOSSO2 -->
+    <repository>
+      <id>atricore-m2-repo</id>
+      <name>Atricore Maven2 Repository</name>
+      <url>http://repository.atricore.org/m2-release-repository</url>
+      <releases>
+        <checksumPolicy>fail</checksumPolicy>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <checksumPolicy>fail</checksumPolicy>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
 
-      <!-- Needed for JOSSO2 -->
-      <repository>
-         <id>atricore-m2-repo</id>
-         <name>Atricore Maven2 Repository</name>
-         <url>http://repository.atricore.org/m2-release-repository</url>
-         <releases>
-            <checksumPolicy>fail</checksumPolicy>
-            <enabled>true</enabled>
-         </releases>
-         <snapshots>
-            <checksumPolicy>fail</checksumPolicy>
-            <enabled>false</enabled>
-         </snapshots>
-      </repository>
-
-		<repository>
-			<id>exo-int</id>
-			<url>http://maven2.exoplatform.org/rest/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+  </repositories>
 
 
-	<build>
-      <!-- Set plugin versions here -->
-      <pluginManagement>
-         <plugins>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-assembly-plugin</artifactId>
-               <version>2.2-beta-5</version>
-            </plugin>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-dependency-plugin</artifactId>
-               <version>2.2</version>
-            </plugin>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-surefire-plugin</artifactId>
-               <version>2.3.1</version>
-            </plugin>
-            <plugin>
-               <groupId>org.apache.xbean</groupId>
-               <artifactId>maven-xbean-plugin</artifactId>
-               <version>${version.xbean}</version>
-            </plugin>
-         </plugins>
-      </pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
+  <build>
+    <!-- Set plugin versions here -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2-beta-5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.xbean</groupId>
+          <artifactId>maven-xbean-plugin</artifactId>
+          <version>${version.xbean}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
           <fork>true</fork>
           <meminitial>256m</meminitial>
           <maxmem>1024m</maxmem>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>java.net maven repository</id>
-			<url>http://download.java.net/maven/2/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>java.net maven repository</id>
+      <url>http://download.java.net/maven/2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 </project>

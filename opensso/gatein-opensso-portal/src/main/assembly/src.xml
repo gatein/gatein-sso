@@ -1,31 +1,30 @@
 <assembly>
-	<includeBaseDirectory>false</includeBaseDirectory>
-	<formats>
-		<format>dir</format>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>dir</format>
 
-	</formats>
+  </formats>
 
-	<fileSets>
-		<fileSet>
+  <fileSets>
+    <fileSet>
 
-			<directory>src/main/resources</directory>
-			<outputDirectory></outputDirectory>
-		</fileSet>
-	</fileSets>
+      <directory>src/main/resources</directory>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+  </fileSets>
 
-	<dependencySets>
+  <dependencySets>
 
-		<dependencySet>
-			<outputDirectory>plugin/WEB-INF/lib</outputDirectory>
-			<useProjectArtifact>false</useProjectArtifact>
-			<useTransitiveDependencies>false</useTransitiveDependencies>
-			<includes>
-				<include>commons-httpclient:commons-httpclient</include>
-            <include>org.gatein.sso:sso-common-plugin</include>
-				<include>org.gatein.sso:sso-opensso-plugin</include>
-			</includes>
-		</dependencySet>
+    <dependencySet>
+      <outputDirectory>plugin/WEB-INF/lib</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <includes>
+        <include>org.gatein.sso:sso-common-plugin</include>
+        <include>org.gatein.sso:sso-opensso-plugin</include>
+      </includes>
+    </dependencySet>
 
-	</dependencySets>
+  </dependencySets>
 
 </assembly>
