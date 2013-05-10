@@ -50,6 +50,9 @@ public class GateInNegotiationAuthenticator extends NegotiationAuthenticator
     public boolean authenticate(final Request request, final HttpServletResponse response, final LoginConfig config)
             throws IOException
     {
+        // We need to set Content-type here, otherwise we may see plain-text login.jsp page
+        response.setContentType("text/html; charset=UTF-8");
+
         boolean superResult = super.authenticate(request, response, config);
 
         // Workaround for SECURITY-719 (TODO: Remove once SECURITY-719 is properly handled in negotiation or jbossweb)
