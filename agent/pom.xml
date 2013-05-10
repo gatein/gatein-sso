@@ -65,10 +65,6 @@
          <groupId>org.jboss.security</groupId>
          <artifactId>jboss-negotiation-spnego</artifactId>
       </dependency>
-      <dependency>
-         <groupId>javax.security</groupId>
-         <artifactId>jacc</artifactId>
-      </dependency>
 
       <dependency>
          <groupId>org.picketlink</groupId>

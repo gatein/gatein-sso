@@ -24,25 +24,13 @@ package org.gatein.sso.agent.login;
 
 import java.security.Principal;
 import java.security.acl.Group;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
-import javax.security.jacc.PolicyContext;
-
-import javax.security.jacc.PolicyContextException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.jboss.security.SimpleGroup;
-import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
 import org.exoplatform.container.ExoContainer;
@@ -52,8 +40,6 @@ import org.exoplatform.container.RootContainer;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.IdentityRegistry;
-import org.exoplatform.container.monitor.jvm.J2EEServerInfo;
-import org.exoplatform.services.security.jaas.UserPrincipal;
 
 /**
  * The LoginModule that is responsible for setting up the proper GateIn roles
@@ -67,9 +53,7 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
 
 	// GateIn integration
 	private static final String OPTION_PORTAL_CONTAINER_NAME = "portalContainerName";
-	private static final String OPTION_REALM_NAME = "realmName";
 	private String portalContainerName;
-	private String realmName;
 
 	private String getPortalContainerName(Map options)
 	{
@@ -82,19 +66,6 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
 			}
 		}
 		return PortalContainer.DEFAULT_PORTAL_CONTAINER_NAME;
-	}
-
-	private String getRealmName(Map options)
-	{
-		if (options != null)
-		{
-			String optionValue = (String) options.get(OPTION_REALM_NAME);
-			if (optionValue != null && optionValue.length() > 0)
-			{
-				return optionValue;
-			}
-		}
-		return PortalContainer.DEFAULT_REALM_NAME;
 	}
 
 	private ExoContainer getContainer() throws Exception
@@ -118,7 +89,6 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
 
 		// GateIn integration
 		this.portalContainerName = getPortalContainerName(options);
-		this.realmName = getRealmName(options);
 	}
 
 	@Override
@@ -207,54 +177,4 @@ public class SPNEGORolesModule extends AbstractServerLoginModule
 		}
 	}
 
-   private String findSessionId() throws PolicyContextException
-   {
-      HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
-      if(request == null)
-      {
-         return null;
-      }
-
-      HttpSession session = request.getSession(false);
-      String sessionId = session.getId();
-      return sessionId;
-   }
-
-   private Principal findKeyPrincipal(Principal subjectPrincipal, List<Principal> allPrincipals, String sessionId)
-   {
-      Principal key = null;
-
-      // TODO: Investigate possibility to find principal without iteration through allPrincipals
-      // Spnego authentication case. Invalidation key starts with sessionId
-      if ((subjectPrincipal instanceof SimplePrincipal) && (sessionId != null))
-      {
-         for (Iterator i = allPrincipals.iterator(); i.hasNext();)
-         {
-            Principal principal = (Principal)i.next();
-
-            if (principal.getName().startsWith(sessionId))
-            {
-               key = principal;
-               break;
-            }
-         }
-      }
-      // Form authentication case
-      else
-      {
-         String userName = subjectPrincipal.getName();
-         for (Iterator i = allPrincipals.iterator(); i.hasNext();)
-         {
-            Principal principal = (Principal)i.next();
-
-            if (principal.getName().equals(userName))
-            {
-               key = principal;
-               break;
-            }
-         }
-      }
-
-      return key;
-   }
 }

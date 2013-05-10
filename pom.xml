@@ -315,11 +315,6 @@
         <artifactId>jboss-negotiation-common</artifactId>
         <version>${version.jboss.negotiation}</version>
       </dependency>
-      <dependency>
-        <groupId>javax.security</groupId>
-        <artifactId>jacc</artifactId>
-        <version>${version.security.jacc}</version>
-      </dependency>
 
       <!-- JBoss Web -->
       <dependency>
