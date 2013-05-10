@@ -37,6 +37,11 @@ public class SAML2LogoutFilter extends AbstractLogoutFilter
    @Override
    protected String getRedirectUrl(HttpServletRequest httpRequest)
    {
+      // This could happen if user clicked to "logout" link but session already expired in the meantime
+      if (httpRequest.getRemoteUser() == null) {
+          return httpRequest.getContextPath();
+      }
+
       String logoutURL =  this.logoutUrl;
 
       // URL from filter init parameter has priority, but if not provided, we will use SAML global logout.
