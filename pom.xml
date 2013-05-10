@@ -78,9 +78,6 @@
     <org.exoplatform.ws.version>2.3.3-GA</org.exoplatform.ws.version>
     <org.gatein.wci.version>2.3.1.CR05</org.gatein.wci.version>
 
-    <!-- JACC -->
-    <version.security.jacc>1.0</version.security.jacc>
-
     <!--  SPNEGO support using JBoss Negotiation -->
     <version.jboss.negotiation>2.2.5.Final</version.jboss.negotiation>
 
