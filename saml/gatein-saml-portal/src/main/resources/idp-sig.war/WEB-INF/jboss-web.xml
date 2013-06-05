@@ -1,6 +1,15 @@
 <jboss-web>
   <security-domain>idp</security-domain>
   <context-root>idp-sig</context-root>
+
+  <valve>
+    <class-name>org.gatein.sso.saml.plugin.valve.IDPSetupValve</class-name>
+    <param>
+      <param-name>characterEncoding</param-name>
+      <param-value>UTF-8</param-value>
+    </param>
+  </valve>
+
   <valve>
      <class-name>org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve</class-name>
    </valve>

@@ -33,7 +33,8 @@
 	<div class="loginBox"
 		style="margin-bottom: 80px; border: 1px solid #000000; width: 310px; background-color: #F8F8F8; align: center;">
 		<form id="login_form" name="login_form" method="post"
-			action="j_security_check" enctype="application/x-www-form-urlencoded">
+			action="j_security_check" enctype="application/x-www-form-urlencoded"
+			accept-charset="UTF-8">
 			<center>
 				<p>
 					Welcome to the <b>PicketLink Identity Provider</b>
