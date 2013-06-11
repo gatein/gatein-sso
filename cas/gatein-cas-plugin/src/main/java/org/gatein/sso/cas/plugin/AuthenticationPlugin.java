@@ -43,7 +43,7 @@ public class AuthenticationPlugin extends AbstractUsernamePasswordAuthentication
 	private String gateInPort;
 	private String gateInContext;
    private String httpMethod;
-   private RestCallbackCaller restCallbackCaller;
+   private volatile RestCallbackCaller restCallbackCaller;
 	
 	public AuthenticationPlugin()
 	{

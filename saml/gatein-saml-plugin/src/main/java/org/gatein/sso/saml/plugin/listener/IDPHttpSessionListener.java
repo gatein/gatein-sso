@@ -41,7 +41,7 @@ public class IDPHttpSessionListener implements HttpSessionListener
 
    private static final String PROPERTY_IDP_ENABLED = "gatein.sso.idp.listener.enabled";
 
-   private HttpSessionListener delegate;
+   private volatile HttpSessionListener delegate;
 
    public void sessionDestroyed(HttpSessionEvent se)
    {

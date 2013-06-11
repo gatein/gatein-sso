@@ -44,7 +44,7 @@ import java.util.Map;
  */
 public class SSODelegateFilter extends AbstractFilter
 {
-   private Map<SSOInterceptor, String> ssoInterceptors;
+   private volatile Map<SSOInterceptor, String> ssoInterceptors;
 
    private static final Logger log = LoggerFactory.getLogger(SSODelegateFilter.class);
 
