@@ -47,11 +47,7 @@
   <properties>
 
     <!-- logging -->
-    <version.slf4j>1.6.1</version.slf4j>
-
-    <!-- logging -->
     <version.commons-logging>1.1.1</version.commons-logging>
-    <version.slf4j>1.6.1</version.slf4j>
 
     <!-- cas -->
     <version.cas>3.5.0</version.cas>
@@ -74,9 +70,9 @@
     <version.axis>1.4</version.axis>
 
     <!-- exo -->
-    <org.exoplatform.core.version>2.5.3-GA</org.exoplatform.core.version>
-    <org.exoplatform.ws.version>2.3.3-GA</org.exoplatform.ws.version>
-    <org.gatein.wci.version>2.3.1.CR05</org.gatein.wci.version>
+    <org.exoplatform.core.version>2.6.0-Alpha4</org.exoplatform.core.version>
+    <org.exoplatform.ws.version>2.4.0-Alpha4</org.exoplatform.ws.version>
+    <org.gatein.wci.version>2.4.0.Beta01</org.gatein.wci.version>
 
     <!--  SPNEGO support using JBoss Negotiation -->
     <version.jboss.negotiation>2.2.5.Final</version.jboss.negotiation>
@@ -103,7 +99,7 @@
       <dependency>
         <groupId>org.gatein</groupId>
         <artifactId>gatein-dep</artifactId>
-        <version>1.2.1.Final</version>
+        <version>1.3.0.Beta01</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -270,12 +266,6 @@
         <groupId>org.apache.axis</groupId>
         <artifactId>axis</artifactId>
         <version>${version.axis}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${version.slf4j}</version>
       </dependency>
 
       <!-- exo -->
