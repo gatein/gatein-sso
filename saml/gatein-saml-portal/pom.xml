@@ -2,7 +2,7 @@
    <parent>
       <artifactId>sso-saml-parent</artifactId>
       <groupId>org.gatein.sso</groupId>
-      <version>1.4.0.Beta01</version>
+      <version>1.4.0.Beta02-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
 
