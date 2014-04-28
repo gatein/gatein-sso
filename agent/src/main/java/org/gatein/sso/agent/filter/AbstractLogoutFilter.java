@@ -21,6 +21,7 @@
  */
 package org.gatein.sso.agent.filter;
 
+import org.gatein.common.http.QueryStringParser;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.sso.agent.filter.api.AbstractSSOInterceptor;
@@ -28,6 +29,7 @@ import org.gatein.sso.agent.filter.api.AbstractSSOInterceptor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -117,7 +119,18 @@ public abstract class AbstractLogoutFilter extends AbstractSSOInterceptor
 		{
 			request.setCharacterEncoding(fileEncoding);
 		}
-		String action = request.getParameter("portal:action");
+
+        String action = null;
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            // The QueryStringParser currently only likes & and not &amp;
+            queryString = queryString.replace("&amp;", "&");
+            Map<String, String[]> queryParams = QueryStringParser.getInstance().parseQueryString(queryString);
+            String[] portalActions = queryParams.get("portal:action");
+            if (portalActions != null && portalActions.length > 0) {
+                action = portalActions[0];
+            }
+        }
 
 		if (action != null && action.equals("Logout"))
 		{
