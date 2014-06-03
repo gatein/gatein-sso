@@ -39,7 +39,7 @@
     <module>josso</module>
     <module>opensso</module>
     <module>spnego</module>
-	  <module>spnegosso</module>
+    <module>spnegosso</module>
     <module>saml</module>
     <module>packaging</module>
     <module>integration</module>
