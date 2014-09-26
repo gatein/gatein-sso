@@ -24,19 +24,15 @@
 package org.gatein.sso.saml.plugin.valve;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Session;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
-import org.picketlink.identity.federation.bindings.tomcat.idp.AbstractIDPValve;
 import org.picketlink.identity.federation.bindings.tomcat.idp.IDPWebBrowserSSOValve;
-import org.picketlink.identity.federation.core.config.IDPType;
-import org.picketlink.identity.federation.core.exceptions.ParsingException;
 import org.picketlink.identity.federation.core.interfaces.TrustKeyManager;
-import org.picketlink.identity.federation.core.saml.v1.SAML11Constants;
-import org.picketlink.identity.federation.core.saml.v2.constants.JBossSAMLURIConstants;
-import org.picketlink.identity.federation.core.util.StringUtil;
 import org.picketlink.identity.federation.web.constants.GeneralConstants;
 import org.picketlink.identity.federation.web.util.ConfigurationUtil;
 import org.picketlink.identity.federation.web.util.IDPWebRequestUtil;
@@ -52,9 +48,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
+import org.picketlink.common.constants.JBossSAMLConstants;
+import org.picketlink.common.constants.JBossSAMLURIConstants;
+import org.picketlink.common.exceptions.ParsingException;
+import org.picketlink.common.util.StringUtil;
+import org.picketlink.config.federation.IDPType;
 
 /**
  * Modified version of {@link IDPWebBrowserSSOValve} for GateIn portal purposes.
@@ -231,7 +231,6 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
           * relay state from the SP
           */
          samlRequestMessage = (String) session.getNote(GeneralConstants.SAML_REQUEST_KEY);
-
          samlResponseMessage = (String) session.getNote(GeneralConstants.SAML_RESPONSE_KEY);
          relayState = (String) session.getNote(GeneralConstants.RELAY_STATE);
          signature = (String) session.getNote(GeneralConstants.SAML_SIGNATURE_REQUEST_KEY);
@@ -252,20 +251,20 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
          // Send valid saml response after processing the request
          if (samlRequestMessage != null)
          {
-            processSAMLRequestMessage(webRequestUtil, request, response);
+            processSAMLRequestMessage(request, response, null, false);
          }
          else if (StringUtil.isNotNull(samlResponseMessage))
          {
-            processSAMLResponseMessage(webRequestUtil, request, response);
+            processSAMLResponseMessage(request, response);
          }
          else
          {
-            String target = request.getParameter(SAML11Constants.TARGET);
+            String target = request.getParameter(JBossSAMLConstants.UNSOLICITED_RESPONSE_TARGET.get());
             if (StringUtil.isNotNull(target))
             {
                // We have SAML 1.1 IDP first scenario. Now we need to create a SAMLResponse and send back
                // to SP as per target
-               handleSAML11(webRequestUtil, request, response);
+               handleSAML11UnsolicitedResponse(request, response);
             }
             else if (skipForwardingToHostedURL)
             {
@@ -315,25 +314,27 @@ public class PortalIDPWebBrowserSSOValve extends IDPWebBrowserSSOValve
     */
    protected void initIDPConfiguration()
    {
-      InputStream is = getContext().getServletContext().getResourceAsStream(configFile);
+      InputStream is = null;
+
+      try
+      {
+         is = new FileInputStream(configFile);
+      }
+      catch (FileNotFoundException ex)
+      {
+         throw new RuntimeException("Failed to locate configuration file " + configFile);
+      }
 
       if (idpConfiguration == null)
       {
-         if (is != null)
+         try
          {
-            try
-            {
-               picketLinkConfiguration = ConfigurationUtil.getConfiguration(is);
-               idpConfiguration = (IDPType) picketLinkConfiguration.getIdpOrSP();
-            }
-            catch (ParsingException e)
-            {
-               log.error("Failed to initialize Picketlink IDM from config file located in " + configFile, e);
-            }
+            picketLinkConfiguration = ConfigurationUtil.getConfiguration(is);
+            idpConfiguration = (IDPType) picketLinkConfiguration.getIdpOrSP();
          }
-         else
+         catch (ParsingException e)
          {
-            throw new RuntimeException("Failed to locate configuration file " + configFile);
+            log.error("Failed to initialize Picketlink IDM from config file located in " + configFile, e);
          }
       }
 

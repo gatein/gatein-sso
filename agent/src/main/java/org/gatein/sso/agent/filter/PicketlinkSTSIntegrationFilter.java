@@ -31,7 +31,6 @@ import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.client.SecurityClient;
 import org.jboss.security.client.SecurityClientFactory;
-import org.picketlink.identity.federation.core.wstrust.SamlCredential;
 
 import javax.security.auth.Subject;
 import javax.servlet.FilterChain;
@@ -43,6 +42,7 @@ import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Set;
+import org.picketlink.identity.federation.core.wstrust.SamlCredential;
 
 /**
  * Filter for set {@link SamlCredential} into {@link SecurityClient}, which enables to propagate authentication from SAML2 ticket into
