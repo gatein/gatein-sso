@@ -26,7 +26,6 @@ package org.gatein.sso.agent.saml;
 import org.gatein.common.logging.Logger;
 import org.gatein.common.logging.LoggerFactory;
 import org.gatein.wci.ServletContainerFactory;
-import org.picketlink.identity.federation.core.exceptions.ProcessingException;
 import org.picketlink.identity.federation.core.saml.v2.interfaces.SAML2HandlerRequest;
 import org.picketlink.identity.federation.core.saml.v2.interfaces.SAML2HandlerResponse;
 import org.picketlink.identity.federation.saml.v2.protocol.LogoutRequestType;
@@ -37,6 +36,7 @@ import org.picketlink.identity.federation.web.handlers.saml2.SAML2LogOutHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.picketlink.common.exceptions.ProcessingException;
 
 /**
  * Extension of {@link SAML2LogOutHandler} because we need to enforce WCI (crossContext) logout in portal environment.
