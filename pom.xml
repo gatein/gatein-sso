@@ -54,6 +54,9 @@
     <!-- cas -->
     <version.cas>3.5.0</version.cas>
 
+    <!-- cas 4 -->
+    <version.cas4>4.0.0</version.cas4>
+
     <!-- josso -->
     <version.josso>1.8.5</version.josso>
 
@@ -130,6 +133,11 @@
       <dependency>
         <groupId>org.gatein.sso</groupId>
         <artifactId>sso-cas-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.gatein.sso</groupId>
+        <artifactId>sso-cas4-plugin</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
