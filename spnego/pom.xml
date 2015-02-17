@@ -53,37 +53,6 @@
 				</plugins>
 			</build>
 		</profile>
-
-		<!--
-			Note: This profile is used only during Development for deploying artifacts into a Development Gatein server 
-		 -->
-		<profile>
-			<id>dev</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>dev</id>
-								<phase>install</phase>
-								<configuration>
-									<tasks>
-										<echo message="Deploying the Gatein SPNEGO Login Module" />
-										
-										<copy file="${settings.localRepository}/org/gatein/sso/spnego/${project.version}/${project.artifactId}-${project.version}.jar" todir="${gatein.location}/deploy/gatein.ear/lib" overwrite="true" />
-									</tasks>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 </project>
 

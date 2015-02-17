@@ -3,29 +3,33 @@
   <includeBaseDirectory>false</includeBaseDirectory>
 
   <formats>
-     <format>zip</format>
+    <format>zip</format>
   </formats>
-  
+
   <fileSets>
     <fileSet>
-       <directory>../cas/gatein-cas-portal/target/sso-cas-pkg-${version}/</directory>
-       <outputDirectory>gatein-sso-${version}/cas</outputDirectory>
+      <directory>../cas/gatein-cas4-portal/target/sso-cas4-pkg-${version}/</directory>
+      <outputDirectory>gatein-sso-${version}/cas4</outputDirectory>
     </fileSet>
     <fileSet>
-       <directory>../josso/gatein-josso-portal/target/sso-josso-pkg-${version}/</directory>
-       <outputDirectory>gatein-sso-${version}/josso</outputDirectory>
+      <directory>../cas/gatein-cas-portal/target/sso-cas-pkg-${version}/</directory>
+      <outputDirectory>gatein-sso-${version}/cas</outputDirectory>
     </fileSet>
     <fileSet>
-       <directory>../opensso/gatein-opensso-portal/target/sso-opensso-pkg-${version}/</directory>
-       <outputDirectory>gatein-sso-${version}/opensso</outputDirectory>
+      <directory>../josso/gatein-josso-portal/target/sso-josso-pkg-${version}/</directory>
+      <outputDirectory>gatein-sso-${version}/josso</outputDirectory>
     </fileSet>
     <fileSet>
-       <directory>../saml/gatein-saml-portal/target/sso-saml-pkg-${version}/</directory>
-       <outputDirectory>gatein-sso-${version}/saml</outputDirectory>
+      <directory>../opensso/gatein-opensso-portal/target/sso-opensso-pkg-${version}/</directory>
+      <outputDirectory>gatein-sso-${version}/opensso</outputDirectory>
     </fileSet>
     <fileSet>
-       <directory>src/main/resources/</directory>
-       <outputDirectory>gatein-sso-${version}</outputDirectory>
+      <directory>../saml/gatein-saml-portal/target/sso-saml-pkg-${version}/</directory>
+      <outputDirectory>gatein-sso-${version}/saml</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/resources/</directory>
+      <outputDirectory>gatein-sso-${version}</outputDirectory>
     </fileSet>
   </fileSets>
 

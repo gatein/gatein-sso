@@ -6,6 +6,7 @@ with GateIn portal authentication mechanism
  - OpenAM (OpenSSO)
  - JOSSO
  - CAS
+ - CAS 4
  - SPNEGO
  - SAML
  
