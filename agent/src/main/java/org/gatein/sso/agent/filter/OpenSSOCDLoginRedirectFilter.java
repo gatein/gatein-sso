@@ -83,7 +83,9 @@ public class OpenSSOCDLoginRedirectFilter extends LoginRedirectFilter
          urlBuilder.append("&goto=").append(URLEncoder.encode(agentUrl, "UTF-8"));
 
          // We need to use Realm=g because of bug (or strange behaviour) of OpenAM, which cuts first character of realmName during parsing
-         String providerId = agentUrl + "/?Realm=g" + openSSORealm;
+         // Update GTNSSO-28 - This extra char is supposed to be a "slash" on pre-10.1 versions. So, adding the "g"
+         // is not really appropriate. Replacing the "g" with "/" makes it work for both 9.x up to 12.0 (latest tested).
+         String providerId = agentUrl + "/?Realm=" + URLEncoder.encode("/" + openSSORealm, "UTF-8");
          urlBuilder.append("&ProviderID=").append(URLEncoder.encode(providerId, "UTF-8"));
 
          // Generate random number for parameter "inResponseTo" and save it to session. This ID must be in response message in parameter "inResponseTo"
