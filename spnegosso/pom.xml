@@ -6,7 +6,7 @@
     <groupId>org.gatein.sso</groupId>
     <artifactId>sso-parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>1.4.5.Final</version>
+    <version>1.4.6.Final-SNAPSHOT</version>
   </parent>
   <artifactId>spnegosso</artifactId>
 
